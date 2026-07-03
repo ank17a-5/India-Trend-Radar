@@ -7,6 +7,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   data-collection:
     runs-on: ubuntu-latest
@@ -25,23 +28,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ----------------------------
       # Google Trends
-      # ----------------------------
+
       - name: Run Google Trends
         run: python -m scripts.google_trends
 
-      # ----------------------------
       # News Collection
       # Uncomment when news_fetch.py is ready
-      # ----------------------------
+
       # - name: Run News Collection
       #   run: python -m scripts.news_fetch
 
-      # ----------------------------
       # YouTube Collection
       # Uncomment when youtube_fetch.py is ready
-      # ----------------------------
+
       # - name: Run YouTube Collection
       #   run: python -m scripts.youtube_fetch
 
