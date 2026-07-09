@@ -40,10 +40,9 @@ jobs:
       #   run: python -m scripts.news_fetch
 
       # YouTube Collection
-      # Uncomment when youtube_fetch.py is ready
-
-      # - name: Run YouTube Collection
-      #   run: python -m scripts.youtube_fetch
+      
+      - name: Run YouTube Collection
+        run: python -m scripts.youtube_fetch
 
       - name: Commit Updated Files
         run: |
