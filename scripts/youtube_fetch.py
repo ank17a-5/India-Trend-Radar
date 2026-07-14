@@ -1,27 +1,25 @@
-# scripts/youtube_fetch.py
-
 import os
 import re
-import sys
-import time
 import argparse
 import traceback
 import pandas as pd
 from datetime import datetime, date
 from dotenv import load_dotenv
-from googleapiclient.discovery import build
-import schedule  # pip install schedule
+from googleapiclient.discovery import build  
 
 # --- Setup ---------------------------------------------------
 load_dotenv(dotenv_path="config/.env")
-API_KEY = os.getenv("YOUTUBE_API_KEY")
+API_KEY = os.getenv("YOUTUBE_API_KEY")   
 
 if not API_KEY:
     print("Error: API key missing. Please check config/.env")
-    exit()
+    exit() 
 
-youtube = build("youtube", "v3", developerKey=API_KEY)
+youtube = build("youtube", "v3", developerKey=API_KEY)  
 print("YouTube API connected successfully.")
+
+# --- Config ----------------------------------------------------------
+ROLLING_WINDOW_DAYS = 30   # keep only the latest 30 collection days
 
 # --- Fetch Function (today's top trending, general chart only) --------
 def fetch_trending_videos(max_results=200):
@@ -29,24 +27,23 @@ def fetch_trending_videos(max_results=200):
     Fetches today's top trending videos for India from YouTube's
     general "mostPopular" chart (no category filtering).
     Note: YouTube's trending chart typically returns a maximum of
-    around 200 videos per region regardless of how high max_results
+    around 200 videos per region regardless of how high max_results   
     is set.
-    """
+    """  
     all_videos = []
-    seen_ids   = set()  # Used to skip duplicate video IDs
+    seen_ids   = set()  # Used to skip duplicate video IDs  
 
-    print("\nFetching today's top trending videos...")
+    print("\nFetching today's top trending videos...")   
     all_videos, seen_ids = fetch_page(
         all_videos, seen_ids,
         category_id=None,
-        max_results=max_results
+        max_results=max_results   
     )
 
     return all_videos
 
 
 # --- Keyword Extraction Helper ---------------------------------------
-# Common English filler/stop words to exclude from extracted keywords
 STOP_WORDS = {
     "a", "an", "the", "and", "or", "but", "if", "in", "on", "at", "to",
     "of", "for", "with", "is", "are", "was", "were", "be", "been", "being",
@@ -64,7 +61,6 @@ def extract_keywords(title, max_keywords=8):
     if not title:
         return ""
 
-    # Keep only letters/numbers/spaces, lowercase everything
     cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", title).lower()
     words = cleaned.split()
 
@@ -110,7 +106,6 @@ def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
         for item in response.get("items", []):
             vid_id = item["id"]
 
-            # Skip duplicates
             if vid_id in seen_ids:
                 continue
             seen_ids.add(vid_id)
@@ -118,7 +113,6 @@ def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
             snippet = item.get("snippet",    {})
             stats   = item.get("statistics", {})
 
-            # Tags - comma separated
             tags_list = snippet.get("tags", [])
             tags_str  = ", ".join(tags_list) if tags_list else "No Tags"
 
@@ -146,70 +140,11 @@ def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
     return all_videos, seen_ids
 
 
-# --- Clean Function ------------------------------------------------
-def clean_data(df, days_back=3):
-    """
-    days_back : how many days of publish history to keep, counting
-                today as day 1. Default 3 means videos published
-                today, yesterday, or the day before are all kept.
-                Set to 1 to restore the old "today only" behavior.
-    """
-    print("\nCleaning data...")
-
-    before = len(df)
-
-    # 1. Remove duplicate video_id
-    df = df.drop_duplicates(subset="video_id")
-
-    # 2. Remove rows with empty title
-    df = df[df["title"].str.strip() != ""]
-
-    # 3. Remove invalid entries where views = 0
-    df = df[df["views"] > 0]
-
-    # 4. Convert published_at to a readable format
-    df["published_at"] = pd.to_datetime(
-        df["published_at"], errors="coerce"
-    ).dt.strftime("%Y-%m-%d %H:%M:%S")
-
-    # 5. Ensure numeric columns are proper integers
-    for col in ["views", "likes", "comments"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
-
-    # 6. Strip extra whitespace from tags
-    df["tags"] = df["tags"].str.strip()
-
-    # 7. Remove non-ASCII characters from title
-    df["title"] = df["title"].str.replace(r"[^\x00-\x7F]+", " ", regex=True).str.strip()
-
-    # 8. Sort by views, descending
-    df = df.sort_values("views", ascending=False).reset_index(drop=True)
-
-    # 9. Keep only videos published within the last `days_back` days.
-    #    Broadened from "today only" to "last few days" because some
-    #    videos take a couple of days to build up views/likes/comments
-    #    before they actually show up as trending - this also means a
-    #    single run picks up some of what would've been missed on
-    #    days the script wasn't run.
-    published_dt = pd.to_datetime(df["published_at"], errors="coerce")
-    cutoff_date = pd.Timestamp(datetime.now().date()) - pd.Timedelta(days=days_back - 1)
-    df = df[published_dt >= cutoff_date]
-
-    after = len(df)
-    print(f"   Removed {before - after} invalid rows")
-    print(f"   Clean rows (published in last {days_back} day(s)): {after}")
-
-    return df
-
-
 # --- Legacy Cleanup Helper -------------------------------------------
 def strip_excel_prefix(df):
     """
     Some older saved CSVs may still have a leading apostrophe (') in
-    front of published_at / collection_date - this was previously
-    added to stop Excel from mangling the date display. This function
-    strips it off (if present) so dates read back in as plain text,
-    e.g. "2026-07-04" instead of "'2026-07-04".
+    front of published_at / collection_date - strips it if present.
     """
     df = df.copy()
     for col in ["published_at", "collection_date"]:
@@ -218,20 +153,15 @@ def strip_excel_prefix(df):
     return df
 
 
-# --- Monthly Rolling File Helper --------------------------------------
-# Instead of creating a brand-new file every single run, we keep adding
-# to the SAME file for the whole calendar month (e.g. 1 July - 31 July).
-# The moment a new month starts, a new file is used automatically -
-# no config or state file needed, it's calculated purely from today's
-# date, so it works the same whether you run it once a day or 50
-# times a day.
+# --- Monthly File Naming Helper (original naming, kept as-is) --------
 import calendar
 
 def get_period_label():
     """
     Returns a label like '20260701_20260731' identifying the current
-    calendar month window, and rolls over to a new label automatically
-    on the 1st of every month.
+    calendar month window. This keeps the original file-naming scheme
+    - no migration needed, since it just keeps writing to whichever
+    monthly file already exists on disk.
     """
     today = date.today()
     last_day = calendar.monthrange(today.year, today.month)[1]
@@ -240,20 +170,40 @@ def get_period_label():
     return f"{period_start.strftime('%Y%m%d')}_{period_end.strftime('%Y%m%d')}"
 
 
+def parse_mixed_dates(series):
+    """
+    Robustly parses a column of date strings even when it contains a
+    MIX of formats - e.g. '2026-07-13', '11/07/2026', '08-07-2026'.
+    Tries known formats one at a time instead of letting pandas guess
+    a single format for the whole column.
+    """
+    s = series.astype(str).str.strip().str.lstrip("'")
+    result = pd.Series(pd.NaT, index=s.index, dtype="datetime64[ns]")
+
+    known_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%Y/%m/%d", "%m/%d/%Y"]
+    remaining = result.isna()
+    for fmt in known_formats:
+        if not remaining.any():
+            break
+        parsed = pd.to_datetime(s[remaining], format=fmt, errors="coerce")
+        result.loc[remaining] = result.loc[remaining].fillna(parsed)
+        remaining = result.isna()
+
+    if remaining.any():
+        parsed = pd.to_datetime(s[remaining], errors="coerce", dayfirst=True)
+        result.loc[remaining] = result.loc[remaining].fillna(parsed)
+
+    return result
+
+
 def append_and_dedupe(existing_path, new_df, sort_col="views"):
     """
     Loads the existing CSV (if any), appends new_df to it, and removes
-    duplicates so that:
-      - the same video collected on the same day only appears once
-        (if you run the script several times in one day, the LATEST
-        run's numbers for that video/day win, older ones are dropped)
-      - data from previous days is kept untouched, so you build up
-        3-4 days, a week, or the full 30-day window in one file.
+    duplicates. Rows are ordered by COLLECTION DATE, newest first.
     """
     if os.path.exists(existing_path):
         old_df = pd.read_csv(existing_path, dtype=str, encoding="utf-8-sig")
         old_df = strip_excel_prefix(old_df)
-        # restore proper dtypes for numeric columns after reading back as str
         for col in ["views", "likes", "comments"]:
             if col in old_df.columns:
                 old_df[col] = pd.to_numeric(old_df[col], errors="coerce").fillna(0).astype(int)
@@ -261,99 +211,124 @@ def append_and_dedupe(existing_path, new_df, sort_col="views"):
     else:
         combined = new_df.copy()
 
-    # Keep the newest row for a given (video_id, collection_date) pair
+    collection_key = parse_mixed_dates(combined["collection_date"])
+    published_key  = parse_mixed_dates(combined["published_at"])
+    combined = combined.assign(_collection_key=collection_key, _published_key=published_key)
+
     combined = combined.drop_duplicates(
-        subset=["video_id", "collection_date"], keep="last"
+        subset=["video_id", "_collection_key"], keep="last"
     )
+
     combined = combined.sort_values(
-        ["collection_date", sort_col], ascending=[False, False]
-    ).reset_index(drop=True)
+        ["_collection_key", "_published_key", sort_col],
+        ascending=[False, False, False]
+    )
+
+    combined["collection_date"] = combined["_collection_key"].dt.strftime("%Y-%m-%d")
+    combined["published_at"]    = combined["_published_key"].dt.strftime("%Y-%m-%d")
+
+    combined = combined.drop(columns=["_collection_key", "_published_key"]).reset_index(drop=True)
 
     return combined
 
 
+# --- Rolling 30-Day Window Helper -------------------------------------
+def enforce_rolling_window(df, days=ROLLING_WINDOW_DAYS):
+    """
+    Keeps only the most recent `days` UNIQUE collection dates in the
+    dataframe and drops everything older.
+
+    This is what creates the rolling window behaviour:
+      - Day 1 to Day 30: data just keeps accumulating in the file.
+      - Day 31: a new collection_date is added, which pushes the count
+        of unique dates to 31 -> the oldest date (Day 1) is dropped,
+        so the file always contains at most `days` collection dates.
+    """
+    if df.empty:
+        return df
+
+    df = df.copy()
+    collection_key = parse_mixed_dates(df["collection_date"])
+    df = df.assign(_collection_key=collection_key)
+
+    unique_dates = sorted(df["_collection_key"].dropna().unique(), reverse=True)
+    keep_dates = set(unique_dates[:days])
+    dropped_dates = sorted(set(unique_dates) - keep_dates, reverse=True)
+
+    if dropped_dates:
+        dropped_str = ", ".join(pd.Timestamp(d).strftime("%Y-%m-%d") for d in dropped_dates)
+        print(f"Rolling window: dropping data for date(s) older than {days} days -> {dropped_str}")
+
+    df = df[df["_collection_key"].isin(keep_dates)]
+    df = df.drop(columns=["_collection_key"]).reset_index(drop=True)
+    return df
+
+
 # --- Save Function ---------------------------------------------------
-def save_data(videos, days_back=3):
+def save_data(videos):
     if not videos:
         print("No data fetched.")
         return
 
     df = pd.DataFrame(videos)
 
-    # Keep only the required columns
+    # Structured column order - always enforced, both for new rows and
+    # for the final saved file (see below).
     df = df[[
-        "video_id",
-        "title",
-        "channel_name",
-        "published_at",
-        "views",
-        "likes",
-        "comments",
-        "tags",
-        "keywords",
-        "video_url",
-        "collection_date"
+        "video_id", "title", "channel_name", "published_at",
+        "views", "likes", "comments", "tags", "keywords",
+        "video_url", "collection_date"
     ]]
 
-    # Clean the data
-    df_clean = clean_data(df, days_back=days_back)
+    df["published_at"] = pd.to_datetime(
+        df["published_at"], errors="coerce"
+    ).dt.strftime("%Y-%m-%d")
 
-    # Folders
-    os.makedirs("data/raw",     exist_ok=True)
-    os.makedirs("data/cleaned", exist_ok=True)
+    os.makedirs("data/raw", exist_ok=True)
 
     period_label = get_period_label()
+    raw_path = f"data/raw/youtube_trending_rolling30.csv"
 
-    # File paths - same file reused for the whole 30-day window,
-    # a new one is created automatically once the window rolls over
-    raw_path   = f"data/raw/youtube_{period_label}.csv"
-    clean_path = f"data/cleaned/youtube_cleaned_{period_label}.csv"
+    raw_combined = append_and_dedupe(raw_path, df)
+    raw_combined = enforce_rolling_window(raw_combined, days=ROLLING_WINDOW_DAYS)
 
-    # Raw: append this run's data to the current window's file
-    raw_df = pd.DataFrame(videos)[[
-        "video_id", "title", "channel_name",
-        "published_at", "views", "likes", "comments", "tags",
-        "keywords", "video_url", "collection_date"
+    # Re-enforce structured column order + dtypes before saving, so the
+    # file on disk is always clean regardless of what was merged in.
+    raw_combined = raw_combined[[
+        "video_id", "title", "channel_name", "published_at",
+        "views", "likes", "comments", "tags", "keywords",
+        "video_url", "collection_date"
     ]]
-    raw_combined = append_and_dedupe(raw_path, raw_df)
+    for col in ["views", "likes", "comments"]:
+        raw_combined[col] = pd.to_numeric(raw_combined[col], errors="coerce").fillna(0).astype(int)
+
     raw_combined.to_csv(raw_path, index=False, encoding="utf-8-sig")
 
-    # Cleaned: append this run's cleaned data to the current window's file
-    clean_combined = append_and_dedupe(clean_path, df_clean)
-    clean_combined.to_csv(clean_path, index=False, encoding="utf-8-sig")
+    num_days = raw_combined["collection_date"].nunique()
 
-    # --- Summary --------------------------------------------------
     print(f"\n{'='*55}")
-    print(f"Current 30-day window : {period_label}")
-    print(f"Raw file (running)    : {raw_path}")
-    print(f"Clean file (running)  : {clean_path}")
+    print(f"Current month window       : {period_label}")
+    print(f"Raw file (rolling {ROLLING_WINDOW_DAYS}-day window): {raw_path}")
     print(f"{'='*55}")
-    print(f"Rows added this run    : {len(df_clean)}")
-    print(f"Total rows in file now : {len(clean_combined)}")
-    print(f"Columns                : {list(clean_combined.columns)}")
-    print(f"Rows with tags         : {(clean_combined['tags'] != 'No Tags').sum()}")
+    print(f"Rows added this run       : {len(df)}")
+    print(f"Total rows in file now    : {len(raw_combined)}")
+    print(f"Unique collection dates   : {num_days} / {ROLLING_WINDOW_DAYS}")
+    print(f"Columns                   : {list(raw_combined.columns)}")
     print(f"{'='*55}")
-    print(f"\nTop 5 by views (whole file so far):")
-    print(clean_combined.head(5)[
+    print(f"\nTop 5 rows (most recent collection date, sorted by views within that day):")
+    print(raw_combined.head(5)[
         ["title", "channel_name", "views", "tags", "collection_date"]
     ].to_string(index=False))
 
 
 # --- Job wrapper (a single fetch + save run) --------------------------
-def run_job(days_back=3):
-    """
-    Runs one complete cycle: fetch + save.
-    The scheduler calls this function repeatedly.
-    If an error occurs (API outage, network issue, quota exceeded),
-    the job will not crash the whole program - it logs the error
-    and lets the next scheduled run proceed as normal.
-    """
+def run_job():
     start = datetime.now()
     print(f"\n[{start.strftime('%Y-%m-%d %H:%M:%S')}] Starting Trend Radar run...")
     print("=" * 55)
     try:
         videos = fetch_trending_videos(max_results=200)
-        save_data(videos, days_back=days_back)
+        save_data(videos)
     except Exception as e:
         print(f"Job failed: {e}")
         traceback.print_exc()
@@ -362,61 +337,12 @@ def run_job(days_back=3):
         print(f"Run completed in {(end - start).total_seconds():.1f}s")
 
 
-# --- Scheduler ---------------------------------------------------------
-def start_scheduler(run_time="09:00", interval=None, run_now=True, days_back=3):
-    """
-    run_time : "HH:MM" (24-hour, local system time) - used for daily runs
-    interval : if provided (in minutes), the job runs every N minutes
-               instead of once a day (useful for testing/frequent updates)
-    run_now  : whether to run the job immediately when the scheduler starts
-    """
-    if run_now:
-        print("Running an immediate job before starting the schedule...")
-        run_job(days_back=days_back)
-
-    if interval:
-        schedule.every(interval).minutes.do(run_job, days_back=days_back)
-        print(f"Scheduler set: will run every {interval} minute(s)")
-    else:
-        schedule.every().day.at(run_time).do(run_job, days_back=days_back)
-        print(f"Scheduler set: will run daily at {run_time} (system local time)")
-
-    print("Scheduler is running. Press Ctrl+C to stop.\n")
-
-    try:
-        while True:
-            schedule.run_pending()
-            time.sleep(30)  # Check every 30 seconds
-    except KeyboardInterrupt:
-        print("\nScheduler stopped manually. Exiting.")
-        sys.exit(0)
-
-
 # --- Main ----------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="India Trend Radar - YouTube Data Collector")
-    parser.add_argument("--schedule", action="store_true",
-                         help="Run in scheduler mode (repeats automatically in the background)")
-    parser.add_argument("--time", default="09:00",
-                         help="Daily run time, 24-hour format, default 09:00")
-    parser.add_argument("--interval", type=int, default=None,
-                         help="Run every N minutes instead of daily (useful for testing)")
-    parser.add_argument("--no-run-now", action="store_true",
-                         help="Do not run immediately when the scheduler starts")
-    parser.add_argument("--days-back", type=int, default=3,
-                         help="Keep videos published in the last N days instead of today only (default: 3)")
     args = parser.parse_args()
 
     print("India Trend Radar - YouTube Data Collection")
     print("=" * 55)
 
-    if args.schedule:
-        start_scheduler(
-            run_time=args.time,
-            interval=args.interval,
-            run_now=not args.no_run_now,
-            days_back=args.days_back
-        )
-    else:
-        # Default behavior - single one-time run
-        run_job(days_back=args.days_back)
+    run_job()   
