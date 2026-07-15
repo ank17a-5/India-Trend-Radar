@@ -275,9 +275,19 @@ def save_data(videos):
     # Structured column order - always enforced, both for new rows and
     # for the final saved file (see below).
     df = df[[
-        "video_id", "title", "channel_name", "published_at",
-        "views", "likes", "comments", "tags", "keywords",
-        "video_url", "collection_date"
+        
+        "collection_date",
+        "collection_time",
+        "keyword",
+        "video_id",
+        "title",
+        "channel_name",
+        "published_at",
+        "views",
+        "likes",
+        "comments",
+        "tags",
+        "video_url"
     ]]
 
     df["published_at"] = pd.to_datetime(
