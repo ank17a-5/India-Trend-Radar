@@ -30,8 +30,8 @@ jobs:
 
       # Google Trends
 
-      - name: Run Google Trends
-        run: python -m scripts.google_trends
+      #- name: Run Google Trends
+      #  run: python -m scripts.google_trends
 
       # News Collection
       # Uncomment when news_fetch.py is ready
