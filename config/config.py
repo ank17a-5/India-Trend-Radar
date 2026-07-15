@@ -1,37 +1,43 @@
 import os
 from dotenv import load_dotenv
 
-# Load variables from .env file
-load_dotenv()
+# Load environment variables from config/.env (for local development)
+load_dotenv("config/.env")
 
+
+# ---------------- Google Trends Configuration ----------------
+
+GOOGLE_TRENDS = {
+    "geo": "IN",
+    "timeframe": "today 1-m",
+    "language": "en-US",
+    "timezone": 330,
+}
+
+
+# ---------------- News Configuration ----------------
 
 class Config:
     """
-    Configuration class for the India Trend Radar project.
+    Configuration for News APIs.
     """
 
-    # News API
     NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-    # GNews API
     GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
-
     NEWS_RETENTION_DAYS = int(os.getenv("NEWS_RETENTION_DAYS", 30))
 
     @classmethod
     def validate(cls):
-        """
-        Validate required environment variables.
-        """
-        required_vars = {
+        required = {
             "NEWS_API_KEY": cls.NEWS_API_KEY,
             "GNEWS_API_KEY": cls.GNEWS_API_KEY,
         }
 
-        missing = [key for key, value in required_vars.items() if not value]
+        missing = [key for key, value in required.items() if not value]
 
         if missing:
             raise EnvironmentError(
                 f"Missing environment variables: {', '.join(missing)}"
             )
 
-        print("✅ Configuration loaded successfully!")
+        print("✅ News configuration loaded successfully.")
