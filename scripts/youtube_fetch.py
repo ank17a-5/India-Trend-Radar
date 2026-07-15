@@ -116,18 +116,21 @@ def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
             tags_list = snippet.get("tags", [])
             tags_str  = ", ".join(tags_list) if tags_list else "No Tags"
 
+            now = datetime.now()
+
             video = {
-                "video_id":        vid_id,
-                "title":           snippet.get("title",        "").strip(),
-                "channel_name":    snippet.get("channelTitle", "").strip(),
-                "published_at":    snippet.get("publishedAt",  ""),
-                "views":           int(stats.get("viewCount",    0) or 0),
-                "likes":           int(stats.get("likeCount",    0) or 0),
-                "comments":        int(stats.get("commentCount", 0) or 0),
-                "tags":            tags_str,
-                "keywords":        extract_keywords(snippet.get("title", "")),
-                "video_url":       f"https://www.youtube.com/watch?v={vid_id}",
-                "collection_date": datetime.now().strftime("%Y-%m-%d"),
+                "video_id": vid_id,
+                "title": snippet.get("title", "").strip(),
+                "channel_name": snippet.get("channelTitle", "").strip(),
+                "published_at": snippet.get("publishedAt", ""),
+                "views": int(stats.get("viewCount", 0) or 0),
+                "likes": int(stats.get("likeCount", 0) or 0),
+                "comments": int(stats.get("commentCount", 0) or 0),
+                "tags": tags_str,
+                "keyword": extract_keywords(snippet.get("title", "")),
+                "video_url": f"https://www.youtube.com/watch?v={vid_id}",
+                "collection_date": now.strftime("%Y-%m-%d"),
+                "collection_time": now.strftime("%H:%M:%S"),
             }
             all_videos.append(video)
             fetched += 1
@@ -147,7 +150,7 @@ def strip_excel_prefix(df):
     front of published_at / collection_date - strips it if present.
     """
     df = df.copy()
-    for col in ["published_at", "collection_date"]:
+    for col in ["published_at", "collection_date", "collection_time"]:
         if col in df.columns:
             df[col] = df[col].astype(str).str.lstrip("'")
     return df
@@ -305,9 +308,18 @@ def save_data(videos):
     # Re-enforce structured column order + dtypes before saving, so the
     # file on disk is always clean regardless of what was merged in.
     raw_combined = raw_combined[[
-        "video_id", "title", "channel_name", "published_at",
-        "views", "likes", "comments", "tags", "keywords",
-        "video_url", "collection_date"
+        "collection_date",
+        "collection_time",
+        "keyword",
+        "video_id",
+        "title",
+        "channel_name",
+        "published_at",
+        "views",
+        "likes",
+        "comments",
+        "tags",
+        "video_url"
     ]]
     for col in ["views", "likes", "comments"]:
         raw_combined[col] = pd.to_numeric(raw_combined[col], errors="coerce").fillna(0).astype(int)
