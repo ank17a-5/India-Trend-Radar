@@ -8,11 +8,11 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build  
 
 # --- Setup ---------------------------------------------------
-load_dotenv(dotenv_path="config/.env")
+load_dotenv("config/.env")
 API_KEY = os.getenv("YOUTUBE_API_KEY")   
 
 if not API_KEY:
-    print("Error: API key missing. Please check config/.env")
+    print("Error: YOUTUBE_API_KEY is not set.")
     exit() 
 
 youtube = build("youtube", "v3", developerKey=API_KEY)  
