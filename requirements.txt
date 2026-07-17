@@ -32,3 +32,4 @@ beautifulsoup4
 gnews
 textblob
 langdetect
+keybert
