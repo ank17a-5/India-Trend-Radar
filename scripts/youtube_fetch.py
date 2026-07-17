@@ -78,7 +78,7 @@ def extract_keywords(title, max_keywords=8):
         if len(keywords) >= max_keywords:
             break
 
-    return ", ".join(keywords)
+    return "| ".join(keywords)
 
 
 def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
@@ -114,7 +114,7 @@ def fetch_page(all_videos, seen_ids, category_id=None, max_results=50):
             stats   = item.get("statistics", {})
 
             tags_list = snippet.get("tags", [])
-            tags_str  = ", ".join(tags_list) if tags_list else "No Tags"
+            tags_str  = "| ".join(tags_list) if tags_list else "No Tags"
 
             now = datetime.now()
 
