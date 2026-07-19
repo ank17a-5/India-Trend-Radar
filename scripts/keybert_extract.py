@@ -1,45 +1,49 @@
 """
 scripts/keybert_extract.py
 ---------------------------
-Member 3 (Anushka) — Phase 2: KeyBERT keyword extraction
+Member 3 (Anuska) — Phase 2: KeyBERT keyword extraction
 
-Reads the real Phase-1 news data (data/raw/news_raw.csv), extracts
+Reads the cleaned news data (data/cleaned/news_clean.csv), extracts
 semantically-ranked keywords per article using KeyBERT, and writes
-a cleaned output table for downstream use (topic-ID matching,
-trend scoring, YAKE comparison, etc).
+an output table for downstream use (topic-ID matching, trend scoring,
+YAKE comparison, etc).
 
 Run from the repo root:
-    python scripts/keybert_extract.py
+    python -m scripts.keybert_extract
 """
 
 import os
 import pandas as pd
-from datetime import datetime
 from keybert import KeyBERT
 
 from utils.utils import logger
 
-RAW_PATH = "data/raw/news_raw.csv"
+CLEANED_PATH = "data/cleaned/news_clean.csv"
 OUTPUT_DIR = "data/cleaned"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "news_keybert.csv")
 
 
-def load_news(path: str = RAW_PATH) -> pd.DataFrame:
-    """Load the Phase-1 news CSV, keeping only English-language rows."""
+def load_news(path: str = CLEANED_PATH) -> pd.DataFrame:
+    """Load the cleaned news CSV, keeping only English-language rows."""
     df = pd.read_csv(path, encoding="utf-8-sig")
 
     before = len(df)
-    df = df[df["language"] == "en"].copy()
+    if "language" in df.columns:
+        df = df[df["language"] == "en"].copy()
     logger.info(f"Loaded {before} articles, {len(df)} after English-only filter")
 
     return df
 
 
 def build_input_text(row) -> str:
-    """Combine title + description for more context than title alone."""
+    """Combine title + description for more context than title alone.
+
+    In the cleaned data, description is often identical to title (already
+    deduplicated during cleaning) — this still works correctly either way.
+    """
     title = str(row.get("title") or "")
     description = str(row.get("description") or "")
-    if description and description.lower() != "nan":
+    if description and description.lower() != "nan" and description != title:
         return f"{title}. {description}"
     return title
 
@@ -81,11 +85,14 @@ def run():
 
     df = extract_keywords_keybert(df, model, top_n=3)
 
-    # keep old crude keyword column for side-by-side comparison
+    # keep old crude keyword column for side-by-side comparison,
+    # plus date-part columns (already provided in the cleaned data)
+    # so the output can be grouped into a "ranked keyword table per day"
     output_cols = [
         "source_name", "title", "description", "url",
         "keyword", "keybert_keywords", "language",
         "published_date", "collected_at",
+        "year", "month", "day", "weekday",
     ]
     df_out = df[[c for c in output_cols if c in df.columns]].copy()
 

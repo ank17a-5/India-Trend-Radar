@@ -1,3 +1,4 @@
+
 from bs4 import BeautifulSoup
 import feedparser
 import os
@@ -7,8 +8,7 @@ from gnews import GNews
 from datetime import datetime
 from langdetect import detect, LangDetectException
 from utils.utils import( logger, extract_keywords)
-
-
+from scripts.news_cleaning import clean_news
 # RSS Collector
 class RSSCollector:
 
@@ -391,9 +391,12 @@ def run():
     file_path = exporter.export(clean_articles)
 
     logger.info(f"CSV exported: {file_path}")
+    
+    clean_news()
 
     logger.info("Pipeline completed")
 
 
 if __name__ == "__main__":
     run()
+
