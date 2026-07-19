@@ -1,0 +1,285 @@
+2026-07-02 16:57:12,679 | INFO | MySQL connection established
+2026-07-02 16:58:40,993 | INFO | MySQL connection established
+2026-07-02 16:58:41,053 | INFO | MySQL connection closed
+2026-07-02 16:59:40,168 | INFO | MySQL connection established
+2026-07-02 16:59:40,188 | INFO | Inserted | Source: UnitTest | Keyword: test | Title: DB Test Article
+2026-07-02 16:59:40,192 | INFO | MySQL connection closed
+2026-07-02 17:05:01,308 | INFO | MySQL connection established
+2026-07-02 17:05:03,090 | INFO | Fetched 296 articles
+2026-07-02 17:05:03,110 | INFO | Inserted | Source: Times of India | Keyword: pm | Title: PM Modi, 'younger sister' Takaichi sign MoC including $10 billion investment, AI boost
+2026-07-02 17:05:03,114 | INFO | Inserted | Source: Times of India | Keyword: 'i | Title: 'I will represent Congress': Salman Khurshid confirms Khamenei funeral participation
+2026-07-02 17:05:03,120 | INFO | Inserted | Source: Times of India | Keyword: unesco | Title: Unesco warns Pakistan over 'reconstructions' at Taxila, the Vedic-era city
+2026-07-02 17:05:03,125 | INFO | Inserted | Source: Times of India | Keyword: shreyas | Title: Shreyas Iyer scripts history, becomes first Indian captain to...
+2026-07-02 17:05:03,129 | INFO | Inserted | Source: Times of India | Keyword: how | Title: How Bengal is taking a 'Right' turn: What Suvendu Adhikari changed in post-Mamata era
+2026-07-02 17:05:03,134 | INFO | Inserted | Source: Times of India | Keyword: this | Title: This Apple privacy feature may have leaked emails for millions of iPhone, Mac users
+2026-07-02 17:05:03,139 | INFO | Inserted | Source: Times of India | Keyword: putin | Title: Putin unleashes 'night of horror' on Ukraine, 17 killed; message for Nato ahead of key meet?
+2026-07-02 17:05:03,143 | INFO | Inserted | Source: Times of India | Keyword: fpis | Title: FPIs continue to exit India: June equity outflows hit Rs 49,340 cr
+2026-07-02 17:05:03,146 | INFO | Inserted | Source: Times of India | Keyword: navy | Title: Navy foils piracy bid in Gulf of Aden on cargo ship carrying critical consignment for India
+2026-07-02 17:05:03,150 | INFO | Inserted | Source: Times of India | Keyword: after | Title: After Meta layoffs, Zuckerberg says firms should empower workers, not replace them
+2026-07-02 17:05:03,154 | INFO | Inserted | Source: Times of India | Keyword: 'issue | Title: 'Issue being overblown': UP dy CM Maurya backs Champat Rai amid Ram Temple row
+2026-07-02 17:05:03,158 | INFO | Inserted | Source: Times of India | Keyword: 'wrote | Title: 'Wrote about ending his life': Pilot who hit Beijing's tallest building suffered from anxiety
+2026-07-02 17:05:03,161 | INFO | Inserted | Source: Times of India | Keyword: man | Title: Man legally named 'Santa Claus' arrested in US child predator sting
+2026-07-02 17:05:03,167 | INFO | Inserted | Source: Times of India | Keyword: cisco | Title: Cisco to roll out AI agents to entire workforce, says in-house AI is most efficient
+2026-07-02 17:05:03,173 | INFO | Inserted | Source: Times of India | Keyword: why | Title: Why Zelenskyy wants to build US Patriot missiles in Ukraine after Russia's attack
+2026-07-02 17:05:03,181 | INFO | Inserted | Source: Times of India | Keyword: yes, | Title: Yes, we KANE: Harry saves England blushes with shot heard round the World Cup
+2026-07-02 17:05:03,185 | INFO | Inserted | Source: Times of India | Keyword: 60-year-old | Title: 60-year-old man dies after falling into uncovered manhole in Mumbai
+2026-07-02 17:05:03,188 | INFO | Inserted | Source: Times of India | Keyword: iraqi | Title: Iraqi 'Godfather of traffickers' found in UK seeking asylum under changed identity
+2026-07-02 17:05:03,191 | INFO | Inserted | Source: Times of India | Keyword: rooftop | Title: Rooftop solar failed to cut bills; consumer wins Rs 25,265 compensation
+2026-07-02 17:05:03,195 | INFO | Inserted | Source: Times of India | Keyword: 'eetha': | Title: 'Eetha': Shraddha Kapoor triples her paycheque to Rs 15 crore for biopic
+2026-07-02 17:05:03,198 | INFO | Inserted | Source: Times of India | Keyword: 'main | Title: 'Main na thodi funny type ki hoon': Dentist who mocked Ketan's death apologises
+2026-07-02 17:05:03,202 | INFO | Inserted | Source: Times of India | Keyword: sarpanches | Title: Sarpanches in Rajasthan, MP linked to trafficking of children
+2026-07-02 17:05:03,205 | INFO | Inserted | Source: Times of India | Keyword: net | Title: NET Sociology paper leaves candidates lost in typos
+2026-07-02 17:05:03,210 | INFO | Inserted | Source: Times of India | Keyword: india | Title: India return to SL for first Test tour since Kohli's 3-0 sweep; check full schedule
+2026-07-02 17:05:03,213 | INFO | Inserted | Source: Times of India | Keyword: whatsapp | Title: WhatsApp usernames decoded: Your questions answered, government's concerns explained
+2026-07-02 17:05:03,217 | INFO | Inserted | Source: Times of India | Keyword: iit | Title: IIT alumnus says AI can't replace the power of the right peer group
+2026-07-02 17:05:03,220 | INFO | Inserted | Source: Times of India | Keyword: kangana | Title: Kangana Slams Dheeraj Dhoopar: Calls out Shah Rukh claim on Lock Upp; promo sparks fan reactions
+2026-07-02 17:05:03,223 | INFO | Inserted | Source: Times of India | Keyword: from | Title: From grief support to marriage prospects: How AI is transforming life in South Korea
+2026-07-02 17:05:03,226 | INFO | Inserted | Source: Times of India | Keyword: 7 | Title: 7 killed, 6 injured as boulders cave in at quarry near Bengaluru
+2026-07-02 17:05:03,229 | INFO | Inserted | Source: Times of India | Keyword: balogun | Title: Balogun joins Zidane, Ronaldinho in unwanted World Cup history after red card vs Bosnia
+2026-07-02 17:05:03,233 | INFO | Inserted | Source: Times of India | Keyword: tattoo | Title: Tattoo on right forearm costs two CRPF inspectors promotion; Delhi HC dismisses pleas
+2026-07-02 17:05:03,236 | INFO | Inserted | Source: Times of India | Keyword: abhishek | Title: Abhishek breaks KL Rahul's record in England, becomes fastest ever to...
+2026-07-02 17:05:03,239 | INFO | Inserted | Source: Times of India | Keyword: ram | Title: Ram temple donation row: How counting room key became central to theft probe
+2026-07-02 17:05:03,246 | INFO | Inserted | Source: Times of India | Keyword: fresh | Title: Fresh violence in Manipur as 20 houses in 3 villages set ablaze
+2026-07-02 17:05:03,249 | INFO | Inserted | Source: Times of India | Keyword: 'welcome | Title: 'Welcome to the Jungle' BO day 6: Movie eyes Rs 90 crore in week 1 finish
+2026-07-02 17:05:03,252 | INFO | Inserted | Source: Times of India | Keyword: tamil | Title: Tamil Nadu govt moves SC against Madras HC order banning cow slaughter
+2026-07-02 17:05:03,255 | INFO | Inserted | Source: Times of India | Keyword: goa | Title: Goa cabinet approves 'Mhajo Flat' scheme to resolve long-pending disputes
+2026-07-02 17:05:03,257 | INFO | Inserted | Source: Times of India | Keyword: india-bound | Title: India-bound oil tanker hit by shrapnel near Hormuz reaches Odisha port safely
+2026-07-02 17:05:03,260 | INFO | Inserted | Source: Times of India | Keyword: b'luru | Title: B'luru daycare incident: Staffer who had reported abuse of toddlers was fired
+2026-07-02 17:05:03,263 | INFO | Inserted | Source: Times of India | Keyword: who | Title: Who should file ITR &amp; is income tax return filing mandatory for salaried taxpayers?
+2026-07-02 17:05:03,266 | INFO | Inserted | Source: Times of India | Keyword: 'que | Title: 'Que sera, sera': Overlooked in Punjab Cong revamp, Manish Tewari posts cryptic message
+2026-07-02 17:05:03,270 | INFO | Inserted | Source: Times of India | Keyword: thailand: | Title: Thailand: 11-year-old crashes truck into group of pilgrims; 8 monks killed
+2026-07-02 17:05:03,272 | INFO | Inserted | Source: Times of India | Keyword: watch: | Title: Watch: Yashasvi Jaiswal flaunts 'Messi' jersey during France vs Sweden WC match
+2026-07-02 17:05:03,275 | INFO | Inserted | Source: Times of India | Keyword: supreme | Title: Supreme Court warns against unchecked AI use in courts after NCLT cites fake cases
+2026-07-02 17:05:03,278 | INFO | Inserted | Source: Times of India | Keyword: fifa | Title: FIFA WC Golden Boot: Kane draws level with Haaland, closes in on Messi &amp; Mbappé
+2026-07-02 17:05:03,281 | INFO | Inserted | Source: NDTV | Keyword: vikram-1, | Title: Vikram-1, India's 1st Private Orbital Rocket, Set To Launch By August 4
+2026-07-02 17:05:03,284 | INFO | Inserted | Source: NDTV | Keyword: isro | Title: ISRO Gets Bomb Threat, Mail Sent To Chairman
+2026-07-02 17:05:03,287 | INFO | Inserted | Source: NDTV | Keyword: monsoon | Title: Monsoon Reached J&K A Day Before Delhi. Weather Official Explains Why
+2026-07-02 17:05:03,290 | INFO | Inserted | Source: NDTV | Keyword: pilot | Title: Pilot Who Crashed Plane Into Beijing Building Wrote About Suicide In Diary
+2026-07-02 17:05:03,293 | INFO | Inserted | Source: NDTV | Keyword: man | Title: Man Drowns After Falling Into Manhole Amid Heavy Rain In Mumbai
+2026-07-02 17:05:03,296 | INFO | Inserted | Source: NDTV | Keyword: stock | Title: Stock Market Highlights, Sensex Today: Sensex Settles 579 Points Higher As Crude Oil Eases Further
+2026-07-02 17:05:03,299 | INFO | Inserted | Source: NDTV | Keyword: china's | Title: China's New Ethnic Unity Law Takes Effect Amid Global Rights Criticism
+2026-07-02 17:05:03,302 | INFO | Inserted | Source: NDTV | Keyword: hope | Title: Hope To Find Survivors Fades As Venezuela Quake Death Count Nears 2,300
+2026-07-02 17:05:03,305 | INFO | Inserted | Source: NDTV | Keyword: palantir | Title: Palantir CEO Calls AI Industry 'Effing Insane', Slams OpenAI, Anthropic
+2026-07-02 17:05:03,308 | INFO | Inserted | Source: NDTV | Keyword: income | Title: Income Tax Return Filing 2026: Six Deadlines Can Save You From Penalties
+2026-07-02 17:05:03,310 | INFO | Inserted | Source: NDTV | Keyword: digvijaya | Title: Digvijaya Singh's 'Fact-Check' Triggers Congress Meltdown, Draws Rare BJP Praise
+2026-07-02 17:05:03,313 | INFO | Inserted | Source: NDTV | Keyword: political | Title: Political Row Erupts As K Kavitha Arrested During Land Protest In Telangana
+2026-07-02 17:05:03,316 | INFO | Inserted | Source: NDTV | Keyword: india-japan | Title: India-Japan Summit 2026 LIVE: Japan, India Working Together To Promote Industry In Northeast: Piyush Goyal
+2026-07-02 17:05:03,319 | INFO | Inserted | Source: NDTV | Keyword: who | Title: Who Is Vadym Yermolaiev? Sanctioned Ukrainian Tycoon Wounded In Monaco Parcel Bomb Attack
+2026-07-02 17:05:03,322 | INFO | Inserted | Source: NDTV | Keyword: tvk-led | Title: TVK-Led Secular Alliance Is Confident As Allies Eye Long-Term Partnership
+2026-07-02 17:05:03,324 | INFO | Inserted | Source: NDTV | Keyword: tiktok | Title: TikTok Settles Social Media Addiction Lawsuit With US Teen Ahead Of Trial
+2026-07-02 17:05:03,328 | INFO | Inserted | Source: NDTV | Keyword: adani | Title: Adani Group Sees Odisha As Heart Of Eastern India's Economic Growth: Karan Adani
+2026-07-02 17:05:03,331 | INFO | Inserted | Source: NDTV | Keyword: jagan | Title: Jagan Reddy's 'Mavigan' Pitch For Next Election Renews Andhra Capital Battle
+2026-07-02 17:05:03,333 | INFO | Inserted | Source: NDTV | Keyword: sharechat, | Title: ShareChat, India's Meta Rival, Targets $400 Million IPO Next Year
+2026-07-02 17:05:03,336 | INFO | Inserted | Source: NDTV | Keyword: how | Title: How ISI Handlers Were Directing Punjab Recruits For Delhi Terror Plot
+2026-07-02 17:05:03,339 | INFO | Inserted | Source: Hindustan Times | Keyword: bjp | Title: BJP accuses Priyanka Gandhi, husband Robert Vadra of land grab attempt in Uttarakhand
+2026-07-02 17:05:03,342 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘catastrophic, | Title: ‘Catastrophic, invisible’: Supreme Court flags use of AI in legal process as ‘misconduct’
+2026-07-02 17:05:03,345 | INFO | Inserted | Source: Hindustan Times | Keyword: whatsapp | Title: WhatsApp username rollout: All FAQs on scams, safety and privacy explained
+2026-07-02 17:05:03,348 | INFO | Inserted | Source: Hindustan Times | Keyword: faridabad | Title: Faridabad man crushed in rampage sparked by tip-off about suspect’s location
+2026-07-02 17:05:03,350 | INFO | Inserted | Source: Hindustan Times | Keyword: air | Title: Air India Express restarts flights to West Asia, Salalah, Kuwait back in service
+2026-07-02 17:05:03,353 | INFO | Inserted | Source: Hindustan Times | Keyword: ai, | Title: AI, defence, healthcare: What was discussed in Modi's meet with Japan PM Sanae Takaichi
+2026-07-02 17:05:03,355 | INFO | Inserted | Source: Hindustan Times | Keyword: 'murdered, | Title: 'Murdered, organs removed': Wife of Indian sailor who died in Venezuela alleges foul play
+2026-07-02 17:05:03,358 | INFO | Inserted | Source: Hindustan Times | Keyword: indian | Title: Indian Navy foils piracy attack on merchant ship in Gulf of Aden; crew safe
+2026-07-02 17:05:03,361 | INFO | Inserted | Source: Hindustan Times | Keyword: left | Title: Left out of Congress’s Punjab poll panels, Manish Tewari reacts
+2026-07-02 17:05:03,364 | INFO | Inserted | Source: Hindustan Times | Keyword: what's | Title: What's in a name: Why FSSAI has called out Red Bull, Sting makers for ‘energy drink’ branding
+2026-07-02 17:05:03,367 | INFO | Inserted | Source: Hindustan Times | Keyword: mumbai | Title: Mumbai man falls into manhole while using the phone in heavy rain, dies
+2026-07-02 17:05:03,370 | INFO | Inserted | Source: Hindustan Times | Keyword: protesters | Title: Protesters torch vehicle in Imphal East as tensions escalate in Manipur
+2026-07-02 17:05:03,372 | INFO | Inserted | Source: Hindustan Times | Keyword: tourist | Title: Tourist dies as Scorpio plunges off road, crashes on under-construction bridge near Himachal's Atal Tunnel | Video
+2026-07-02 17:05:03,375 | INFO | Inserted | Source: Hindustan Times | Keyword: delhi | Title: Delhi HC sets aside conviction of former major general in asset case
+2026-07-02 17:05:03,380 | INFO | Inserted | Source: Hindustan Times | Keyword: akhilesh | Title: Akhilesh Yadav condemns alleged attack on Mahua Moitra, accuses BJP of ‘fostering political violence’
+2026-07-02 17:05:03,382 | INFO | Inserted | Source: Hindustan Times | Keyword: cm | Title: CM Vijay's government in danger? What we know about the TVK-DMK 'horse-trading' row
+2026-07-02 17:05:03,386 | INFO | Inserted | Source: Hindustan Times | Keyword: off | Title: Off the rails and back again: The story of Kolkata's trams that BJP's Bengal govt wants to revive
+2026-07-02 17:05:03,388 | INFO | Inserted | Source: Hindustan Times | Keyword: 'india | Title: 'India only country to match China's scale in...': US senator's remarks over trust and innovation
+2026-07-02 17:05:03,391 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘a | Title: ‘A terrorist, is a terrorist’: India calls for collective action to root out ‘murderous ideology’
+2026-07-02 17:05:03,394 | INFO | Inserted | Source: Hindustan Times | Keyword: hc | Title: HC cites inconsistencies in 15 docs, upholds order declaring Assam man foreigner
+2026-07-02 17:05:03,396 | INFO | Inserted | Source: Hindustan Times | Keyword: udupi | Title: Udupi man found dead in Goa hotel room, police register murder case
+2026-07-02 17:05:03,399 | INFO | Inserted | Source: Hindustan Times | Keyword: ram | Title: Ram Mandir donation row: Temple official Gopal Rao accused of 'playing politics' amid theft case
+2026-07-02 17:05:03,401 | INFO | Inserted | Source: Hindustan Times | Keyword: min | Title: Min temp dips to 22.8°C as monsoon arrives in Delhi 5 days behind schedule
+2026-07-02 17:05:03,409 | INFO | Inserted | Source: Hindustan Times | Keyword: toddlers | Title: Toddlers abused, 5 nannies booked, facility shut temporarily: Inside the Bengaluru daycare case
+2026-07-02 17:05:03,412 | INFO | Inserted | Source: Hindustan Times | Keyword: russia | Title: Russia turns to India amid gasoline shortage as Ukraine targets energy sites: Report
+2026-07-02 17:05:03,415 | INFO | Inserted | Source: Hindustan Times | Keyword: amid | Title: Amid UBT crisis, independent MLC Kiran Sarnaik joins Eknath Shinde's Shiv Sena
+2026-07-02 17:05:03,418 | INFO | Inserted | Source: Hindustan Times | Keyword: chips | Title: Chips over subs: Why Sanae Takaichi's India visit is about economics first
+2026-07-02 17:05:03,421 | INFO | Inserted | Source: Hindustan Times | Keyword: sonam | Title: Sonam Raghuvanshi: Meghalaya moves SC to stay bail of honeymoon-murder accused
+2026-07-02 17:05:03,426 | INFO | Inserted | Source: Hindustan Times | Keyword: privacy | Title: Privacy for better, worse, or both? Why WhatsApp username feature worries the government & how the concerns hold up
+2026-07-02 17:05:03,429 | INFO | Inserted | Source: Hindustan Times | Keyword: monsoon | Title: Monsoon arrives in Delhi, flooded roads in Mumbai, Rudraprayag under water as rain fury hits India
+2026-07-02 17:05:03,432 | INFO | Inserted | Source: Hindustan Times | Keyword: sikkim: | Title: Sikkim: Eurasian Lynx captured on cam for 1st time; 2nd record in eastern Himalayas
+2026-07-02 17:05:03,435 | INFO | Inserted | Source: Hindustan Times | Keyword: odisha | Title: Odisha files 8 FIRs over illegal recruitment after Tamil Nadu gas leak deaths
+2026-07-02 17:05:03,438 | INFO | Inserted | Source: Hindustan Times | Keyword: alert | Title: Alert systems to be activated as water level nears warning mark amid heavy rain in Uttarakhand's Rudraprayag
+2026-07-02 17:05:03,441 | INFO | Inserted | Source: Hindustan Times | Keyword: uddhav | Title: Uddhav Thackeray loyalists miffed about ‘special treatment’ to outsiders
+2026-07-02 17:05:03,444 | INFO | Inserted | Source: Hindustan Times | Keyword: 9 | Title: 9 dead as heavy rain, landslides wreak havoc in several states
+2026-07-02 17:05:03,446 | INFO | Inserted | Source: Hindustan Times | Keyword: village | Title: Village torched in Manipur as fresh Naga-Kuki tensions erupt near border areas
+2026-07-02 17:05:03,449 | INFO | Inserted | Source: Hindustan Times | Keyword: why | Title: Why AAIB’s AI-171 investigation faces a major crisis of confidence
+2026-07-02 17:05:03,452 | INFO | Inserted | Source: Hindustan Times | Keyword: weather | Title: Weather news LIVE: Heavy rain in Uttarakhand, Kedarnath pilgrimage route hit by landslide; Himachal on orange alert
+2026-07-02 17:05:03,455 | INFO | Inserted | Source: Hindustan Times | Keyword: birth | Title: Birth and death registrations nearly match estimates in 2024
+2026-07-02 17:05:03,468 | INFO | Inserted | Source: Hindustan Times | Keyword: champat | Title: Champat Rai 'may be guilty of negligence' in Ram Temple donation case, admits VHP chief Alok Kumar
+2026-07-02 17:05:03,470 | INFO | Inserted | Source: Hindustan Times | Keyword: msc-adani | Title: MSC-Adani Vizhinjam port deal: Kerala CM says State’s consent mandatory for change of ownership
+2026-07-02 17:05:03,473 | INFO | Inserted | Source: Hindustan Times | Keyword: infra | Title: Infra giant MEIL partners with Analog, to use physical intelligence for smart urban solutions
+2026-07-02 17:05:03,476 | INFO | Inserted | Source: Hindustan Times | Keyword: mavigun | Title: Mavigun vs Amaravati to be Jagan’s agenda for Andhra assembly polls
+2026-07-02 17:05:03,479 | INFO | Inserted | Source: Hindustan Times | Keyword: head-on | Title: Head-on lorry collision leaves four charred near NH-16: Police
+2026-07-02 17:05:03,482 | INFO | Inserted | Source: Hindustan Times | Keyword: kerala | Title: Kerala Assembly unanimously approves state’s name change to ‘Keralam’
+2026-07-02 17:05:03,485 | INFO | Inserted | Source: Hindustan Times | Keyword: two | Title: Two AP YouTubers held for remarks against CM
+2026-07-02 17:05:03,488 | INFO | Inserted | Source: Hindustan Times | Keyword: what | Title: What monsoon tells us about Bengaluru’s soil
+2026-07-02 17:05:03,491 | INFO | Inserted | Source: Hindustan Times | Keyword: sit | Title: SIT arrests two more cops in Andhra’s custodial death case
+2026-07-02 17:05:03,494 | INFO | Inserted | Source: Hindustan Times | Keyword: state | Title: State to consider govt-backed OTT platform: DK Shivakumar
+2026-07-02 17:05:03,497 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘gruha | Title: ‘Gruha Lakshmi’ verification a bid to reduce beneficiaries: K’taka BJP
+2026-07-02 17:05:03,499 | INFO | Inserted | Source: Hindustan Times | Keyword: won’t | Title: Won’t submit Kala Hiran for certification until July 6, HC told after Salman Khan’s plea
+2026-07-02 17:05:03,502 | INFO | Inserted | Source: Hindustan Times | Keyword: ritabrata | Title: Ritabrata Banerjee-led rebel TMC unit to meet ECI today amid dispute over party leadership, symbol
+2026-07-02 17:05:03,505 | INFO | Inserted | Source: Hindustan Times | Keyword: jpc | Title: JPC set to retain clause on removal of ministers in custody for 30 days
+2026-07-02 17:05:03,512 | INFO | Inserted | Source: Hindustan Times | Keyword: tvk, | Title: TVK, DMK accused each other of horse-trading
+2026-07-02 17:05:03,515 | INFO | Inserted | Source: Hindustan Times | Keyword: parliamentary | Title: Parliamentary committee members call for statutory status for National Testing Agency
+2026-07-02 17:05:03,518 | INFO | Inserted | Source: Hindustan Times | Keyword: tamil | Title: Tamil Nadu moves SC over Madras HC order on cow slaughter ban
+2026-07-02 17:05:03,521 | INFO | Inserted | Source: Hindustan Times | Keyword: us | Title: US removes 4 Indian companies from Russia-related sanctions list
+2026-07-02 17:05:03,523 | INFO | Inserted | Source: Hindustan Times | Keyword: foreign | Title: Foreign Secretary Vikram Misri gets one-year extension
+2026-07-02 17:05:03,526 | INFO | Inserted | Source: Hindustan Times | Keyword: modernisation, | Title: Modernisation, self-reliance top priorities for army chief
+2026-07-02 17:05:03,530 | INFO | Inserted | Source: Hindustan Times | Keyword: kharge, | Title: Kharge, Nabin among invitees for Khamenei’s funeral in Iran
+2026-07-02 17:05:03,533 | INFO | Inserted | Source: Hindustan Times | Keyword: 5 | Title: 5 booked after videos show child abuse at B’luru IT campus creche
+2026-07-02 17:05:03,535 | INFO | Inserted | Source: Hindustan Times | Keyword: court | Title: Court raps CBI in IPS officer bribery case
+2026-07-02 17:05:03,538 | INFO | Inserted | Source: Hindustan Times | Keyword: sc | Title: SC ends 18-year land row, saves 16 Greater Noida homes from acquisition
+2026-07-02 17:05:03,541 | INFO | Inserted | Source: Hindustan Times | Keyword: centre | Title: Centre begins fresh eviction process against Delhi Gymkhana Club
+2026-07-02 17:05:03,544 | INFO | Inserted | Source: Hindustan Times | Keyword: vikram | Title: Vikram Misri gets 1-year extension as foreign secretary
+2026-07-02 17:05:03,547 | INFO | Inserted | Source: Hindustan Times | Keyword: japan | Title: Japan PM arrives in Delhi; delighted to host you on your first visit to India, says PM Modi
+2026-07-02 17:05:03,550 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘peace | Title: ‘Peace can't be one-sided’, ‘forgotten Pahalgam’: BJP, oppn react to letter calling for India-Pak talks
+2026-07-02 17:05:03,552 | INFO | Inserted | Source: Hindustan Times | Keyword: india | Title: India one of most strategic partners for Europe, says Ireland at start of EU presidency
+2026-07-02 17:05:03,555 | INFO | Inserted | Source: Hindustan Times | Keyword: finance | Title: Finance Minister Nirmala Sitharaman begins official four-day visit to France to deepen strategic economic ties
+2026-07-02 17:05:03,558 | INFO | Inserted | Source: Hindustan Times | Keyword: govt | Title: Govt to bring back AC trams in Kolkata; new route may link Dakshineswar, Kalighat temples
+2026-07-02 17:05:03,561 | INFO | Inserted | Source: Hindustan Times | Keyword: 5 | Title: 5 Surat engineers suspended after Gujarat HC questions demolition of 100 houses
+2026-07-02 17:05:03,564 | INFO | Inserted | Source: Hindustan Times | Keyword: 'deplorable, | Title: 'Deplorable, not isolated': India condemns demolition of 125-year-old gurdwara in Pakistan's Farooqabad
+2026-07-02 17:05:03,567 | INFO | Inserted | Source: Hindustan Times | Keyword: india | Title: India condemns demolition of 125-yr-old gurdwara in Pakistan’s Punjab province
+2026-07-02 17:05:03,570 | INFO | Inserted | Source: Hindustan Times | Keyword: bengaluru | Title: Bengaluru woman meets Bumble date in 2022, years later finds intimate videos online
+2026-07-02 17:05:03,579 | INFO | Inserted | Source: Hindustan Times | Keyword: 2 | Title: 2 Hyderabad YouTubers held by AP police over comments against CM Naidu
+2026-07-02 17:05:03,582 | INFO | Inserted | Source: Hindustan Times | Keyword: centre | Title: Centre issues notice to Meta over new WhatsApp feature, flags ‘fraud, phishing' concerns
+2026-07-02 17:05:03,584 | INFO | Inserted | Source: Hindustan Times | Keyword: india, | Title: India, Pakistan exchange lists of prisoners and fishermen in custody
+2026-07-02 17:05:03,587 | INFO | Inserted | Source: Hindustan Times | Keyword: tmc | Title: TMC rebel faction to meet ECI in Delhi, stake claim to party symbol: Ritabrata
+2026-07-02 17:05:03,590 | INFO | Inserted | Source: Hindustan Times | Keyword: bengaluru | Title: Bengaluru horror: Toddlers locked in bathrooms, put inside washing machine at daycare; FIR against five
+2026-07-02 17:05:03,593 | INFO | Inserted | Source: Hindustan Times | Keyword: delhi | Title: Delhi mandates 50% work from home every winter under permanent anti-pollution plan
+2026-07-02 17:05:03,596 | INFO | Inserted | Source: Hindustan Times | Keyword: centre | Title: Centre assures support as Arunachal floods kill 4, affect over 90,000 people
+2026-07-02 17:05:03,598 | INFO | Inserted | Source: Hindustan Times | Keyword: two | Title: Two Maharashtra police personnel held with Tiger skins in Chhattisgarh's Kanker
+2026-07-02 17:05:03,601 | INFO | Inserted | Source: Hindustan Times | Keyword: govt | Title: Govt flags fraud and impersonation risks in WhatsApp username feature, MeitY to call Meta for talks
+2026-07-02 17:05:03,604 | INFO | Inserted | Source: Hindustan Times | Keyword: cabinet | Title: Cabinet approves construction of 6-lane tunnel to connect Dwarka Expressway to Vasant Kunj | What we know
+2026-07-02 17:05:03,606 | INFO | Inserted | Source: Hindustan Times | Keyword: karnataka | Title: Karnataka Congress chief asks why BJP's Ram Madhav met retired ISI officer in Colombo
+2026-07-02 17:05:03,616 | INFO | Inserted | Source: Hindustan Times | Keyword: nayara | Title: Nayara vs public fuel retailers: City-wise comparison of petrol and diesel prices after latest cut
+2026-07-02 17:05:03,619 | INFO | Inserted | Source: Hindustan Times | Keyword: odisha | Title: Odisha govt to withdraw school textbooks after errors like Hampi-Konark mix-up
+2026-07-02 17:05:03,622 | INFO | Inserted | Source: Hindustan Times | Keyword: bjp's | Title: BJP's Nitin Nabin, Congress' Mallikarjun Kharge invited for Ayatollah Ali Khamenei's funeral in Iran next week
+2026-07-02 17:05:03,625 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘amit | Title: ‘Amit Shah didn't visit Ram Temple even once’: Kejriwal attacks govt amid donation row
+2026-07-02 17:05:03,628 | INFO | Inserted | Source: Hindustan Times | Keyword: mumbai | Title: Mumbai weather: IMD Red alert in city, adjoining areas as rain causes waterlogging in Andheri, Worli; Powai lake swells
+2026-07-02 17:05:03,630 | INFO | Inserted | Source: Hindustan Times | Keyword: cabinet | Title: Cabinet approves construction of 6-lane Dwarka tunnel in Delhi
+2026-07-02 17:05:03,633 | INFO | Inserted | Source: Hindustan Times | Keyword: mahua | Title: Mahua Moitra shares video of egg attack during TMC meeting in Bengal: 'Police watching the fun'
+2026-07-02 17:05:03,636 | INFO | Inserted | Source: Hindustan Times | Keyword: falling | Title: Falling boulder kills woman in Himachal Pradesh's Mandi as torrential rain strikes
+2026-07-02 17:05:03,639 | INFO | Inserted | Source: Hindustan Times | Keyword: ‘my | Title: ‘My phone goes to Delhi, not Beijing’: US Senator’s China trust jab and big praise for India
+2026-07-02 17:05:03,642 | INFO | Inserted | Source: India Today | Keyword: gujarat | Title: Gujarat couple, daughter killed in fire at Ohio motel where they lived
+2026-07-02 17:05:03,645 | INFO | Inserted | Source: India Today | Keyword: ai, | Title: AI, defence, energy: PM Modi, Takaichi widen India-Japan partnership
+2026-07-02 17:05:03,648 | INFO | Inserted | Source: India Today | Keyword: chetan | Title: Chetan Bhagat's viral 'regressive baniya family' theory behind Siya-Ketan case
+2026-07-02 17:05:03,650 | INFO | Inserted | Source: India Today | Keyword: bjp | Title: BJP grapples with wave of factionalism even as Karnataka polls draw near
+2026-07-02 17:05:03,654 | INFO | Inserted | Source: India Today | Keyword: punjab | Title: Punjab civic polls: Early edge to Congress as counting proceeds amid tight security
+2026-07-02 17:05:03,657 | INFO | Inserted | Source: India Today | Keyword: 10-man | Title: 10-man USA keep dream alive, reach last 16 with win over Bosnia & Herzegovina
+2026-07-02 17:05:03,659 | INFO | Inserted | Source: India Today | Keyword: balogun | Title: Balogun did not deserve a red card: USA coach questions referee's decision
+2026-07-02 17:05:03,662 | INFO | Inserted | Source: India Today | Keyword: harry | Title: Harry Kane on Lionel Messi's level? Gordon makes big GOAT comparison after England win
+2026-07-02 17:05:03,664 | INFO | Inserted | Source: India Today | Keyword: heartbreaking | Title: Heartbreaking moment as DR Congo coach learns of father's death after World Cup exit
+2026-07-02 17:05:03,666 | INFO | Inserted | Source: India Today | Keyword: thomas | Title: Thomas Tuchel urges parents to let children stay up for England's clash with Mexico
+2026-07-02 17:05:03,669 | INFO | Inserted | Source: India Today | Keyword: how | Title: How Vijay govt is saving big for Tamil Nadu, and contractors are thanking him
+2026-07-02 17:05:03,672 | INFO | Inserted | Source: India Today | Keyword: in | Title: In China, rain falls from buildings to defeat rising heat. How does it work?
+2026-07-02 17:05:03,674 | INFO | Inserted | Source: India Today | Keyword: huge | Title: Huge potholes on Delhi-Dehradun highway spark outrage, NHAI shifts blame
+2026-07-02 17:05:03,677 | INFO | Inserted | Source: India Today | Keyword: kerala | Title: Kerala man, UP woman found dead in rented room under suspicious circumstances
+2026-07-02 17:05:03,679 | INFO | Inserted | Source: India Today | Keyword: why | Title: Why the Northeast now anchors Japan's India strategy
+2026-07-02 17:05:03,682 | INFO | Inserted | Source: India Today | Keyword: hindu | Title: Hindu College: Arts at its heart
+2026-07-02 17:05:03,685 | INFO | Inserted | Source: India Today | Keyword: how | Title: How AI boom rides on data centres keeping their 'cool'
+2026-07-02 17:05:03,688 | INFO | Inserted | Source: India Today | Keyword: from | Title: From the India Today archives (2025) | Semiconductors: India's great chip gambit
+2026-07-02 17:05:03,690 | INFO | Inserted | Source: India Today | Keyword: why | Title: Why Rajasthan crackdown on 'VIP culture' misses a bigger road-safety crisis
+2026-07-02 17:05:03,694 | INFO | Inserted | Source: India Today | Keyword: iitian | Title: IITian chooses peace over pay, rejects Rs 32 LPA Gurgaon job to stay in Bengaluru
+2026-07-02 17:05:03,697 | INFO | Inserted | Source: India Today | Keyword: supreme | Title: Supreme Court junks tribunal order for using citations hallucinated by AI
+2026-07-02 17:05:03,700 | INFO | Inserted | Source: India Today | Keyword: mumbai | Title: Mumbai man, 60, drowns after falling into manhole amid heavy rain
+2026-07-02 17:05:03,703 | INFO | Inserted | Source: India Today | Keyword: first | Title: First he cheats, then calls: Old video shows Siya abusing on phone while partying
+2026-07-02 17:05:03,710 | INFO | Inserted | Source: India Today | Keyword: 15-year-old | Title: 15-year-old made to wait: What exactly is India's plan for Vaibhav Sooryavanshi?
+2026-07-02 17:05:03,714 | INFO | Inserted | Source: India Today | Keyword: live: | Title: Live: PM Takaichi bats for stronger India-Japan partnership amid global uncertainty
+2026-07-02 17:05:03,718 | INFO | Inserted | Source: India Today | Keyword: live-in, | Title: Live-in, woman who turned to be a man, stalking: Story of a Rajkot murder
+2026-07-02 17:05:03,722 | INFO | Inserted | Source: India Today | Keyword: this | Title: This mini electric SUV is set to hit Indian roads this year
+2026-07-02 17:05:03,725 | INFO | Inserted | Source: India Today | Keyword: the | Title: The new face of female action in South cinema: Samantha, Priety and Abhirami
+2026-07-02 17:05:03,728 | INFO | Inserted | Source: India Today | Keyword: a | Title: A Chinese corridor to India's east? China plans Bangladesh route after Pak CPEC
+2026-07-02 17:05:03,733 | INFO | Inserted | Source: India Today | Keyword: watch: | Title: Watch: Bihar board exam papers found floating in rainwater, viral video sparks row
+2026-07-02 17:05:03,737 | INFO | Inserted | Source: India Today | Keyword: epfo | Title: EPFO new rule: PF contribution above Rs 1,800 now voluntary; what it means for you
+2026-07-02 17:05:03,741 | INFO | Inserted | Source: India Today | Keyword: beyond | Title: Beyond mileage, E20 is accelerating wear and tear in older petrol cars
+2026-07-02 17:05:03,744 | INFO | Inserted | Source: India Today | Keyword: was | Title: Was offered Rs 30 crore and told 10 MLAs ready to switch to DMK: TVK legislator
+2026-07-02 17:05:03,749 | INFO | Inserted | Source: India Today | Keyword: what | Title: What is SSPX, the secretive rebel Catholic group expelled by the Pope
+2026-07-02 17:05:03,752 | INFO | Inserted | Source: India Today | Keyword: former | Title: Former PepsiCo CEO Indra Nooyi says India's beauty lies in chaos, sparks debate
+2026-07-02 17:05:03,756 | INFO | Inserted | Source: India Today | Keyword: china, | Title: China, EU to hold regular trade talks as deficit pressure mounts
+2026-07-02 17:05:03,759 | INFO | Inserted | Source: India Today | Keyword: this | Title: This is the only mid-size all-wheel drive electric SUV you can buy under Rs 26 lakh
+2026-07-02 17:05:03,762 | INFO | Inserted | Source: India Today | Keyword: isro | Title: ISRO headquarters receive bomb threat; no suspicious objects found
+2026-07-02 17:05:03,770 | INFO | Inserted | Source: India Today | Keyword: galle, | Title: Galle, Colombo to host India in August Test series. Sri Lanka announces schedule
+2026-07-02 17:05:03,773 | INFO | Inserted | Source: India Today | Keyword: apple-1 | Title: Apple-1 computer from 1976 is going up for auction, it could fetch over Rs 4.5 crore
+2026-07-02 17:05:03,776 | INFO | Inserted | Source: India Today | Keyword: planet | Title: Planet that survived the death of its sun found. It should have died too
+2026-07-02 17:05:03,779 | INFO | Inserted | Source: India Today | Keyword: richa | Title: Richa Chadha tears into Dia Mirza trolls, says critics can 'bully a 5-year-old'
+2026-07-02 17:05:03,782 | INFO | Inserted | Source: India Today | Keyword: ayodhya | Title: Ayodhya lawyers file police complaint against Champat Rai in Ram Temple row
+2026-07-02 17:05:03,785 | INFO | Inserted | Source: India Today | Keyword: driving | Title: Driving a restored 1955 Mercedes-Benz 220 Ponton: The start of S-Class' legacy
+2026-07-02 17:05:03,788 | INFO | Inserted | Source: India Today | Keyword: rajdeep | Title: Rajdeep Sardesai
+2026-07-02 17:05:03,791 | INFO | Inserted | Source: India Today | Keyword: gaurav | Title: Gaurav C Sawant
+2026-07-02 17:05:03,794 | INFO | Inserted | Source: India Today | Keyword: akshita | Title: Akshita Nandagopal
+2026-07-02 17:05:03,796 | INFO | Inserted | Source: India Today | Keyword: suyesha | Title: Suyesha Savant
+2026-07-02 17:05:03,800 | INFO | Inserted | Source: India Today | Keyword: news | Title: News Today
+2026-07-02 17:05:03,803 | INFO | Inserted | Source: India Today | Keyword: india | Title: India First
+2026-07-02 17:05:03,806 | INFO | Inserted | Source: India Today | Keyword: newstrack | Title: Newstrack
+2026-07-02 17:05:03,809 | INFO | Inserted | Source: India Today | Keyword: to | Title: To The Point
+2026-07-02 17:05:03,813 | INFO | Inserted | Source: India Today | Keyword: 5ive | Title: 5ive Live
+2026-07-02 17:05:03,816 | INFO | Inserted | Source: India Today | Keyword: super | Title: Super 6
+2026-07-02 17:05:03,819 | INFO | Inserted | Source: India Today | Keyword: a | Title: A foreign country using Pakistan soil to hit Afghanistan with drones?
+2026-07-02 17:05:03,822 | INFO | Inserted | Source: India Today | Keyword: elderly | Title: Elderly man falls into open manhole in Mumbai's Sakinaka, dies
+2026-07-02 17:05:03,825 | INFO | Inserted | Source: India Today | Keyword: video: | Title: Video: Faridabad feud turns fatal as SUV chases, runs over man after dispute
+2026-07-02 17:05:03,830 | INFO | Inserted | Source: India Today | Keyword: south | Title: South Africa not at peak, but England will be under pressure: Laura Wolvaardt
+2026-07-02 17:05:03,834 | INFO | Inserted | Source: India Today | Keyword: video: | Title: Video: Pro-Kannada outfit tears down signboard over alleged Hindi imposition
+2026-07-02 17:05:03,840 | INFO | Inserted | Source: India Today | Keyword: stebin | Title: Stebin Ben weighs in on Kriti Sanon's wedding speculation and Kabir Bahia rumours
+2026-07-02 17:05:03,843 | INFO | Inserted | Source: India Today | Keyword: google | Title: Google Pixel 10 just got cheaper, here are the details
+2026-07-02 17:05:03,847 | INFO | Inserted | Source: India Today | Keyword: iphone | Title: iPhone 16 Plus price drops by Rs 21,000, details inside
+2026-07-02 17:05:03,853 | INFO | Inserted | Source: India Today | Keyword: iphone | Title: iPhone 17 Pro available with over Rs 52,000 discount on Flipkart
+2026-07-02 17:05:03,856 | INFO | Inserted | Source: India Today | Keyword: oura | Title: Oura Ring 4 to get big discount in Amazon Prime Day Sale
+2026-07-02 17:05:03,859 | INFO | Inserted | Source: India Today | Keyword: samsung | Title: Samsung Galaxy S25 FE price drops to lowest, details here
+2026-07-02 17:05:03,863 | INFO | Inserted | Source: India Today | Keyword: samsung | Title: Samsung Galaxy S25 Ultra to get Rs 45,000 discount at Amazon Prime Day 2026 sale
+2026-07-02 17:05:03,866 | INFO | Inserted | Source: India Today | Keyword: blinkit | Title: Blinkit rider's emotional reaction to getting a Rs 500 tip on Rs 15 order goes viral
+2026-07-02 17:05:03,869 | INFO | Inserted | Source: India Today | Keyword: nagpur | Title: Nagpur auto driver gets Rs 50 extra from passenger, what follows is worth watching
+2026-07-02 17:05:03,871 | INFO | Inserted | Source: India Today | Keyword: delhi | Title: Delhi man asked why his Rapido rider was rushing. His answer stayed with him
+2026-07-02 17:05:03,874 | INFO | Inserted | Source: India Today | Keyword: pune | Title: Pune cop breaks glasses in cafe, misbehaves with staff and customers; suspended
+2026-07-02 17:05:03,882 | INFO | Inserted | Source: India Today | Keyword: lumio | Title: Lumio wants you to WhatsApp your TV: Hands-on with Project Neo
+2026-07-02 17:05:03,887 | INFO | Inserted | Source: India Today | Keyword: sooryavanshi's | Title: Sooryavanshi's wait for India debut will put him under more pressure: Gavaskar
+2026-07-02 17:05:03,890 | INFO | Inserted | Source: India Today | Keyword: what | Title: What Kamakhya Temple teaches us about menstruation
+2026-07-02 17:05:03,892 | INFO | Inserted | Source: India Today | Keyword: viral | Title: Viral "Tirri stop" clips spark debate
+2026-07-02 17:05:03,895 | INFO | Inserted | Source: India Today | Keyword: 11-year-old | Title: 11-year-old dies as tree crushes school bus in Chembur
+2026-07-02 17:05:03,898 | INFO | Inserted | Source: India Today | Keyword: iran | Title: Iran didn't win the World Cup. They won the world.
+2026-07-02 17:05:03,901 | INFO | Inserted | Source: India Today | Keyword: why | Title: Why Karnataka's Chief Ministers keep avoiding this official residence
+2026-07-02 17:05:03,904 | INFO | Inserted | Source: India Today | Keyword: french | Title: French woman rescued in Pakistan after alleged 12-year confinement
+2026-07-02 17:05:03,910 | INFO | Inserted | Source: India Today | Keyword: god | Title: God Particle detector shut for four years: Here's what will happen in 2030
+2026-07-02 17:05:03,917 | INFO | Inserted | Source: India Today | Keyword: centre | Title: Centre eyes LIC, PSU stake sales to cushion strain from oil crisis: Report
+2026-07-02 17:05:03,920 | INFO | Inserted | Source: India Today | Keyword: sensex | Title: Sensex jumps 579 points as IT stocks shine; Nifty closes above 24,175
+2026-07-02 17:05:03,923 | INFO | Inserted | Source: India Today | Keyword: isro's | Title: Isro's headquarters in Bengaluru evacuated after hoax bomb threat
+2026-07-02 17:05:03,929 | INFO | Inserted | Source: India Today | Keyword: toddlers | Title: Toddlers tortured inside Capgemini Bengaluru daycare
+2026-07-02 17:05:03,934 | INFO | Inserted | Source: India Today | Keyword: up | Title: UP police arrest 119 in fake international call centre cyber fraud case in Lucknow
+2026-07-02 17:05:03,938 | INFO | Inserted | Source: India Today | Keyword: europe | Title: Europe on the boil: What is fuelling the killer heatwave?
+2026-07-02 17:05:03,940 | INFO | Inserted | Source: India Today | Keyword: why | Title: Why a weak monsoon could deepen India's structural water crisis
+2026-07-02 17:05:03,943 | INFO | Inserted | Source: India Today | Keyword: delhi's | Title: Delhi's EV Policy 2.0 has a tall target. Is it achievable?
+2026-07-02 17:05:03,946 | INFO | Inserted | Source: India Today | Keyword: india's | Title: India's half billion Gen-Z will inherit a still-young country
+2026-07-02 17:05:03,950 | INFO | Inserted | Source: India Today | Keyword: india's | Title: India's workforce is ready for future jobs, but lags in skills
+2026-07-02 17:05:03,954 | INFO | Inserted | Source: India Today | Keyword: beyond | Title: Beyond 150 injections: Anushka Ranjan's IVF story reveals its deeper emotional toll
+2026-07-02 17:05:03,957 | INFO | Inserted | Source: India Today | Keyword: can | Title: Can India guarantee the right to walk without taking away someone's right to earn?
+2026-07-02 17:05:03,966 | INFO | Inserted | Source: India Today | Keyword: rs | Title: Rs 2 lakh to 5 crore for one topper? Faculty incentives at JEE, NEET coaching
+2026-07-02 17:05:03,969 | INFO | Inserted | Source: India Today | Keyword: the | Title: The NEET reset: How many entrance exams will it take to become a doctor in India?
+2026-07-02 17:05:03,975 | INFO | Inserted | Source: India Today | Keyword: typo | Title: Typo errors not unusual: NTA on UGC-NET Sociology paper mistakes
+2026-07-02 17:05:03,978 | INFO | Inserted | Source: India Today | Keyword: uttarakhand | Title: Uttarakhand abolishes Madrasa Board, sets up unified minority education authority
+2026-07-02 17:05:03,984 | INFO | Inserted | Source: India Today | Keyword: tea | Title: Tea and biscuits cost him a 17-year job, High Court reinstates dismissed peon
+2026-07-02 17:05:03,990 | INFO | Inserted | Source: India Today | Keyword: 15 | Title: 15 years of knee pain: How a farmer walked again without knee replacement
+2026-07-02 17:05:03,993 | INFO | Inserted | Source: India Today | Keyword: dermatologists | Title: Dermatologists never skip these 5 summer skincare habits neither should you
+2026-07-02 17:05:03,996 | INFO | Inserted | Source: India Today | Keyword: study | Title: Study finds over-40s with obesity have improved heart risk markers
+2026-07-02 17:05:03,999 | INFO | Inserted | Source: India Today | Keyword: 5 | Title: 5 ways to know if your food is stale without any smell to avoid stomach infections
+2026-07-02 17:05:04,003 | INFO | Inserted | Source: India Today | Keyword: this | Title: This video doesn't show cops beating Bhim Army worker for insulting Lord Ram
+2026-07-02 17:05:04,006 | INFO | Inserted | Source: India Today | Keyword: ger-money | Title: Ger-money troubles: Germans are no fans of the heat, and fan prices are soaring
+2026-07-02 17:05:04,010 | INFO | Inserted | Source: India Today | Keyword: fact | Title: Fact Check: The heatwave DID NOT melt traffic lights in Italy and Germany
+2026-07-02 17:05:04,013 | INFO | Inserted | Source: India Today | Keyword: fact | Title: Fact Check: These 3 dramatic earthquake videos are not from Venezuela
+2026-07-02 17:05:04,016 | INFO | Inserted | Source: India Today | Keyword: dipu | Title: Dipu Das killer dies of electrocution? No, here are the facts
+2026-07-02 17:05:04,021 | INFO | Inserted | Source: India Today | Keyword: mamata | Title: Mamata loses chair, not Bengal's attention online
+2026-07-02 17:05:04,058 | INFO | MySQL connection closed
+2026-07-02 17:05:04,059 | INFO | Pipeline finished
+2026-07-02 17:08:54,171 | INFO | MySQL connection established
+2026-07-02 17:08:56,256 | INFO | Fetched 296 articles
+2026-07-02 17:08:56,695 | INFO | Inserted | Source: India Today | Keyword: delhi | Title: Delhi has 9,000 charging points, targets 32,000: CM Rekha Gupta on EV policy rollout
+2026-07-02 17:08:56,784 | INFO | Inserted | Source: India Today | Keyword: indian | Title: Indian researchers design new way to select and kill oral cancer cells
+2026-07-02 17:08:57,006 | INFO | MySQL connection closed
+2026-07-02 17:08:57,006 | INFO | Pipeline finished
+2026-07-02 17:11:14,621 | INFO | MySQL connection established
+2026-07-02 17:11:19,255 | INFO | Fetched 296 articles
+2026-07-02 17:11:20,092 | INFO | MySQL connection closed
+2026-07-02 17:11:20,092 | INFO | Pipeline finished
