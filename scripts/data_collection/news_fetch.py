@@ -8,7 +8,7 @@ from gnews import GNews
 from datetime import datetime
 from langdetect import detect, LangDetectException
 from utils.utils import( logger, extract_keywords)
-from scripts.cleaning.news_cleaning import clean_news
+from scripts.Cleaning.news_cleaning import clean_news
 # RSS Collector
 class RSSCollector:
 
