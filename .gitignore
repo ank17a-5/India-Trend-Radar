@@ -4,6 +4,8 @@
 # Python
 __pycache__/
 *.pyc
+*.py[cod]
+*.pyo
 
 # Environment Variables
 .env
@@ -19,6 +21,13 @@ data/raw/
 # IDE
 .vscode/
 .idea/
+
+# BERTopic model cache
+*.bin
+*.pt
+
+# Jupyter
+.ipynb_checkpoints/
 
 # OS
 .DS_Store
