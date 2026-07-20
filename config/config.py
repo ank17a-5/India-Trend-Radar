@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 # Load environment variables from config/.env (for local development)
 load_dotenv("config/.env")
@@ -41,3 +42,21 @@ class Config:
             )
 
         print("✅ News configuration loaded successfully.")
+
+# Base directory
+BASE_DIR = Path(__file__).resolve().parent
+
+# Data paths
+NEWS_DATA = BASE_DIR / "data" / "news_clean.csv"
+# REDDIT_DATA = BASE_DIR / "data" / "cleaned_reddit.csv"
+
+# Output paths
+OUTPUT_DIR = BASE_DIR / "output"
+TOPIC_INFO = OUTPUT_DIR / "topic_info.csv"
+TOPIC_ASSIGNMENTS = OUTPUT_DIR / "topic_assignments.csv"
+
+# Model directory
+MODEL_DIR = BASE_DIR / "models"
+
+# Embedding model
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"
