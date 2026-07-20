@@ -8,7 +8,7 @@ import time
 import random  # Added to introduce jitter (randomized sleep)
 import traceback
 
-from scripts.get_daily_trends import get_daily_trends
+from scripts.data_collection.get_daily_trends import get_daily_trends
 
 
 def collect_google_trends():
