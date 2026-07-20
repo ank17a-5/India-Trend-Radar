@@ -36,17 +36,17 @@ jobs:
       # Google Trends
 
       - name: Run Google Trends
-        run: python -m scripts.google_trends
+        run: python -m scripts.data_collection.google_trends
 
       # News Collection
 
       - name: Run News Collection
-        run: python -m scripts.news_fetch
+        run: python -m scripts.data_collection.news_fetch
 
       # YouTube Collection
       
       - name: Run YouTube Collection
-        run: python -m scripts.youtube_fetch
+        run: python -m scripts.data_collection.youtube_fetch
 
       - name: Commit Updated Files
         run: |
