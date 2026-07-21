@@ -1,3 +1,4 @@
+from scripts.Cleaning.google_cleaning import clean_google_data
 from pytrends.request import TrendReq
 from pytrends.exceptions import TooManyRequestsError  # Added to catch the 429 error
 from config.config import GOOGLE_TRENDS
@@ -8,7 +9,7 @@ import time
 import random  # Added to introduce jitter (randomized sleep)
 import traceback
 
-from scripts.get_daily_trends import get_daily_trends
+from scripts.data_collection.get_daily_trends import get_daily_trends
 
 
 def collect_google_trends():
@@ -187,3 +188,4 @@ def collect_google_trends():
 
 if __name__ == "__main__":
     collect_google_trends()
+    clean_google_data()

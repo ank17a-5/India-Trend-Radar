@@ -1,3 +1,4 @@
+from scripts.Cleaning.youtube_cleaning import clean_youtube_data
 import os
 import re
 import argparse
@@ -367,4 +368,6 @@ if __name__ == "__main__":
     print("India Trend Radar - YouTube Data Collection")
     print("=" * 55)
 
-    run_job()   
+   if __name__ == "__main__":
+    run_job()
+    clean_youtube_data()
