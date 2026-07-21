@@ -62,8 +62,14 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+          # Latest changes from GitHub
+          git pull --rebase origin main
+
+          # Add all updated files
           git add .
 
+          # Commit only if there are changes
           git diff --cached --quiet || git commit -m "Daily automated data collection"
 
-          git push
+          # Push changes
+          git push origin main
