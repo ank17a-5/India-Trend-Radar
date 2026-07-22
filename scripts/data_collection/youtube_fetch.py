@@ -368,6 +368,6 @@ if __name__ == "__main__":
     print("India Trend Radar - YouTube Data Collection")
     print("=" * 55)
 
-   if __name__ == "__main__":
+   
     run_job()
     clean_youtube_data()
