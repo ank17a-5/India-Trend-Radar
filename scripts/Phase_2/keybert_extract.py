@@ -17,8 +17,8 @@ from keybert import KeyBERT
 
 from utils.utils import logger
 
-CLEANED_PATH = "data/cleaned/news_clean.csv"
-OUTPUT_DIR = "data/cleaned"
+CLEANED_PATH = "data/processed/news_with_ner.csv"
+OUTPUT_DIR = "data/processed"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "news_keybert.csv")
 
 
@@ -85,6 +85,7 @@ def run():
         "keyword", "keybert_keywords", "language",
         "published_date", "collected_at",
         "year", "month", "day", "weekday",
+        "entities", "entity_count",
     ]
     df_out = df[[c for c in output_cols if c in df.columns]].copy()
 
