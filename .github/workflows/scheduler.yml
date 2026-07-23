@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -33,28 +35,46 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Google Trends
+      # Install spaCy Model
+      - name: Install spaCy Model
+        run: |
+          python -m spacy download en_core_web_sm
 
+      # Google Trends
       - name: Run Google Trends
-        run: python -m scripts.google_trends
+        run: python -m scripts.data_collection.google_trends
+
+      - name: Run Google Cleaning
+        run: python -m scripts.Cleaning.google_cleaning
 
       # News Collection
-
       - name: Run News Collection
-        run: python -m scripts.news_fetch
+        run: python -m scripts.data_collection.news_fetch
+
+      - name: Run News Cleaning
+        run: python -m scripts.Cleaning.news_cleaning
 
       # YouTube Collection
-      
       - name: Run YouTube Collection
-        run: python -m scripts.youtube_fetch
+        run: python -m scripts.data_collection.youtube_fetch
 
-      - name: Commit Updated Files
+      - name: Run YouTube Cleaning
+        run: python -m scripts.Cleaning.youtube_cleaning
+
+      - name: Commit and Push Updated Files
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
           git add .
 
-          git diff --cached --quiet || git commit -m "Daily automated data collection"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
 
-          git push
+          git commit -m "Daily automated data collection"
+
+          git pull --rebase origin main
+
+          git push origin main

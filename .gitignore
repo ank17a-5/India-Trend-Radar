@@ -15,6 +15,7 @@ logs/
 # Output
 data/raw/
 *.csv
+!data/processed/news_with_ner.csv
 
 # IDE
 .vscode/
