@@ -25,6 +25,13 @@ tzdata==2026.2
 uritemplate==4.2.0
 urllib3==2.7.0
 yake==0.4.8
+spacy
+keybert
+sentence-transformers
+bertopic
+umap-learn
+hdbscan
+scikit-learn
 
 # News Module
 newsapi-python
