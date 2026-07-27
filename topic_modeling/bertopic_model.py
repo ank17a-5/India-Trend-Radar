@@ -93,14 +93,14 @@ final_df["keyword"] = final_df["keyword"].str.replace(",", " | ", regex=False)
 
 # Save CSV safely
 final_df.to_csv(
-    "topic_modeling/output/news_with_topics.csv",
+    "topic_modeling/data/processed/news_with_ner.csv",
     index=False,
     encoding="utf-8",
     quoting=csv.QUOTE_ALL
 )
 
 print("BERTopic training completed.")
-print("Output saved: topic_modeling/output/news_with_topics.csv")
+print("Output saved: topic_modeling/data/processed/news_with_ner.csv")
 
 print("BERTopic training completed.")
 print("Files saved successfully.")
