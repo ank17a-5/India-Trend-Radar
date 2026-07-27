@@ -5,8 +5,8 @@ from pathlib import Path
 
 # File Paths
 
-INPUT_FILE = Path("India-Trend-Radar/data/processed/news_with_ner.csv")
-OUTPUT_FILE = Path("India-Trend-Radar/data/processed/news_yake_keywords.csv")
+INPUT_FILE = Path("data/processed/news_with_ner.csv")
+OUTPUT_FILE = Path("data/processed/news_yake_keywords.csv")
 
 # Create output directory if it doesn't exist
 OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
