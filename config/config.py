@@ -47,16 +47,16 @@ class Config:
 BASE_DIR = Path(__file__).resolve().parent
 
 # Data paths
-NEWS_DATA = BASE_DIR / "data" / "news_clean.csv"
+NEWS_DATA = BASE_DIR / "data" /"cleaned" / "news_clean.csv"
 # REDDIT_DATA = BASE_DIR / "data" / "cleaned_reddit.csv"
 
 # Output paths
-OUTPUT_DIR = BASE_DIR / "output"
-TOPIC_INFO = OUTPUT_DIR / "topic_info.csv"
-TOPIC_ASSIGNMENTS = OUTPUT_DIR / "topic_assignments.csv"
+OUTPUT_DIR = BASE_DIR / "data" / "processed"
+NEWS_WITH_TOPICS = OUTPUT_DIR / "news_with_ner.csv"
 
 # Model directory
 MODEL_DIR = BASE_DIR / "models"
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 # Embedding model
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"

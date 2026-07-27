@@ -3,7 +3,6 @@
 
 # Python
 __pycache__/
-*.pyc
 *.py[cod]
 *.pyo
 
@@ -14,15 +13,11 @@ __pycache__/
 logs/
 *.log
 
-# Output
-data/raw/
-*.csv
-
 # IDE
 .vscode/
 .idea/
 
-# BERTopic model cache
+# BERTopic Model Cache
 *.bin
 *.pt
 
