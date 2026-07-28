@@ -1,1 +1,44 @@
-  c e r t i f i = = 2 0 2 6 . 6 . 1 7   c h a r s e t - n o r m a l i z e r = = 3 . 4 . 7   f e e d p a r s e r = = 6 . 0 . 1 1   g o o g l e - a p i - p y t h o n - c l i e n t = = 2 . 1 7 7 . 0   g o o g l e - a u t h = = 2 . 4 0 . 3   g o o g l e - a u t h - h t t p l i b 2 = = 0 . 2 . 0   g o o g l e - a u t h - o a u t h l i b = = 1 . 2 . 2   h t t p l i b 2 = = 0 . 2 2 . 0   i d n a = = 3 . 1 8   l x m l = = 6 . 1 . 1   n u m p y = = 2 . 5 . 0   o a u t h l i b = = 3 . 3 . 1   p a n d a s = = 3 . 0 . 3   p y a s n 1 = = 0 . 6 . 1   p y a s n 1 - m o d u l e s = = 0 . 4 . 2   p y p a r s i n g = = 3 . 2 . 3   p y t h o n - d a t e u t i l = = 2 . 9 . 0 . p o s t 0   p y t h o n - d o t e n v = = 1 . 1 . 1   p y t r e n d s = = 4 . 9 . 2   r e q u e s t s = = 2 . 3 4 . 2   r e q u e s t s - o a u t h l i b = = 2 . 0 . 0   r s a = = 4 . 9 . 1   s i x = = 1 . 1 7 . 0   t z d a t a = = 2 0 2 6 . 2   u r i t e m p l a t e = = 4 . 2 . 0   u r l l i b 3 = = 2 . 7 . 0     #   N e w s   M o d u l e   n e w s a p i - p y t h o n   A P S c h e d u l e r   b e a u t i f u l s o u p 4   g n e w s   t e x t b l o b   l a n g d e t e c t keybert
+certifi
+charset-normalizer
+feedparser
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+httplib2
+idna
+lxml
+numpy
+oauthlib
+pandas
+pyasn1
+pyasn1-modules
+pyparsing
+python-dateutil
+python-dotenv
+pytrends
+requests
+requests-oauthlib
+rsa
+six
+tzdata
+uritemplate
+urllib3
+
+# NLP
+yake
+spacy
+keybert
+sentence-transformers
+bertopic
+umap-learn
+hdbscan
+scikit-learn
+
+# News Module
+newsapi-python
+APScheduler
+beautifulsoup4
+gnews
+textblob
+langdetect
