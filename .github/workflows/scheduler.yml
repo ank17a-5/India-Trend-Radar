@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.11'
 
       - name: Install Dependencies
         run: |
@@ -60,6 +60,30 @@ jobs:
 
       - name: Run YouTube Cleaning
         run: python -m scripts.Cleaning.youtube_cleaning
+
+      # -----------------------------
+      # NLP PIPELINE (Uncomment when ready)
+      # -----------------------------
+
+      - name: Run spaCy NER
+        run: python -m scripts.Phase_2.spacy_ner
+
+      # - name: Run KeyBERT
+      #   run: python -m scripts.Phase_2.keybert_extract
+
+      - name: Run YAKE
+        run: python -m scripts.Phase_2.yake_extract
+
+      # - name: Run BERTopic
+      #   run: python -m scripts.Phase_2.bertopic_model
+
+      # -----------------------------
+      # FEATURE ENGINEERING (Uncomment when ready)
+      # -----------------------------
+
+      # - name: Run Feature Engineering
+      #   run: python -m scripts.Phase_2.pipeline
+
 
       - name: Commit and Push Updated Files
         run: |
