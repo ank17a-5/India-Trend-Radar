@@ -5,7 +5,7 @@ from pathlib import Path
 
 # File Paths
 
-INPUT_FILE = Path("data/processed/news_with_ner.csv")
+INPUT_FILE = Path("data/processed/news_keybert.csv")
 OUTPUT_FILE = Path("data/processed/news_yake_keywords.csv")
 
 # Create output directory if it doesn't exist
@@ -67,7 +67,10 @@ def run():
     df["combined_text"] = df.apply(combine_text, axis=1)
 
     # Extract keywords
-    df["keywords"] = df["combined_text"].apply(extract_keywords)
+    df["yake_keywords"] = df["combined_text"].apply(extract_keywords)
+
+    # Remove temporary column
+    df.drop(columns=["combined_text"], inplace=True)
 
     # Save processed dataset
     df.to_csv(OUTPUT_FILE, index=False)
