@@ -40,21 +40,27 @@ jobs:
         run: |
           python -m spacy download en_core_web_sm
 
-      # Google Trends
+      # -----------------------------
+      # GOOGLE TRENDS
+      # -----------------------------
       - name: Run Google Trends
         run: python -m scripts.data_collection.google_trends
 
       - name: Run Google Cleaning
         run: python -m scripts.Cleaning.google_cleaning
 
-      # News Collection
+      # -----------------------------
+      # NEWS
+      # -----------------------------
       - name: Run News Collection
         run: python -m scripts.data_collection.news_fetch
 
       - name: Run News Cleaning
         run: python -m scripts.Cleaning.news_cleaning
 
-      # YouTube Collection
+      # -----------------------------
+      # YOUTUBE
+      # -----------------------------
       - name: Run YouTube Collection
         run: python -m scripts.data_collection.youtube_fetch
 
@@ -62,29 +68,31 @@ jobs:
         run: python -m scripts.Cleaning.youtube_cleaning
 
       # -----------------------------
-      # NLP PIPELINE (Uncomment when ready)
+      # NLP PIPELINE
       # -----------------------------
-
       - name: Run spaCy NER
         run: python -m scripts.Phase_2.spacy_ner
 
-      # - name: Run KeyBERT
-      #   run: python -m scripts.Phase_2.keybert_extract
+      - name: Run KeyBERT
+        run: python -m scripts.Phase_2.keybert_extract
 
       - name: Run YAKE
         run: python -m scripts.Phase_2.yake_extract
 
-      # - name: Run BERTopic
-      #   run: python -m scripts.Phase_2.bertopic_model
+      - name: Run BERTopic
+        run: python -m scripts.Phase_2.bertopic_model
 
       # -----------------------------
-      # FEATURE ENGINEERING (Uncomment when ready)
+      # FEATURE ENGINEERING
       # -----------------------------
+      # Uncomment when ready
 
       # - name: Run Feature Engineering
       #   run: python -m scripts.Phase_2.pipeline
 
-
+      # -----------------------------
+      # COMMIT CHANGES
+      # -----------------------------
       - name: Commit and Push Updated Files
         run: |
           git config --global user.name "github-actions"
