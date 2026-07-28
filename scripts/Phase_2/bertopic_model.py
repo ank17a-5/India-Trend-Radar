@@ -1,12 +1,11 @@
 import pandas as pd
 import csv
-from config.config import NEWS_DATA
 from sentence_transformers import SentenceTransformer
 from bertopic import BERTopic
 
 # Load cleaned news data
 df = pd.read_csv(
-    NEWS_DATA,
+    "data/processed/news_yake_keywords.csv",
     encoding="utf-8",
     skipinitialspace=True,
     on_bad_lines="skip"
