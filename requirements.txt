@@ -1,4 +1,4 @@
-﻿certifi
+certifi
 charset-normalizer
 feedparser
 google-api-python-client
