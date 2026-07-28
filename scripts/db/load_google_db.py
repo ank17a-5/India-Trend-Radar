@@ -1,12 +1,29 @@
-import pandas as pd  
-from sqlalchemy import create_engine 
+import os
+import pandas as pd
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
 
+# Load .env
+load_dotenv("config/.env")
 
-df = pd.read_csv("data/cleaned/google_trends_clean.csv") 
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine("postgresql+psycopg2://postgres:MALI8261@localhost:5432/india_trend_radar")
+print("Connected to:")
+print(DATABASE_URL)
 
-df.to_sql("google_trends",engine,if_exists="replace",index=False)
+# Read CSV
+df = pd.read_csv("data/cleaned/google_trends_clean.csv")
 
-print("Google Trends data loaded successfully")
-print(f"Total rows loaded:{len(df)}")
+# Neon connection
+engine = create_engine(DATABASE_URL)
+
+# Upload
+df.to_sql(
+    "google_trends",
+    engine,
+    if_exists="replace",
+    index=False
+)
+
+print("Google Trends uploaded to Neon")
+print(f"Rows: {len(df)}")
