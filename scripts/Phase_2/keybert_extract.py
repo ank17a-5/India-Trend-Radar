@@ -80,15 +80,7 @@ def run():
 
     df = extract_keywords_keybert(df, model, top_n=3)
 
-    output_cols = [
-        "source_name", "title", "description", "url",
-        "keyword", "keybert_keywords", "language",
-        "published_date", "collected_at",
-        "year", "month", "day", "weekday",
-        "entities", "entity_count",
-    ]
-    df_out = df[[c for c in output_cols if c in df.columns]].copy()
-
+    df_out = df.copy()
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     df_out.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
 
