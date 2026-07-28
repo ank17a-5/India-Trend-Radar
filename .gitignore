@@ -3,8 +3,7 @@
 
 # Python
 __pycache__/
-*.py[cod]
-*.pyo
+*.pyc
 
 # Environment Variables
 .env
@@ -13,24 +12,14 @@ __pycache__/
 logs/
 *.log
 
-<<<<<<< HEAD
-=======
 # Output
 data/raw/
 *.csv
 !data/processed/news_with_ner.csv
 
->>>>>>> main
 # IDE
 .vscode/
 .idea/
-
-# BERTopic Model Cache
-*.bin
-*.pt
-
-# Jupyter
-.ipynb_checkpoints/
 
 # OS
 .DS_Store
