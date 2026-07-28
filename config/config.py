@@ -2,8 +2,11 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+# Base directory
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Load environment variables from config/.env (for local development)
-load_dotenv("config/.env")
+load_dotenv(BASE_DIR / "config" / ".env")
 
 
 # ---------------- Google Trends Configuration ----------------
@@ -43,16 +46,10 @@ class Config:
 
         print("✅ News configuration loaded successfully.")
 
-# Base directory
-BASE_DIR = Path(__file__).resolve().parent
 
 # Data paths
-NEWS_DATA = BASE_DIR / "data" /"cleaned" / "news_clean.csv"
+NEWS_DATA = BASE_DIR / "data" / "cleaned" / "news_clean.csv"
 # REDDIT_DATA = BASE_DIR / "data" / "cleaned_reddit.csv"
-
-# Output paths
-OUTPUT_DIR = BASE_DIR / "data" / "processed"
-NEWS_WITH_TOPICS = OUTPUT_DIR / "news_with_ner.csv"
 
 # Model directory
 MODEL_DIR = BASE_DIR / "models"
