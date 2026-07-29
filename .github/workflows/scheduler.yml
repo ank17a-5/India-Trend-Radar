@@ -91,7 +91,7 @@ jobs:
       # -----------------------------
 
       - name: Run Feature Engineering
-        run: python -m scripts.Phase_2.pipeline
+        run: python -m scripts.features.pipeline
 
       # -----------------------------
       # COMMIT CHANGES
