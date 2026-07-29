@@ -82,13 +82,16 @@ jobs:
       - name: Run BERTopic
         run: python -m scripts.Phase_2.bertopic_model
 
+      - name: Run Unified Topic IDs
+        run: python -m scripts.Phase_2.unified_topic_ids
+
+
       # -----------------------------
       # FEATURE ENGINEERING
       # -----------------------------
-      # Uncomment when ready
 
-      # - name: Run Feature Engineering
-      #   run: python -m scripts.Phase_2.pipeline
+      - name: Run Feature Engineering
+        run: python -m scripts.Phase_2.pipeline
 
       # -----------------------------
       # COMMIT CHANGES
@@ -105,8 +108,8 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Daily automated data collection"
-
+          git commit -m "Automated daily pipeline update"
+          
           git pull --rebase origin main
 
           git push origin main

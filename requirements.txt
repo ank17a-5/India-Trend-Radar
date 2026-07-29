@@ -17,6 +17,7 @@ pyparsing
 python-dateutil
 python-dotenv
 pytrends
+rapidfuzz
 requests
 requests-oauthlib
 rsa

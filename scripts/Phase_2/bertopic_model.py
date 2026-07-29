@@ -70,7 +70,7 @@ topic_info = topic_model.get_topic_info()
 
 # Merge topic details with each article
 final_df = df.merge(
-    topic_info[["Topic", "Name", "Count"]],
+    topic_info[[ "Topic", "Name", "Count"]],
     left_on="topic",
     right_on="Topic",
     how="left"
