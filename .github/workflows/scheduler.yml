@@ -22,39 +22,94 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.11'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Google Trends
+      # Install spaCy Model
+      - name: Install spaCy Model
+        run: |
+          python -m spacy download en_core_web_sm
 
+      # -----------------------------
+      # GOOGLE TRENDS
+      # -----------------------------
       - name: Run Google Trends
-        run: python -m scripts.google_trends
+        run: python -m scripts.data_collection.google_trends
 
-      # News Collection
+      - name: Run Google Cleaning
+        run: python -m scripts.Cleaning.google_cleaning
 
+      # -----------------------------
+      # NEWS
+      # -----------------------------
       - name: Run News Collection
-        run: python -m scripts.news_fetch
+        run: python -m scripts.data_collection.news_fetch
 
-      # YouTube Collection
-      
+      - name: Run News Cleaning
+        run: python -m scripts.Cleaning.news_cleaning
+
+      # -----------------------------
+      # YOUTUBE
+      # -----------------------------
       - name: Run YouTube Collection
-        run: python -m scripts.youtube_fetch
+        run: python -m scripts.data_collection.youtube_fetch
 
-      - name: Commit Updated Files
+      - name: Run YouTube Cleaning
+        run: python -m scripts.Cleaning.youtube_cleaning
+
+      # -----------------------------
+      # NLP PIPELINE
+      # -----------------------------
+      - name: Run spaCy NER
+        run: python -m scripts.Phase_2.spacy_ner
+
+      - name: Run KeyBERT
+        run: python -m scripts.Phase_2.keybert_extract
+
+      - name: Run YAKE
+        run: python -m scripts.Phase_2.yake_extract
+
+      - name: Run BERTopic
+        run: python -m scripts.Phase_2.bertopic_model
+
+      - name: Run Unified Topic IDs
+        run: python -m scripts.Phase_2.unified_topic_ids
+
+
+      # -----------------------------
+      # FEATURE ENGINEERING
+      # -----------------------------
+
+      - name: Run Feature Engineering
+        run: python -m scripts.Phase_2.pipeline
+
+      # -----------------------------
+      # COMMIT CHANGES
+      # -----------------------------
+      - name: Commit and Push Updated Files
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
           git add .
 
-          git diff --cached --quiet || git commit -m "Daily automated data collection"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
 
-          git push
+          git commit -m "Automated daily pipeline update"
+          
+          git pull --rebase origin main
+
+          git push origin main
