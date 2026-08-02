@@ -50,15 +50,14 @@ print("Running BERTopic...\n")
 topics, probabilities = topic_model.fit_transform(documents)
 
 # Reduce outliers
-topics = topic_model.reduce_outliers(
-    documents,
-    topics,
-    strategy="embeddings"
-)
-
-# Update topic representations
-topic_model.update_topics(documents, topics=topics)
-
+if -1 in topics:
+    topics = topic_model.reduce_outliers(
+        documents,
+        topics,
+        strategy="embeddings"
+    )
+    topic_model.update_topics(documents, topics=topics)
+    
 # Assign updated topics
 df["topic"] = topics
 
