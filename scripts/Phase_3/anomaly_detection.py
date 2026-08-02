@@ -17,7 +17,7 @@ FEATURE_COLUMNS = [
     "news_count",
     "unique_sources",
     "avg_news_title_length",
-    "avg_description_length",git status
+    "avg_description_length",
     "news_age_hours",
     "latest_interest",
     "num_rising_queries",
@@ -165,7 +165,7 @@ def export(df: pd.DataFrame, path: str):
 # ------------------------------------------------------------------
 # MAIN
 # ------------------------------------------------------------------
-def main():
+def run():
     df = load_data(INPUT_PATH)
     features = prepare_features(df, FEATURE_COLUMNS)
 
@@ -178,4 +178,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
