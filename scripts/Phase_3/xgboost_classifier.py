@@ -23,7 +23,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from xgboost import XGBClassifier
-
+from datetime import datetime
 from utils.utils import logger
 
 FEATURES_PATH = "data/features/master_trend_features.csv"
@@ -108,6 +108,7 @@ def run():
     df_out = df[["keyword"]].copy() if "keyword" in df.columns else pd.DataFrame(index=df.index)
     df_out["predicted_viral"] = full_preds
     df_out["viral_probability"] = full_probs
+    df_out["prediction_date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     os.makedirs(PREDICTIONS_DIR, exist_ok=True)
     df_out.to_csv(PREDICTIONS_PATH, index=False, encoding="utf-8-sig")
