@@ -23,7 +23,7 @@ def retrain_models():
     # ------------------------------------
     print("Processing Target & Retraining XGBoost Virality Classifier")
     
-    # Target = Top 20% of trend_score (Anushka's logic)
+    # Target = Top 20% of trend_score 
     threshold = df["trend_score"].quantile(0.80)
     y = (df["trend_score"] >= threshold).astype(int)
 
