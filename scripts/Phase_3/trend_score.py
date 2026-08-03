@@ -26,13 +26,6 @@ def load_data():
     print("Loading datasets...")
 
     master = pd.read_csv(MASTER_FILE)
-
-    prophet = pd.read_csv(PROPHET_FILE)
-
-    virality = pd.read_csv(VIRALITY_FILE)
-
-    anomaly = pd.read_csv(ANOMALY_FILE)
-
     master.columns = master.columns.str.strip()
 
     prophet = pd.read_csv(PROPHET_FILE)
@@ -253,7 +246,9 @@ def save_results(df):
 
     output.to_csv(
         OUTPUT_FILE,
-        index=False
+        index=False,
+        encoding="utf-8-sig"
+
     )
 
     print("=" * 60)
@@ -274,7 +269,7 @@ def save_results(df):
 # Main
 # ==========================================================
 
-def main():
+def run():
 
     print("=" * 60)
     print("INDIA TREND SCORE PIPELINE")
@@ -303,4 +298,4 @@ def main():
 # ==========================================================
 
 if __name__ == "__main__":
-    main()
+    run()
