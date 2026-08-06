@@ -7,7 +7,7 @@ from prophet import Prophet
 FEATURES_PATH = "data/features/master_trend_features.csv"
 NON_FEATURE_COLS = ["keyword", "latest_news_time", "latest_video_date", "trend_score", "trend_rank"]
 
-def retrain_models():
+def run():
     if not os.path.exists(FEATURES_PATH):
         print(f"File not found at {FEATURES_PATH}")
         return
@@ -67,7 +67,7 @@ def retrain_models():
             joblib.dump(prophet_model, "models/prophet_model.pkl")
             print("Prophet model retrained & saved to 'models/prophet_model.pkl'")
 
-    print("\nRetraining completed perfectly using Anushka's exact logic!")
+    print("\nRetraining pipeline completed successfully.")
 
 if __name__ == "__main__":
-    retrain_models()
+    run()
