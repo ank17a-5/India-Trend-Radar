@@ -1,24 +1,14 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 
-# Neon PostgreSQL Connection String
-DATABASE_URL = "postgresql://neondb_owner:npg_VJtX25dKCIzc@ep-withered-mud-ax4d54jf-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require"
+load_dotenv("config/.env")
 
-try:
-    # Create connection
-    engine = create_engine(DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-    with engine.connect() as conn:
-        # Test query
-        result = conn.execute(text("SELECT version();"))
+engine = create_engine(DATABASE_URL)
 
-        print("=" * 50)
-        print("Connected Successfully to Neon PostgreSQL")
-        print("=" * 50)
-        print(result.fetchone()[0])
-        print("=" * 50)
+with engine.connect() as conn:
+    result = conn.execute(text("SELECT version();"))
 
-except Exception as e:
-    print("=" * 50)
-    print(" Connection Failed!")
-    print("=" * 50)
-    print(e)
+    print(result.fetchone()[0])
