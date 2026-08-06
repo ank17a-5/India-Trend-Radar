@@ -184,13 +184,15 @@ def evaluate_india_trend(india):
 
 def save_metrics(metrics_records):
 
-    metrics_df = pd.DataFrame(metrics_records, columns=["section", "metric", "value"])
-    metrics_df.to_csv(METRICS_FILE, index=False)
+    os.makedirs("data/reports", exist_ok=True)
 
+
+    metrics_df = pd.DataFrame(metrics_records, columns=["section", "metric", "value"])
+    metrics_df.to_csv(METRICS_FILE, index=False, encoding="utf-8-sig")
 
 # Main-
 
-def main():
+def run():
     print("=" * 70)
     print("MODEL EVALUATION REPORT")
     print("=" * 70)
@@ -211,4 +213,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
