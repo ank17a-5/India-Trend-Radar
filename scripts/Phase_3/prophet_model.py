@@ -8,7 +8,7 @@ from prophet import Prophet
 # Configuration
 # ==========================================================
 
-INPUT_FILE = "../../data/features/master_trend_features_clean.csv"
+INPUT_FILE = "../../data/features/master_trend_features.csv"
 
 PREDICTIONS_FILE = "../../data/predictions/prophet_predictions.csv"
 
@@ -164,7 +164,7 @@ def save_model(model):
 # Main Pipeline
 # ==========================================================
 
-def main():
+def run():
 
     print("=" * 60)
     print("PROPHET FORECASTING PIPELINE")
@@ -192,4 +192,4 @@ def main():
 # ==========================================================
 
 if __name__ == "__main__":
-    main()
+    run()
