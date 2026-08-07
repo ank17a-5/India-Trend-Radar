@@ -92,8 +92,24 @@ jobs:
         run: python -m scripts.features.pipeline
 
       # -----------------------------
-      # PHASE 3: MODEL RETRAINING
+      # PHASE 3
       # -----------------------------
+
+      - name: Run Prophet Forecasting
+        run: python -m scripts.Phase_3.prophet_model
+
+      - name: Run XGBoost Classifier
+        run: python -m scripts.Phase_3.xgboost_classifier
+
+      - name: Run Anomaly Detection
+        run: python -m scripts.Phase_3.anomaly_detection
+
+      - name: Run India Trend Score
+        run: python -m scripts.Phase_3.trend_score
+
+      - name: Run Model Evaluation
+        run: python -m scripts.Phase_3.evaluation
+
       - name: Run Model Retraining
         run: python -m scripts.Phase_3.retraining
 
