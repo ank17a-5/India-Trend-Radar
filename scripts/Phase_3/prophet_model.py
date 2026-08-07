@@ -8,11 +8,11 @@ from prophet import Prophet
 # Configuration
 # ==========================================================
 
-INPUT_FILE = "../../data/features/master_trend_features.csv"
+INPUT_FILE = "data/features/master_trend_features.csv"
 
-PREDICTIONS_FILE = "../../data/predictions/prophet_predictions.csv"
+PREDICTIONS_FILE = "data/predictions/prophet_predictions.csv"
 
-MODEL_FILE = "../../models/prophet_model.pkl"
+MODEL_FILE = "models/prophet_model.pkl"
 
 
 # ==========================================================
@@ -120,7 +120,7 @@ def forecast(model):
 def save_predictions(forecast):
 
     os.makedirs(
-        "../../data/predictions",
+        "data/predictions",
         exist_ok=True
     )
 
@@ -148,7 +148,7 @@ def save_predictions(forecast):
 def save_model(model):
 
     os.makedirs(
-        "../../models",
+        "models",
         exist_ok=True
     )
 
