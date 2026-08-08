@@ -24,7 +24,7 @@ from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from xgboost import XGBClassifier
-
+from datetime import datetime
 from utils.utils import logger
 
 FEATURES_PATH = "data/features/master_trend_features.csv"
