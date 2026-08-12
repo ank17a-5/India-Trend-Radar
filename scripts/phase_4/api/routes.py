@@ -1,23 +1,14 @@
 from fastapi import APIRouter
-from .schemas import RisingTrend
-from .services import get_rising_trends, get_top_niches, get_forecast
+
+from .trend_api import router as trend_router
+from .forecast_api import router as forecast_router
+from .anomaly_api import router as anomaly_router
+from .evaluation_api import router as evaluation_router
 
 router = APIRouter()
 
-
-@router.get(
-    "/trends/rising",
-    response_model=list[RisingTrend]
-)
-def rising():
-    return get_rising_trends()
-
-
-@router.get("/trends/forecast/{topic}")
-def forecast(topic: str):
-    return get_forecast(topic)
-
-
-@router.get("/niches/top")
-def top_niches():
-    return get_top_niches()
+# Register all sub-routers
+router.include_router(trend_router)
+router.include_router(forecast_router)
+router.include_router(anomaly_router)
+router.include_router(evaluation_router)

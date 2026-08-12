@@ -8,6 +8,8 @@ PROJECT_ROOT = Path.cwd() if (Path.cwd() / "data").exists() else SCRIPT_DIR.pare
 # Explicit CSV Paths
 TREND_FILE = PROJECT_ROOT / "data" / "predictions" / "india_trend_score.csv"
 FORECAST_FILE = PROJECT_ROOT / "data" / "predictions" / "prophet_predictions.csv"
+ANOMALY_FILE = PROJECT_ROOT / "data" / "predictions" / "anomaly_detection.csv"
+METRICS_FILE = PROJECT_ROOT / "data" / "reports" / "model_metrics.csv"
 
 
 def get_rising_trends():
@@ -76,3 +78,57 @@ def get_forecast(topic: str):
         return {"topic": topic, "forecast": df.to_dict(orient="records")}
     except Exception as e:
         return {"topic": topic, "forecast": [], "error": str(e)}
+
+def get_anomalies(limit: int = 20):
+    if not ANOMALY_FILE.exists():
+        return {
+            "anomalies": [],
+            "error": f"File not found at: {ANOMALY_FILE}",
+        }
+
+    try:
+        df = pd.read_csv(ANOMALY_FILE)
+        df = df.where(pd.notnull(df), None)
+
+        if "is_anomaly" in df.columns:
+            df = df[df["is_anomaly"] == 1]
+
+        if "anomaly_score" in df.columns:
+            df = df.sort_values(
+                by="anomaly_score",
+                ascending=False
+            )
+
+        return {
+            "count": len(df),
+            "anomalies": df.head(limit).to_dict(orient="records"),
+        }
+
+    except Exception as e:
+        return {
+            "anomalies": [],
+            "error": str(e),
+        }
+
+
+def get_model_evaluation():
+    if not METRICS_FILE.exists():
+        return {
+            "metrics": [],
+            "error": f"File not found at: {METRICS_FILE}",
+        }
+
+    try:
+        df = pd.read_csv(METRICS_FILE)
+        df = df.where(pd.notnull(df), None)
+
+        return {
+            "metrics": df.to_dict(orient="records")
+        }
+
+    except Exception as e:
+        return {
+            "metrics": [],
+            "error": str(e),
+        }
+
