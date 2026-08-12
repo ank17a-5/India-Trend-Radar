@@ -43,3 +43,17 @@ beautifulsoup4
 gnews
 textblob
 langdetect
+
+#phase 3
+pandas
+numpy
+scikit-learn
+xgboost
+prophet
+joblib
+matplotlib
+
+# phase 4
+fastapi
+uvicorn
+requests
