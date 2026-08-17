@@ -63,7 +63,8 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const API_BASE = "/api";
+const RAW_API_URL = import.meta.env.VITE_API_URL || "/api";
+const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
 export const formatKeyword = (rawKeyword: string): string => {
   if (!rawKeyword) return "";
@@ -77,43 +78,60 @@ export const formatKeyword = (rawKeyword: string): string => {
     .join(" • ");
 };
 
-export async function fetchRisingTrends(): Promise<RisingTrend[]> {
-  const res = await fetch(`${API_BASE}/trends/rising`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch rising trends: ${res.statusText}`);
+async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
+  const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      if (res.status === 502) {
+        throw new Error(
+          `${errorMessage}: Bad Gateway (502). The backend API server is offline or unreachable. Please verify backend server status.`
+        );
+      }
+      if (res.status === 504) {
+        throw new Error(`${errorMessage}: Gateway Timeout (504). The backend server took too long to respond.`);
+      }
+      if (res.status === 404) {
+        throw new Error(`${errorMessage}: Endpoint not found (404) at ${url}.`);
+      }
+      throw new Error(`${errorMessage}: HTTP ${res.status} ${res.statusText}`);
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("text/html")) {
+      throw new Error(
+        `${errorMessage}: Received HTML response instead of JSON. Check backend routing or VITE_API_URL configuration.`
+      );
+    }
+
+    return (await res.json()) as T;
+  } catch (err: any) {
+    if (err instanceof TypeError && err.message.toLowerCase().includes("failed to fetch")) {
+      throw new Error(
+        `${errorMessage}: Network connection failed. Please ensure backend server is running.`
+      );
+    }
+    throw err;
   }
-  return res.json();
+}
+
+export async function fetchRisingTrends(): Promise<RisingTrend[]> {
+  return apiFetch<RisingTrend[]>("/trends/rising", "Failed to fetch rising trends");
 }
 
 export async function fetchTopNiches(): Promise<TopNiche[]> {
-  const res = await fetch(`${API_BASE}/niches/top`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch top niches: ${res.statusText}`);
-  }
-  return res.json();
+  return apiFetch<TopNiche[]>("/niches/top", "Failed to fetch top niches");
 }
 
 export async function fetchForecast(topic: string = "overall"): Promise<ForecastResponse> {
   const encodedTopic = encodeURIComponent(topic);
-  const res = await fetch(`${API_BASE}/trends/forecast/${encodedTopic}`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch forecast: ${res.statusText}`);
-  }
-  return res.json();
+  return apiFetch<ForecastResponse>(`/trends/forecast/${encodedTopic}`, "Failed to fetch forecast");
 }
 
 export async function fetchAnomalies(limit: number = 20): Promise<AnomalyResponse> {
-  const res = await fetch(`${API_BASE}/anomalies?limit=${limit}`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch anomalies: ${res.statusText}`);
-  }
-  return res.json();
+  return apiFetch<AnomalyResponse>(`/anomalies?limit=${limit}`, "Failed to fetch anomalies");
 }
 
 export async function fetchEvaluation(): Promise<EvaluationResponse> {
-  const res = await fetch(`${API_BASE}/evaluation`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch evaluation metrics: ${res.statusText}`);
-  }
-  return res.json();
+  return apiFetch<EvaluationResponse>("/evaluation", "Failed to fetch evaluation metrics");
 }
