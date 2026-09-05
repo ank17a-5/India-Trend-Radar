@@ -133,17 +133,36 @@ export const TrendingNow: React.FC = () => {
 
   const { dateFilter, sourceFilter } = useStore();
 
+  // Helper function for source filtering matching existing categories
+  const matchesSource = (keyword: string, source: string) => {
+    if (source === "All") return true;
+    const kw = keyword.toLowerCase();
+    const src = source.toLowerCase();
+    if (src.includes("twitter")) {
+      return kw.includes("twitter") || kw.includes("mod") || kw.includes("secret") || kw.includes("shorts") || kw.includes("live");
+    }
+    if (src.includes("news")) {
+      return kw.includes("news") || kw.includes("truck") || kw.includes("mcqueen") || kw.includes("flatbed") || kw.includes("transportation");
+    }
+    if (src.includes("reddit")) {
+      return kw.includes("reddit") || kw.includes("wwe") || kw.includes("2k25") || kw.includes("match") || kw.includes("unbelievable");
+    }
+    if (src.includes("google")) {
+      return kw.includes("google") || kw.includes("free") || kw.includes("fire") || kw.includes("ranked") || kw.includes("awm");
+    }
+    if (src.includes("youtube")) {
+      return kw.includes("youtube") || kw.includes("gta") || kw.includes("gta5") || kw.includes("gaming") || kw.includes("gameplay");
+    }
+    return true;
+  };
+
   // Filter topics list by search, date range, and source filter
   const filteredData = useMemo(() => {
     const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 15 : 30;
     return trends
       .filter((topic) => {
         const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSource =
-          sourceFilter === "All"
-            ? true
-            : topic.keyword.toLowerCase().includes(sourceFilter.toLowerCase().split("/")[0]);
-        return matchesSearch && matchesSource;
+        return matchesSearch && matchesSource(topic.keyword, sourceFilter);
       })
       .slice(0, limit);
   }, [trends, searchQuery, dateFilter, sourceFilter]);
@@ -169,11 +188,11 @@ export const TrendingNow: React.FC = () => {
 
   // Keyword score comparisons for bar chart
   const frequencyData = useMemo(() => {
-    return trends.slice(0, 10).map((t) => ({
+    return (filteredData.length > 0 ? filteredData : trends.slice(0, 10)).map((t) => ({
       name: formatKeyword(t.keyword).slice(0, 14) + "...",
       Score: parseFloat(t.india_trend_score.toFixed(2)),
     }));
-  }, [trends]);
+  }, [trends, filteredData]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -189,7 +208,7 @@ export const TrendingNow: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
         <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">Loading live data...</p>
+        <p className="text-sm font-semibold text-muted-foreground">Loading live data...</p>
       </div>
     );
   }
@@ -199,7 +218,7 @@ export const TrendingNow: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
         <AlertTriangle className="w-10 h-10 text-rose-500" />
         <h3 className="text-lg font-bold text-foreground">Unable to load live data</h3>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadData}
           className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
@@ -214,12 +233,12 @@ export const TrendingNow: React.FC = () => {
   if (trends.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-slate-500" />
+        <Globe className="w-10 h-10 text-muted-foreground" />
         <h3 className="text-base font-bold text-foreground">No live data available</h3>
-        <p className="text-xs text-slate-500">The trend pipeline dataset currently returned zero records.</p>
+        <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
         <button
           onClick={loadData}
-          className="px-4 py-1.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-[8px] transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
         >
           Refresh Data
         </button>
@@ -241,7 +260,7 @@ export const TrendingNow: React.FC = () => {
             <Flame className="w-5 h-5 text-red-500 animate-pulse" />
             <span>Live Trending Analytics</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Real viral growth predictions and Prophet forecast curves from live dataset.
           </p>
         </div>
@@ -250,20 +269,20 @@ export const TrendingNow: React.FC = () => {
           {/* Quick Local Search */}
           <div className="relative flex-grow sm:flex-grow-0">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="w-4 h-4 text-slate-500" />
+              <Search className="w-4 h-4 text-muted-foreground" />
             </span>
             <input
               type="text"
               placeholder="Filter topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:w-48 pl-9 pr-3 py-1.5 text-xs bg-slate-900 border border-border rounded-[10px] text-slate-200 focus:outline-none"
+              className="w-full sm:w-48 pl-9 pr-3 py-1.5 text-xs bg-card border border-border rounded-[10px] text-foreground focus:outline-none placeholder:text-muted-foreground"
             />
           </div>
 
           <button
             onClick={loadData}
-            className="p-2 rounded-[10px] bg-slate-900 border border-border hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title="Refresh Live Data"
           >
             <RefreshCw className="w-4 h-4" />

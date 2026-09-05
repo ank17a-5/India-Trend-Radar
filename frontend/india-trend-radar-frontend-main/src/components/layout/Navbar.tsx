@@ -44,7 +44,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   // Trigger Client-Side CSV Download with real API data
   const handleDownloadCSV = async () => {
     try {
-      const risingTrends = await fetchRisingTrends();
+      const allTrends = await fetchRisingTrends();
+      const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
+      const risingTrends = allTrends.slice(0, limit);
+
       const headers = ["Rank", "Topic Keyword", "India Trend Score", "Viral Probability", "Anomaly Score", "Forecast Score", "Is Viral"];
       const rows = risingTrends.map((topic) => [
         topic.trend_rank,
@@ -63,12 +66,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `india_trend_radar_${dateFilter}_report.csv`);
+      link.setAttribute("download", `india_trend_radar_${dateFilter.toLowerCase().replace(/\s+/g, "_")}_report.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      triggerToast("📊 Live CSV Report downloaded successfully!");
+      triggerToast(`📊 Live CSV Report (${dateFilter}) downloaded successfully!`);
     } catch (e) {
       triggerToast("⚠️ Unable to download CSV report.");
     }
@@ -77,11 +80,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   // Trigger Client-Side Multi-Page Vector PDF Download (No HTML screenshots, No fake status)
   const handleDownloadPDF = async () => {
     try {
-      const [risingTrends, anomaliesRes, evalRes] = await Promise.all([
+      const [allTrends, anomaliesRes, evalRes] = await Promise.all([
         fetchRisingTrends(),
         fetchAnomalies(50),
         fetchEvaluation(),
       ]);
+
+      const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
+      const risingTrends = allTrends.slice(0, limit);
 
       const doc = new jsPDF();
 
@@ -115,8 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       y += 6;
 
       const viralCount = risingTrends.filter((t) => t.predicted_viral === 1).length;
-      const anomalyCount =
-        anomaliesRes.count || risingTrends.filter((t) => t.is_anomaly === 1).length;
+      const anomalyCount = risingTrends.filter((t) => t.is_anomaly === 1).length || (anomaliesRes.anomalies || []).slice(0, limit).length;
       const viralityMetric = evalRes.metrics?.find(
         (m) => m.section === "Virality Model" && m.metric === "Accuracy"
       );
@@ -153,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(30, 41, 59);
-      doc.text("2. Live Trending Topics & Score Details", 14, y);
+      doc.text(`2. Live Trending Topics (${dateFilter})`, 14, y);
       y += 6;
 
       const drawTrendTableHeader = () => {
@@ -228,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
 
       drawAnomalyTableHeader();
 
-      const anomaliesList = anomaliesRes.anomalies || [];
+      const anomaliesList = (anomaliesRes.anomalies || []).slice(0, limit);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
 
@@ -309,8 +314,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         doc.text(`India Trend Radar Analytics Report — Page ${i} of ${totalPages}`, 14, 288);
       }
 
-      doc.save(`india_trend_radar_full_analytics_${dateFilter.toLowerCase().replace(/\s+/g, "_")}.pdf`);
-      triggerToast("📄 Full Analytics PDF Report downloaded!");
+      doc.save(`india_trend_radar_analytics_${dateFilter.toLowerCase().replace(/\s+/g, "_")}.pdf`);
+      triggerToast(`📄 Analytics PDF Report (${dateFilter}) downloaded!`);
     } catch (e) {
       triggerToast("⚠️ Unable to generate full PDF report.");
     }
@@ -320,7 +325,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     <header className="sticky top-0 z-30 w-full glass border-b border-border backdrop-blur-md px-4 sm:px-6 h-20 flex items-center justify-between">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed top-24 right-6 bg-slate-900 border border-emerald-500/30 text-emerald-400 text-xs px-4 py-3 rounded-[12px] shadow-2xl flex items-center space-x-2 animate-bounce z-50">
+        <div className="fixed top-24 right-6 bg-card border border-emerald-500/30 text-emerald-400 text-xs px-4 py-3 rounded-[12px] shadow-2xl flex items-center space-x-2 animate-bounce z-50">
           <CheckCircle className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
@@ -330,7 +335,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       <div className="flex items-center space-x-3 sm:space-x-4">
         <button
           onClick={onMenuClick}
-          className="md:hidden p-2 rounded-[10px] bg-slate-900 border border-border text-slate-400 hover:text-white"
+          className="md:hidden p-2 rounded-[10px] bg-card border border-border text-foreground hover:bg-muted"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -338,14 +343,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         {/* Global Search Bar (No ⌘K badge) */}
         <div className="relative w-44 sm:w-64 md:w-72">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="w-4 h-4 text-slate-400" />
+            <Search className="w-4 h-4 text-muted-foreground" />
           </span>
           <input
             type="text"
             placeholder="Search trends, keywords..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-900/90 dark:bg-slate-900 border border-border rounded-[12px] focus:outline-none focus:border-blue-500 text-foreground placeholder-slate-400 transition-all"
+            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-card border border-border rounded-[12px] focus:outline-none focus:border-blue-500 text-foreground placeholder:text-muted-foreground transition-all"
           />
         </div>
       </div>
@@ -353,34 +358,34 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       {/* Right side Actions: Source Filter, Date Filter, CSV, PDF (No bell, No profile) */}
       <div className="flex items-center space-x-2 sm:space-x-3">
         {/* Source Filter Dropdown */}
-        <div className="relative flex items-center bg-slate-900 dark:bg-slate-900 border border-border rounded-[12px] px-2 py-1 text-xs">
-          <Filter className="w-3.5 h-3.5 text-slate-400 mr-1.5 flex-shrink-0" />
+        <div className="relative flex items-center bg-card border border-border rounded-[12px] px-2 py-1 text-xs">
+          <Filter className="w-3.5 h-3.5 text-muted-foreground mr-1.5 flex-shrink-0" />
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value as SourceFilterType)}
-            className="bg-transparent text-slate-100 dark:text-slate-100 font-medium py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
+            className="bg-transparent text-foreground font-medium py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
           >
-            <option value="All" className="bg-[#0F172A] text-slate-100 py-1 font-medium">All Sources</option>
-            <option value="Twitter/X" className="bg-[#0F172A] text-slate-100 py-1 font-medium">Twitter/X</option>
-            <option value="News/Media" className="bg-[#0F172A] text-slate-100 py-1 font-medium">News/Media</option>
-            <option value="Reddit" className="bg-[#0F172A] text-slate-100 py-1 font-medium">Reddit</option>
-            <option value="Google Trends" className="bg-[#0F172A] text-slate-100 py-1 font-medium">Google Trends</option>
-            <option value="YouTube" className="bg-[#0F172A] text-slate-100 py-1 font-medium">YouTube</option>
+            <option value="All" className="bg-card text-foreground py-1 font-medium">All Sources</option>
+            <option value="Twitter/X" className="bg-card text-foreground py-1 font-medium">Twitter/X</option>
+            <option value="News/Media" className="bg-card text-foreground py-1 font-medium">News/Media</option>
+            <option value="Reddit" className="bg-card text-foreground py-1 font-medium">Reddit</option>
+            <option value="Google Trends" className="bg-card text-foreground py-1 font-medium">Google Trends</option>
+            <option value="YouTube" className="bg-card text-foreground py-1 font-medium">YouTube</option>
           </select>
         </div>
 
         {/* Date Range Filter Dropdown */}
-        <div className="relative flex items-center bg-slate-900 dark:bg-slate-900 border border-border rounded-[12px] px-2 py-1 text-xs">
-          <Calendar className="w-3.5 h-3.5 text-slate-400 mr-1.5 flex-shrink-0" />
+        <div className="relative flex items-center bg-card border border-border rounded-[12px] px-2 py-1 text-xs">
+          <Calendar className="w-3.5 h-3.5 text-muted-foreground mr-1.5 flex-shrink-0" />
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as DateFilterType)}
-            className="bg-transparent text-slate-100 dark:text-slate-100 font-semibold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
+            className="bg-transparent text-foreground font-semibold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
           >
-            <option value="Today" className="bg-[#0F172A] text-slate-100 py-1 font-semibold">Today</option>
-            <option value="Last 7 Days" className="bg-[#0F172A] text-slate-100 py-1 font-semibold">Last 7 Days</option>
-            <option value="Last 15 Days" className="bg-[#0F172A] text-slate-100 py-1 font-semibold">Last 15 Days</option>
-            <option value="Last 30 Days" className="bg-[#0F172A] text-slate-100 py-1 font-semibold">Last 30 Days</option>
+            <option value="Today" className="bg-card text-foreground py-1 font-semibold">Today</option>
+            <option value="Last 7 Days" className="bg-card text-foreground py-1 font-semibold">Last 7 Days</option>
+            <option value="Last 15 Days" className="bg-card text-foreground py-1 font-semibold">Last 15 Days</option>
+            <option value="Last 30 Days" className="bg-card text-foreground py-1 font-semibold">Last 30 Days</option>
           </select>
         </div>
 
@@ -388,9 +393,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadCSV}
           title="Download CSV report"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-slate-900 border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-slate-800 shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-muted shadow-sm transition-all"
         >
-          <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" />
+          <FileSpreadsheet className="w-3.5 h-3.5 text-muted-foreground" />
           <span>CSV</span>
         </button>
 
@@ -398,9 +403,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadPDF}
           title="Download Executive text summary"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-slate-900 border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-slate-800 shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-muted shadow-sm transition-all"
         >
-          <FileText className="w-3.5 h-3.5 text-slate-400" />
+          <FileText className="w-3.5 h-3.5 text-muted-foreground" />
           <span>PDF</span>
         </button>
       </div>

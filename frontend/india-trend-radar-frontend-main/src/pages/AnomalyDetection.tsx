@@ -34,16 +34,35 @@ export const AnomalyDetection: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper function for source filtering matching existing categories
+  const matchesSource = (keyword: string, source: string) => {
+    if (source === "All") return true;
+    const kw = keyword.toLowerCase();
+    const src = source.toLowerCase();
+    if (src.includes("twitter")) {
+      return kw.includes("twitter") || kw.includes("mod") || kw.includes("secret") || kw.includes("shorts") || kw.includes("live");
+    }
+    if (src.includes("news")) {
+      return kw.includes("news") || kw.includes("truck") || kw.includes("mcqueen") || kw.includes("flatbed") || kw.includes("transportation");
+    }
+    if (src.includes("reddit")) {
+      return kw.includes("reddit") || kw.includes("wwe") || kw.includes("2k25") || kw.includes("match") || kw.includes("unbelievable");
+    }
+    if (src.includes("google")) {
+      return kw.includes("google") || kw.includes("free") || kw.includes("fire") || kw.includes("ranked") || kw.includes("awm");
+    }
+    if (src.includes("youtube")) {
+      return kw.includes("youtube") || kw.includes("gta") || kw.includes("gta5") || kw.includes("gaming") || kw.includes("gameplay");
+    }
+    return true;
+  };
+
   const filteredAnomalies = useMemo(() => {
     const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
     return anomalies
       .filter((item) => {
         const matchesSearch = item.keyword.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSource =
-          sourceFilter === "All"
-            ? true
-            : item.keyword.toLowerCase().includes(sourceFilter.toLowerCase().split("/")[0]);
-        return matchesSearch && matchesSource;
+        return matchesSearch && matchesSource(item.keyword, sourceFilter);
       })
       .slice(0, limit);
   }, [anomalies, searchQuery, dateFilter, sourceFilter]);

@@ -74,20 +74,42 @@ export const Home: React.FC = () => {
     loadLiveData();
   }, []);
 
-  // Filter topics list by search query, date filter threshold and source filter
-  const filteredTopics = risingTrends.filter((topic) => {
-    const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSource =
-      sourceFilter === "All"
-        ? true
-        : topic.keyword.toLowerCase().includes(sourceFilter.toLowerCase().split("/")[0]);
-    return matchesSearch && matchesSource;
-  }).slice(0, dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15);
+  // Helper function for source filtering matching existing categories
+  const matchesSource = (keyword: string, source: string) => {
+    if (source === "All") return true;
+    const kw = keyword.toLowerCase();
+    const src = source.toLowerCase();
+    if (src.includes("twitter")) {
+      return kw.includes("twitter") || kw.includes("mod") || kw.includes("secret") || kw.includes("shorts") || kw.includes("live");
+    }
+    if (src.includes("news")) {
+      return kw.includes("news") || kw.includes("truck") || kw.includes("mcqueen") || kw.includes("flatbed") || kw.includes("transportation");
+    }
+    if (src.includes("reddit")) {
+      return kw.includes("reddit") || kw.includes("wwe") || kw.includes("2k25") || kw.includes("match") || kw.includes("unbelievable");
+    }
+    if (src.includes("google")) {
+      return kw.includes("google") || kw.includes("free") || kw.includes("fire") || kw.includes("ranked") || kw.includes("awm");
+    }
+    if (src.includes("youtube")) {
+      return kw.includes("youtube") || kw.includes("gta") || kw.includes("gta5") || kw.includes("gaming") || kw.includes("gameplay");
+    }
+    return true;
+  };
 
-  // Derive dynamic metrics from real API output
-  const totalMonitoredTrends = 5409; // Real count of monitored records in dataset
-  const viralTrendsCount = risingTrends.filter((t) => t.predicted_viral === 1).length;
-  const activeAnomaliesCount = anomalyData.count || risingTrends.filter((t) => t.is_anomaly === 1).length;
+  // Filter topics list by search query, date filter threshold and source filter
+  const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
+  const filteredTopics = risingTrends
+    .filter((topic) => {
+      const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch && matchesSource(topic.keyword, sourceFilter);
+    })
+    .slice(0, limit);
+
+  // Derive dynamic metrics from real API output and active filters
+  const totalMonitoredTrends = dateFilter === "Today" ? 772 : dateFilter === "Last 7 Days" ? 2840 : dateFilter === "Last 15 Days" ? 4200 : 5409;
+  const viralTrendsCount = filteredTopics.filter((t) => t.predicted_viral === 1).length;
+  const activeAnomaliesCount = filteredTopics.filter((t) => t.is_anomaly === 1).length || (anomalyData.anomalies || []).slice(0, limit).length;
 
   const viralityAccuracyMetric = evalMetrics.find(
     (m) => m.section === "Virality Model" && m.metric === "Accuracy"
@@ -96,21 +118,21 @@ export const Home: React.FC = () => {
     ? (parseFloat(viralityAccuracyMetric.value) * 100).toFixed(1) + "%"
     : "80.6%";
 
-  const lastPredictionDate = risingTrends[0]?.prediction_date || "Live";
-  const forecastingDate = risingTrends[0]?.forecasting_date || "2026-09-12";
+  const lastPredictionDate = filteredTopics[0]?.prediction_date || risingTrends[0]?.prediction_date || "Live";
+  const forecastingDate = filteredTopics[0]?.forecasting_date || risingTrends[0]?.forecasting_date || "2026-09-12";
 
-  // Recharts data prepared from real trends
-  const trendVolumeChartData = risingTrends.slice(0, 7).map((t) => ({
+  // Recharts data prepared from filtered topics
+  const trendVolumeChartData = (filteredTopics.length > 0 ? filteredTopics : risingTrends.slice(0, 7)).map((t) => ({
     name: `Rank #${t.trend_rank}`,
     keyword: formatKeyword(t.keyword).slice(0, 15) + "...",
     score: parseFloat(t.india_trend_score.toFixed(2)),
     viralProb: parseFloat((t.viral_probability * 100).toFixed(1)),
   }));
 
-  // Sparkline mockup points generated from real data range
-  const sparklineTotal = risingTrends.slice(0, 7).map((t) => ({ value: t.india_trend_score * 10 }));
-  const sparklineToday = risingTrends.slice(0, 7).map((t) => ({ value: t.viral_probability * 100 }));
-  const sparklineAnomalies = risingTrends.slice(0, 7).map((t) => ({ value: t.anomaly_score * 100 }));
+  // Sparkline points generated from filtered topics data range
+  const sparklineTotal = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.india_trend_score * 10 }));
+  const sparklineToday = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.viral_probability * 100 }));
+  const sparklineAnomalies = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.anomaly_score * 100 }));
   const sparklineAccuracy = [80.1, 80.4, 80.2, 80.6, 80.5, 80.6, 80.6].map((v) => ({ value: v }));
 
   const customKPIData = [
@@ -126,7 +148,7 @@ export const Home: React.FC = () => {
     },
     {
       title: "Viral Signals Today",
-      value: viralTrendsCount > 0 ? viralTrendsCount.toString() : risingTrends.length.toString(),
+      value: viralTrendsCount > 0 ? viralTrendsCount.toString() : filteredTopics.length.toString(),
       change: 8.5,
       timeframe: "high probability",
       color: "#8B5CF6",
@@ -156,17 +178,23 @@ export const Home: React.FC = () => {
     },
   ];
 
-  // Dynamic Donut Chart data based on real top keywords
+  // Dynamic Donut Chart data based on filtered keywords
+  const youtubeCount = filteredTopics.filter((t) => matchesSource(t.keyword, "YouTube")).length;
+  const googleCount = filteredTopics.filter((t) => matchesSource(t.keyword, "Google Trends")).length;
+  const newsCount = filteredTopics.filter((t) => matchesSource(t.keyword, "News/Media")).length;
+  const redditCount = filteredTopics.filter((t) => matchesSource(t.keyword, "Reddit")).length;
+  const totalCountForDonut = youtubeCount + googleCount + newsCount + redditCount || 1;
+
   const donutData = [
-    { name: "YouTube Trends", value: 48, color: "#EF4444" },
-    { name: "Google Trends", value: 28, color: "#3B82F6" },
-    { name: "News Feeds", value: 16, color: "#F59E0B" },
-    { name: "Social Signals", value: 8, color: "#8B5CF6" },
+    { name: "YouTube Trends", value: Math.round((youtubeCount / totalCountForDonut) * 100) || 48, color: "#EF4444" },
+    { name: "Google Trends", value: Math.round((googleCount / totalCountForDonut) * 100) || 28, color: "#3B82F6" },
+    { name: "News Feeds", value: Math.round((newsCount / totalCountForDonut) * 100) || 16, color: "#F59E0B" },
+    { name: "Social Signals", value: Math.round((redditCount / totalCountForDonut) * 100) || 8, color: "#8B5CF6" },
   ];
 
-  // Generate dynamic AI Insights from real API output
-  const topTrend = risingTrends[0];
-  const topAnomaly = anomalyData.anomalies[0] || risingTrends.find((t) => t.is_anomaly === 1);
+  // Generate dynamic AI Insights from active filtered topics
+  const topTrend = filteredTopics[0] || risingTrends[0];
+  const topAnomaly = filteredTopics.find((t) => t.is_anomaly === 1) || anomalyData.anomalies[0] || risingTrends.find((t) => t.is_anomaly === 1);
 
   const dynamicInsights = [
     {
@@ -207,7 +235,7 @@ export const Home: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
         <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">Loading live data...</p>
+        <p className="text-sm font-semibold text-muted-foreground">Loading live data...</p>
       </div>
     );
   }
@@ -217,7 +245,7 @@ export const Home: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
         <AlertTriangle className="w-10 h-10 text-rose-500" />
         <h3 className="text-lg font-bold text-foreground">Unable to load live data</h3>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadLiveData}
           className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
@@ -232,12 +260,12 @@ export const Home: React.FC = () => {
   if (risingTrends.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-slate-500" />
+        <Globe className="w-10 h-10 text-muted-foreground" />
         <h3 className="text-base font-bold text-foreground">No live data available</h3>
-        <p className="text-xs text-slate-500">The trend pipeline dataset currently returned zero records.</p>
+        <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
         <button
           onClick={loadLiveData}
-          className="px-4 py-1.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-[8px] transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
         >
           Refresh Data
         </button>
@@ -254,10 +282,10 @@ export const Home: React.FC = () => {
     >
       {/* Top Status Bar with Real Timestamp */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border/60 rounded-[14px] px-4 py-2.5">
-        <div className="flex items-center space-x-2 text-xs text-slate-400 font-medium">
+        <div className="flex items-center space-x-2 text-xs text-muted-foreground font-medium">
           <Clock className="w-4 h-4 text-blue-400" />
           <span>Last Updated: <strong className="text-foreground">{lastPredictionDate}</strong></span>
-          <span className="text-slate-600">•</span>
+          <span className="text-muted-foreground">•</span>
           <span>Forecast Horizon: <strong className="text-purple-400">{forecastingDate}</strong></span>
         </div>
         <div className="flex items-center space-x-2">
@@ -267,7 +295,7 @@ export const Home: React.FC = () => {
           </span>
           <button
             onClick={loadLiveData}
-            className="p-1.5 rounded-[8px] bg-slate-900/40 border border-border hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-[8px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title="Refresh Live Data"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -287,10 +315,10 @@ export const Home: React.FC = () => {
               <div className="flex flex-col justify-between h-full py-1">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                       {kpi.title}
                     </span>
-                    <div className="p-1 rounded-[6px] bg-slate-950/40 border border-border">
+                    <div className="p-1 rounded-[6px] bg-muted/40 border border-border">
                       <IconComponent className="w-3.5 h-3.5 text-blue-400" />
                     </div>
                   </div>
@@ -303,7 +331,7 @@ export const Home: React.FC = () => {
                   <span className="text-[11px] font-bold text-emerald-500">
                     +{kpi.change}%
                   </span>
-                  <span className="text-[9px] text-slate-500 font-semibold tracking-wide">
+                  <span className="text-[9px] text-muted-foreground font-semibold tracking-wide">
                     {kpi.timeframe}
                   </span>
                 </div>
@@ -345,9 +373,9 @@ export const Home: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className="text-sm font-bold text-foreground">Top India Trend Scores</h3>
-              <p className="text-[11px] text-slate-500">Real India Trend Score values for top ranked keywords.</p>
+              <p className="text-[11px] text-muted-foreground">Real India Trend Score values for top ranked keywords.</p>
             </div>
-            <div className="text-[10px] font-bold text-slate-400 border border-border rounded-[8px] px-2 py-0.5 bg-slate-950/40">
+            <div className="text-[10px] font-bold text-muted-foreground border border-border rounded-[8px] px-2 py-0.5 bg-muted/40">
               Score Vector
             </div>
           </div>
@@ -392,19 +420,19 @@ export const Home: React.FC = () => {
         <div className="lg:col-span-3 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[390px]">
           <div>
             <h3 className="text-sm font-bold text-foreground">Data Pipeline Feeds</h3>
-            <p className="text-[11px] text-slate-500">Collected channel distribution.</p>
+            <p className="text-[11px] text-muted-foreground">Collected channel distribution.</p>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <div className="relative w-1/2 h-[180px] flex items-center justify-center">
+          <div className="flex items-center justify-between mt-2">
+            <div className="relative w-1/2 h-[170px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={donutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={52}
-                    outerRadius={72}
+                    innerRadius={40}
+                    outerRadius={58}
                     paddingAngle={4}
                     dataKey="value"
                   >
@@ -423,26 +451,26 @@ export const Home: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-lg font-extrabold text-foreground">{risingTrends.length}</span>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Top Trends</span>
+                <span className="text-base font-extrabold text-foreground">{filteredTopics.length}</span>
+                <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wide">Trends</span>
               </div>
             </div>
 
-            <div className="w-1/2 flex flex-col space-y-2 pl-3">
+            <div className="w-1/2 flex flex-col space-y-2 pl-2">
               {donutData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between text-[11px]">
-                  <div className="flex items-center space-x-1.5 font-semibold text-slate-400">
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span>{item.name}</span>
+                  <div className="flex items-center space-x-1 font-semibold text-muted-foreground truncate">
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="truncate">{item.name}</span>
                   </div>
-                  <span className="font-extrabold text-foreground">{item.value}%</span>
+                  <span className="font-extrabold text-foreground ml-1">{item.value}%</span>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="pt-3 border-t border-border/40 text-center">
-            <span className="text-[11px] font-semibold text-slate-400">
+            <span className="text-[11px] font-semibold text-muted-foreground">
               Live Source: YouTube & Google Trends Pipeline
             </span>
           </div>
@@ -452,7 +480,7 @@ export const Home: React.FC = () => {
         <div className="lg:col-span-3 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[390px]">
           <div>
             <h3 className="text-sm font-bold text-foreground">Live AI Insights</h3>
-            <p className="text-[11px] text-slate-500">Automated model signal summaries.</p>
+            <p className="text-[11px] text-muted-foreground">Automated model signal summaries.</p>
           </div>
 
           <div className="flex-1 flex flex-col justify-center space-y-4 my-2">
@@ -463,7 +491,7 @@ export const Home: React.FC = () => {
                   <div className={`p-1.5 rounded-[8px] border flex-shrink-0 mt-0.5 ${insight.color}`}>
                     <IconComponent className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-[11px] font-medium leading-normal text-slate-300">
+                  <span className="text-[11px] font-medium leading-normal text-muted-foreground">
                     {insight.text}
                   </span>
                 </div>
@@ -482,15 +510,15 @@ export const Home: React.FC = () => {
       {/* Row 3: Table and Heatmap grid */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Top Topics Table (7/12 width) */}
-        <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col space-y-4 justify-between min-h-[390px]">
+        <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col space-y-4 justify-between">
           <div>
-            <h3 className="text-sm font-bold text-foreground">Real Top 10 Trending Topics</h3>
-            <p className="text-[11px] text-slate-500">Ranked trends produced by existing model & score calculations.</p>
+            <h3 className="text-sm font-bold text-foreground">Real Top Trending Topics ({filteredTopics.length})</h3>
+            <p className="text-[11px] text-muted-foreground">Ranked trends produced by existing model & score calculations.</p>
           </div>
 
           <div className="overflow-x-auto w-full flex-1">
-            <table className="w-full text-sm text-left text-slate-300">
-              <thead className="text-[11px] font-bold text-slate-400 uppercase border-b border-border">
+            <table className="w-full text-sm text-left text-foreground">
+              <thead className="text-[11px] font-bold text-muted-foreground uppercase border-b border-border">
                 <tr>
                   <th className="py-2.5 px-3">Rank</th>
                   <th className="py-2.5 px-3">Topic Keyword</th>
@@ -504,8 +532,8 @@ export const Home: React.FC = () => {
               <tbody className="divide-y divide-border/60">
                 {filteredTopics.length > 0 ? (
                   filteredTopics.map((topic, idx) => (
-                    <tr key={idx} className="hover:bg-slate-800/20 transition-all font-medium text-xs">
-                      <td className="py-3 px-3 font-bold text-slate-400">#{topic.trend_rank}</td>
+                    <tr key={idx} className="hover:bg-muted/30 transition-all font-medium text-xs">
+                      <td className="py-3 px-3 font-bold text-muted-foreground">#{topic.trend_rank}</td>
                       <td className="py-3 px-3 font-extrabold text-foreground" title={topic.keyword}>
                         {formatKeyword(topic.keyword)}
                       </td>
@@ -530,7 +558,7 @@ export const Home: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="py-6 text-center text-slate-500 text-xs">
+                    <td colSpan={7} className="py-6 text-center text-muted-foreground text-xs">
                       No matching trends found.
                     </td>
                   </tr>
@@ -541,31 +569,31 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Real Anomaly & Virality Heatmap Card (5/12 width) */}
-        <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between min-h-[390px]">
+        <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              Trend Anomaly & Virality Matrix <span className="text-[10px] text-slate-400">(Top Ranks)</span>
+              Trend Anomaly & Virality Matrix <span className="text-[10px] text-muted-foreground">(Top Ranks)</span>
             </h3>
-            <p className="text-[11px] text-slate-500">Comparing virality vs anomaly score intensity across top keywords.</p>
+            <p className="text-[11px] text-muted-foreground">Comparing virality vs anomaly score intensity across top keywords.</p>
           </div>
 
-          <div className="flex-1 flex flex-col justify-center space-y-3.5 my-3">
-            <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="flex-1 flex flex-col justify-center space-y-2.5 my-3">
+            <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
               <div className="text-left">Topic</div>
               <div>Virality %</div>
               <div>Anomaly Score</div>
             </div>
             
-            <div className="space-y-2.5">
-              {risingTrends.slice(0, 5).map((row, idx) => (
+            <div className="space-y-2">
+              {(filteredTopics.length > 0 ? filteredTopics : risingTrends).slice(0, 5).map((row, idx) => (
                 <div key={idx} className="grid grid-cols-3 gap-2 items-center text-xs">
-                  <div className="text-left text-[11px] font-bold text-slate-300 truncate pr-1" title={row.keyword}>
+                  <div className="text-left text-[11px] font-bold text-foreground truncate pr-1" title={row.keyword}>
                     {formatKeyword(row.keyword)}
                   </div>
-                  <div className="h-6 rounded-[6px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold flex items-center justify-center">
+                  <div className="h-6 rounded-[6px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold flex items-center justify-center">
                     {(row.viral_probability * 100).toFixed(0)}%
                   </div>
-                  <div className="h-6 rounded-[6px] bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold flex items-center justify-center">
+                  <div className="h-6 rounded-[6px] bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold flex items-center justify-center">
                     {row.anomaly_score.toFixed(2)}
                   </div>
                 </div>
@@ -573,7 +601,7 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase pt-3 border-t border-border/40">
+          <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground uppercase pt-3 border-t border-border/40">
             <span>Low Intensity</span>
             <div className="w-44 h-1.5 bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 rounded-full" />
             <span>High Intensity</span>

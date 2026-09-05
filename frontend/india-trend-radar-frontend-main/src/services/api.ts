@@ -80,8 +80,13 @@ export const formatKeyword = (rawKeyword: string): string => {
 
 async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
   const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
     if (!res.ok) {
       if (res.status === 502) {
         throw new Error(
@@ -106,6 +111,12 @@ async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
 
     return (await res.json()) as T;
   } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error(
+        `${errorMessage}: Request timed out (5s). The backend server took too long to respond.`
+      );
+    }
     if (err instanceof TypeError && err.message.toLowerCase().includes("failed to fetch")) {
       throw new Error(
         `${errorMessage}: Network connection failed. Please ensure backend server is running.`
