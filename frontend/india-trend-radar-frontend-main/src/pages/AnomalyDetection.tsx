@@ -204,7 +204,7 @@ export const AnomalyDetection: React.FC = () => {
         </div>
         <button
           onClick={loadAnomalyData}
-          className="p-2 rounded-[10px] bg-slate-900 border border-border hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           title="Refresh Live Data"
         >
           <RefreshCw className="w-4 h-4" />
@@ -214,12 +214,12 @@ export const AnomalyDetection: React.FC = () => {
       {/* Stats Cards Row */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Detected */}
-        <div className="p-5 bg-gradient-to-br from-slate-900/40 to-slate-900/20 border border-slate-800 rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
+        <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full filter blur-xl group-hover:bg-blue-500/10 transition-colors" />
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Detected Anomalies</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Detected Anomalies</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-foreground">{kpis.detected}</h3>
-            <span className="text-[10px] text-slate-500 font-bold">in dataset</span>
+            <span className="text-[10px] text-muted-foreground font-bold">in dataset</span>
           </div>
         </div>
 
@@ -255,7 +255,7 @@ export const AnomalyDetection: React.FC = () => {
           <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Low Severity</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-blue-400">{kpis.low}</h3>
-            <span className="text-[10px] text-slate-500 font-bold">Low deviation</span>
+            <span className="text-[10px] text-muted-foreground font-bold">Low deviation</span>
           </div>
         </div>
       </motion.div>
@@ -270,7 +270,7 @@ export const AnomalyDetection: React.FC = () => {
               <Activity className="w-4 h-4 text-rose-500" />
               <span>Anomaly Score vs Z-Score Max Deviation</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Mapping real statistical Z-score deviation against model Anomaly Score.
             </p>
           </div>
@@ -319,19 +319,20 @@ export const AnomalyDetection: React.FC = () => {
               <Flame className="w-4 h-4 text-rose-500" />
               <span>Top Detected Anomalies Highlight</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Top anomaly records ranked by model anomaly score.
             </p>
-          </div>          <div className="flex-1 flex flex-col justify-center space-y-3.5 my-3">
+          </div>
+          <div className="flex-1 flex flex-col justify-center space-y-3.5 my-3">
             {filteredAnomalies.slice(0, 5).map((item, idx) => {
               const sev = item.anomaly_score >= 0.7 ? "Critical" : item.anomaly_score >= 0.4 ? "Medium" : "Low";
               return (
-                <div key={idx} className="p-3 bg-slate-900/60 border border-border rounded-[12px] flex items-center justify-between text-xs">
+                <div key={idx} className="p-3 bg-muted/30 border border-border rounded-[12px] flex items-center justify-between text-xs">
                   <div>
                     <span className="font-extrabold text-foreground block truncate max-w-[180px]" title={item.keyword}>
                       {formatKeyword(item.keyword)}
                     </span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-muted-foreground">
                       Rank #{item.trend_rank} • Z-Score: {item.z_score_max.toFixed(1)}
                     </span>
                   </div>

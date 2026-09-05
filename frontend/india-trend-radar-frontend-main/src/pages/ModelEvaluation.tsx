@@ -211,7 +211,7 @@ export const ModelEvaluation: React.FC = () => {
         </div>
         <button
           onClick={loadEvaluationData}
-          className="p-2 rounded-[10px] bg-slate-900 border border-border hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           title="Refresh Live Data"
         >
           <RefreshCw className="w-4 h-4" />

@@ -211,7 +211,7 @@ export const IndiaTrendScore: React.FC = () => {
         </div>
         <button
           onClick={loadTrendScoreData}
-          className="p-2 rounded-[10px] bg-slate-900 border border-border hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           title="Refresh Live Data"
         >
           <RefreshCw className="w-4 h-4" />
@@ -235,7 +235,7 @@ export const IndiaTrendScore: React.FC = () => {
                 Score: {activeTopic?.india_trend_score.toFixed(2)}
               </div>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Multi-parameter dimensional inspection for the selected trend.
             </p>
           </div>
@@ -270,7 +270,7 @@ export const IndiaTrendScore: React.FC = () => {
         <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[400px]">
           <div>
             <h3 className="text-sm font-bold text-foreground">Trend Score Distribution</h3>
-            <p className="text-xs text-slate-500">Frequency distribution of India Trend Scores in top rankings.</p>
+            <p className="text-xs text-muted-foreground">Frequency distribution of India Trend Scores in top rankings.</p>
           </div>
           <div className="flex-1 w-full h-[260px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -298,11 +298,11 @@ export const IndiaTrendScore: React.FC = () => {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-foreground">Active Leaderboard ({filteredTrends.length})</h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Click on any row to inspect its dimensional radar vector above.
             </p>
           </div>
-          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-[10px] bg-slate-950 border border-border text-xs font-semibold text-slate-400">
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-[10px] bg-muted/40 border border-border text-xs font-semibold text-muted-foreground">
             <Compass className="w-4 h-4 text-amber-500" />
             <span>Click rows to analyze dimensions</span>
           </div>
