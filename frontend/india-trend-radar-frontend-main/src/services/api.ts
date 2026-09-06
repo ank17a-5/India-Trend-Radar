@@ -125,10 +125,21 @@ async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
     throw err;
   }
 }
+export async function fetchRisingTrends(
+  dateRange: string = "7d",
+  source: string = "all"
+): Promise<RisingTrend[]> {
+  const queryParams = new URLSearchParams({
+    date_range: dateRange,
+    source: source,
+  }).toString();
 
-export async function fetchRisingTrends(): Promise<RisingTrend[]> {
-  return apiFetch<RisingTrend[]>("/trends/rising", "Failed to fetch rising trends");
+  return apiFetch<RisingTrend[]>(
+    `/trends/rising?${queryParams}`,
+    "Failed to fetch rising trends"
+  );
 }
+
 
 export async function fetchTopNiches(): Promise<TopNiche[]> {
   return apiFetch<TopNiche[]>("/niches/top", "Failed to fetch top niches");

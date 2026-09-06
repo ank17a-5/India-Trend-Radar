@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   AreaChart,
@@ -51,30 +51,54 @@ export const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadLiveData = async () => {
+  // Helper functions to map filter options to API parameters
+  const getDateRangeParam = (filter: string) => {
+    switch (filter) {
+      case "Today":
+        return "today";
+      case "Last 7 Days":
+        return "7d";
+      case "Last 15 Days":
+        return "15d";
+      case "Last 30 Days":
+        return "30d";
+      default:
+        return "7d";
+    }
+  };
+
+  const getSourceParam = (filter: string) => {
+    if (filter === "All") return "all";
+    return filter.toLowerCase().replace(/[^a-z0-9]/g, "");
+  };
+
+  const loadLiveData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
+      const dateRangeParam = getDateRangeParam(dateFilter);
+      const sourceParam = getSourceParam(sourceFilter);
+
       const [trends, anomalies, evaluation] = await Promise.all([
-        fetchRisingTrends(),
+        fetchRisingTrends(dateRangeParam, sourceParam),
         fetchAnomalies(10),
         fetchEvaluation(),
       ]);
-      setRisingTrends(trends);
-      setAnomalyData(anomalies);
-      setEvalMetrics(evaluation.metrics || []);
+      setRisingTrends(trends || []);
+      setAnomalyData(anomalies || { count: 0, anomalies: [] });
+      setEvalMetrics(evaluation?.metrics || []);
     } catch (err: any) {
       setError(err.message || "Unable to load live data. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateFilter, sourceFilter]);
 
   useEffect(() => {
     loadLiveData();
-  }, []);
+  }, [loadLiveData]);
 
-  // Helper function for source filtering matching existing categories
+  // Helper function for source category matching (fallback client-side match)
   const matchesSource = (keyword: string, source: string) => {
     if (source === "All") return true;
     const kw = keyword.toLowerCase();
@@ -97,19 +121,16 @@ export const Home: React.FC = () => {
     return true;
   };
 
-  // Filter topics list by search query, date filter threshold and source filter
-  const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
-  const filteredTopics = risingTrends
-    .filter((topic) => {
-      const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch && matchesSource(topic.keyword, sourceFilter);
-    })
-    .slice(0, limit);
+  // Client-side search & category filtering
+  const filteredTopics = risingTrends.filter((topic) => {
+    const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch && matchesSource(topic.keyword, sourceFilter);
+  });
 
-  // Derive dynamic metrics from real API output and active filters
+  // Dynamic metrics calculation
   const totalMonitoredTrends = dateFilter === "Today" ? 772 : dateFilter === "Last 7 Days" ? 2840 : dateFilter === "Last 15 Days" ? 4200 : 5409;
   const viralTrendsCount = filteredTopics.filter((t) => t.predicted_viral === 1).length;
-  const activeAnomaliesCount = filteredTopics.filter((t) => t.is_anomaly === 1).length || (anomalyData.anomalies || []).slice(0, limit).length;
+  const activeAnomaliesCount = filteredTopics.filter((t) => t.is_anomaly === 1).length || (anomalyData.anomalies || []).length;
 
   const viralityAccuracyMetric = evalMetrics.find(
     (m) => m.section === "Virality Model" && m.metric === "Accuracy"
@@ -122,17 +143,17 @@ export const Home: React.FC = () => {
   const forecastingDate = filteredTopics[0]?.forecasting_date || risingTrends[0]?.forecasting_date || "2026-09-12";
 
   // Recharts data prepared from filtered topics
-  const trendVolumeChartData = (filteredTopics.length > 0 ? filteredTopics : risingTrends.slice(0, 7)).map((t) => ({
+  const trendVolumeChartData = (filteredTopics.length > 0 ? filteredTopics : risingTrends).slice(0, 7).map((t) => ({
     name: `Rank #${t.trend_rank}`,
     keyword: formatKeyword(t.keyword).slice(0, 15) + "...",
-    score: parseFloat(t.india_trend_score.toFixed(2)),
-    viralProb: parseFloat((t.viral_probability * 100).toFixed(1)),
+    score: parseFloat((t.india_trend_score || 0).toFixed(2)),
+    viralProb: parseFloat(((t.viral_probability || 0) * 100).toFixed(1)),
   }));
 
-  // Sparkline points generated from filtered topics data range
-  const sparklineTotal = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.india_trend_score * 10 }));
-  const sparklineToday = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.viral_probability * 100 }));
-  const sparklineAnomalies = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: t.anomaly_score * 100 }));
+  // Sparkline points
+  const sparklineTotal = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: (t.india_trend_score || 0) * 10 }));
+  const sparklineToday = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: (t.viral_probability || 0) * 100 }));
+  const sparklineAnomalies = (filteredTopics.length > 0 ? filteredTopics : risingTrends).map((t) => ({ value: (t.anomaly_score || 0) * 100 }));
   const sparklineAccuracy = [80.1, 80.4, 80.2, 80.6, 80.5, 80.6, 80.6].map((v) => ({ value: v }));
 
   const customKPIData = [
@@ -192,7 +213,7 @@ export const Home: React.FC = () => {
     { name: "Social Signals", value: Math.round((redditCount / totalCountForDonut) * 100) || 8, color: "#8B5CF6" },
   ];
 
-  // Generate dynamic AI Insights from active filtered topics
+  // Dynamic AI Insights from active filtered topics
   const topTrend = filteredTopics[0] || risingTrends[0];
   const topAnomaly = filteredTopics.find((t) => t.is_anomaly === 1) || anomalyData.anomalies[0] || risingTrends.find((t) => t.is_anomaly === 1);
 
@@ -200,7 +221,7 @@ export const Home: React.FC = () => {
     {
       id: 1,
       text: topTrend
-        ? `🔥 '${formatKeyword(topTrend.keyword)}' leads with an India Trend Score of ${topTrend.india_trend_score.toFixed(2)}.`
+        ? `🔥 '${formatKeyword(topTrend.keyword)}' leads with an India Trend Score of ${(topTrend.india_trend_score || 0).toFixed(2)}.`
         : "🔥 Analyzing live trend scores...",
       icon: Flame,
       color: "text-orange-500 bg-orange-500/10 border-orange-500/20",
@@ -208,7 +229,7 @@ export const Home: React.FC = () => {
     {
       id: 2,
       text: topAnomaly
-        ? `🚨 Anomaly signal detected for '${formatKeyword(topAnomaly.keyword)}' (Score: ${topAnomaly.anomaly_score.toFixed(2)}).`
+        ? `🚨 Anomaly signal detected for '${formatKeyword(topAnomaly.keyword)}' (Score: ${(topAnomaly.anomaly_score || 0).toFixed(2)}).`
         : "🚨 Monitoring real-time anomaly scores...",
       icon: AlertTriangle,
       color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
@@ -366,7 +387,7 @@ export const Home: React.FC = () => {
         })}
       </motion.div>
 
-      {/* Row 2: 3-column premium layout */}
+      {/* Row 2: 3-column layout */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Trend Area Chart (6/12 width) */}
         <div className="lg:col-span-6 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[390px]">
@@ -476,7 +497,7 @@ export const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Today's AI Insights (3/12 width) */}
+        {/* Live AI Insights (3/12 width) */}
         <div className="lg:col-span-3 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[390px]">
           <div>
             <h3 className="text-sm font-bold text-foreground">Live AI Insights</h3>
@@ -516,9 +537,9 @@ export const Home: React.FC = () => {
             <p className="text-[11px] text-muted-foreground">Ranked trends produced by existing model & score calculations.</p>
           </div>
 
-          <div className="overflow-x-auto w-full flex-1">
+          <div className="overflow-x-auto w-full flex-1 max-h-[360px]">
             <table className="w-full text-sm text-left text-foreground">
-              <thead className="text-[11px] font-bold text-muted-foreground uppercase border-b border-border">
+              <thead className="text-[11px] font-bold text-muted-foreground uppercase border-b border-border sticky top-0 bg-card z-10">
                 <tr>
                   <th className="py-2.5 px-3">Rank</th>
                   <th className="py-2.5 px-3">Topic Keyword</th>
@@ -537,10 +558,10 @@ export const Home: React.FC = () => {
                       <td className="py-3 px-3 font-extrabold text-foreground" title={topic.keyword}>
                         {formatKeyword(topic.keyword)}
                       </td>
-                      <td className="py-3 px-3 font-bold text-amber-400">{topic.india_trend_score.toFixed(2)}</td>
-                      <td className="py-3 px-3 font-bold text-emerald-400">{(topic.viral_probability * 100).toFixed(1)}%</td>
-                      <td className="py-3 px-3 font-bold text-rose-400">{topic.anomaly_score.toFixed(2)}</td>
-                      <td className="py-3 px-3 font-semibold text-purple-400">{topic.forecast_score.toFixed(3)}</td>
+                      <td className="py-3 px-3 font-bold text-amber-400">{(topic.india_trend_score || 0).toFixed(2)}</td>
+                      <td className="py-3 px-3 font-bold text-emerald-400">{((topic.viral_probability || 0) * 100).toFixed(1)}%</td>
+                      <td className="py-3 px-3 font-bold text-rose-400">{(topic.anomaly_score || 0).toFixed(2)}</td>
+                      <td className="py-3 px-3 font-semibold text-purple-400">{(topic.forecast_score || 0).toFixed(3)}</td>
                       <td className="py-3 px-3">
                         <span
                           className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${
@@ -591,10 +612,10 @@ export const Home: React.FC = () => {
                     {formatKeyword(row.keyword)}
                   </div>
                   <div className="h-6 rounded-[6px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold flex items-center justify-center">
-                    {(row.viral_probability * 100).toFixed(0)}%
+                    {((row.viral_probability || 0) * 100).toFixed(0)}%
                   </div>
                   <div className="h-6 rounded-[6px] bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold flex items-center justify-center">
-                    {row.anomaly_score.toFixed(2)}
+                    {(row.anomaly_score || 0).toFixed(2)}
                   </div>
                 </div>
               ))}

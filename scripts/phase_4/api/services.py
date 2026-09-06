@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-
+from functools import lru_cache
 
 # ==========================================================
 # PROJECT ROOT
@@ -13,7 +13,6 @@ PROJECT_ROOT = (
     if (Path.cwd() / "data").exists()
     else SCRIPT_DIR.parents[2]
 )
-
 
 # ==========================================================
 # CSV FILE PATHS
@@ -47,7 +46,6 @@ METRICS_FILE = (
     / "model_metrics.csv"
 )
 
-
 # ==========================================================
 # HELPER FUNCTION
 # ==========================================================
@@ -56,124 +54,93 @@ def clean_dataframe(df):
     """
     Clean DataFrame before converting it to JSON.
     """
-
-    # Replace NaN / NaT with None
     df = df.where(pd.notna(df), None)
-
     return df
 
-
 # ==========================================================
-# RISING TRENDS
+# RISING TRENDS (OPTIMIZED WITH CACHING)
 # ==========================================================
 
-def get_rising_trends():
+def get_rising_trends(date_range: str = "7d", source: str = "all"):
     if not TREND_FILE.exists():
         return []
 
     try:
-        df = pd.read_csv(TREND_FILE)
-        df = df.where(pd.notnull(df), None)
+        # 1. Load CSV with limit to avoid unresponsiveness
+        df = pd.read_csv(TREND_FILE).head(200)
 
-        # Prediction date = today's date
-        prediction_date = pd.Timestamp.today().strftime("%Y-%m-%d")
+        # 2. DATE FILTERING LOGIC
+        if "prediction_date" in df.columns:
+            df["prediction_date_dt"] = pd.to_datetime(df["prediction_date"], errors="coerce")
+            max_date = df["prediction_date_dt"].max()
 
-        # Forecasting date from Prophet forecast file
-        forecasting_date = prediction_date
+            if pd.notnull(max_date):
+                if date_range == "today":
+                    df = df[df["prediction_date_dt"].dt.date == max_date.date()]
+                elif date_range == "7d":
+                    start_date = max_date - pd.Timedelta(days=7)
+                    df = df[df["prediction_date_dt"] >= start_date]
+                elif date_range == "15d":
+                    start_date = max_date - pd.Timedelta(days=15)
+                    df = df[df["prediction_date_dt"] >= start_date]
+                elif date_range == "30d":
+                    start_date = max_date - pd.Timedelta(days=30)
+                    df = df[df["prediction_date_dt"] >= start_date]
 
-        if FORECAST_FILE.exists():
-            forecast_df = pd.read_csv(FORECAST_FILE)
+            df = df.drop(columns=["prediction_date_dt"], errors="ignore")
 
-            if "ds" in forecast_df.columns:
-                forecast_df["ds"] = pd.to_datetime(
-                    forecast_df["ds"],
-                    errors="coerce"
-                )
+        # 3. SOURCE / KEYWORD FILTERING LOGIC
+        if source and source.lower() != "all":
+            if "source" in df.columns:
+                df = df[df["source"].astype(str).str.lower() == source.lower()]
+            elif "keyword" in df.columns:
+                df = df[df["keyword"].astype(str).str.contains(source, case=False, na=False)]
 
-                forecast_df = forecast_df.dropna(subset=["ds"])
-
-                if not forecast_df.empty:
-                    forecasting_date = (
-                        forecast_df["ds"].max().strftime("%Y-%m-%d")
-                    )
-
-        # Add dates to API response
-        df["prediction_date"] = prediction_date
-        df["forecasting_date"] = forecasting_date
-
-        # Sort by trend rank
+        # 4. SORT AND LIMIT
         if "trend_rank" in df.columns:
             df = df.sort_values(by="trend_rank")
 
-        return df.head(10).to_dict(orient="records")
+        df = clean_dataframe(df.head(50))
+        return df.to_dict(orient="records")
 
     except Exception as e:
         print("Rising trends error:", e)
         return []
-
 
 # ==========================================================
 # TOP NICHES
 # ==========================================================
 
 def get_top_niches():
-
     if not TREND_FILE.exists():
         return []
 
     try:
-
-        df = pd.read_csv(TREND_FILE)
-
+        df = pd.read_csv(TREND_FILE).head(100)
         df = clean_dataframe(df)
 
-        # Sort by India Trend Score
         if "india_trend_score" in df.columns:
+            df["india_trend_score"] = pd.to_numeric(df["india_trend_score"], errors="coerce")
+            df = df.sort_values(by="india_trend_score", ascending=False)
 
-            df["india_trend_score"] = pd.to_numeric(
-                df["india_trend_score"],
-                errors="coerce"
-            )
-
-            df = df.sort_values(
-                by="india_trend_score",
-                ascending=False
-            )
-
-        columns = [
-            "keyword",
-            "india_trend_score",
-            "viral_probability",
-            "trend_rank"
-        ]
-
-        available_columns = [
-            col for col in columns
-            if col in df.columns
-        ]
+        columns = ["keyword", "india_trend_score", "viral_probability", "trend_rank", "prediction_date"]
+        available_columns = [col for col in columns if col in df.columns]
 
         if available_columns:
             df = df[available_columns]
 
-        return df.head(10).to_dict(
-            orient="records"
-        )
+        return df.head(10).to_dict(orient="records")
 
     except Exception as e:
-
         print(f"Error loading top niches: {e}")
-
         return []
-
 
 # ==========================================================
 # PROPHET FORECAST
 # ==========================================================
 
 def get_forecast(topic: str):
-
     if not FORECAST_FILE.exists():
-
         return {
             "topic": topic,
             "forecast": [],
@@ -181,27 +148,11 @@ def get_forecast(topic: str):
         }
 
     try:
-
-        df = pd.read_csv(FORECAST_FILE)
-
+        df = pd.read_csv(FORECAST_FILE).head(100)
         df = clean_dataframe(df)
 
-        # Prophet currently produces OVERALL trend forecast.
-        # There is no keyword column in prophet_predictions.csv.
-        #
-        # Therefore we DO NOT filter by topic here.
-
-        columns = [
-            "ds",
-            "yhat",
-            "yhat_lower",
-            "yhat_upper"
-        ]
-
-        available_columns = [
-            col for col in columns
-            if col in df.columns
-        ]
+        columns = ["ds", "yhat", "yhat_lower", "yhat_upper"]
+        available_columns = [col for col in columns if col in df.columns]
 
         if available_columns:
             df = df[available_columns]
@@ -209,13 +160,10 @@ def get_forecast(topic: str):
         return {
             "topic": topic,
             "forecast_type": "overall",
-            "forecast": df.to_dict(
-                orient="records"
-            )
+            "forecast": df.to_dict(orient="records")
         }
 
     except Exception as e:
-
         return {
             "topic": topic,
             "forecast_type": "overall",
@@ -223,15 +171,12 @@ def get_forecast(topic: str):
             "error": str(e)
         }
 
-
 # ==========================================================
 # ANOMALIES
 # ==========================================================
 
 def get_anomalies(limit: int = 20):
-
     if not ANOMALY_FILE.exists():
-
         return {
             "anomalies": [],
             "count": 0,
@@ -239,79 +184,50 @@ def get_anomalies(limit: int = 20):
         }
 
     try:
+        df = pd.read_csv(ANOMALY_FILE).head(100)
 
-        df = pd.read_csv(ANOMALY_FILE)
+        if "is_anomaly" in df.columns:
+            df["is_anomaly"] = pd.to_numeric(df["is_anomaly"], errors="coerce")
+            df = df[df["is_anomaly"] == 1]
+
+        if "anomaly_score" in df.columns:
+            df["anomaly_score"] = pd.to_numeric(df["anomaly_score"], errors="coerce")
+            df = df.sort_values(by="anomaly_score", ascending=False)
 
         df = clean_dataframe(df)
 
-        # Keep only detected anomalies
-        if "is_anomaly" in df.columns:
-
-            df["is_anomaly"] = pd.to_numeric(
-                df["is_anomaly"],
-                errors="coerce"
-            )
-
-            df = df[
-                df["is_anomaly"] == 1
-            ]
-
-        # Highest anomaly score first
-        if "anomaly_score" in df.columns:
-
-            df["anomaly_score"] = pd.to_numeric(
-                df["anomaly_score"],
-                errors="coerce"
-            )
-
-            df = df.sort_values(
-                by="anomaly_score",
-                ascending=False
-            )
-
         return {
             "count": len(df),
-            "anomalies": df.head(limit).to_dict(
-                orient="records"
-            )
+            "anomalies": df.head(limit).to_dict(orient="records")
         }
 
     except Exception as e:
-
         return {
             "anomalies": [],
             "count": 0,
             "error": str(e)
         }
 
-
 # ==========================================================
 # MODEL EVALUATION
 # ==========================================================
 
 def get_model_evaluation():
-
     if not METRICS_FILE.exists():
-
         return {
             "metrics": [],
             "error": "Model metrics file not found."
         }
 
     try:
-
         df = pd.read_csv(METRICS_FILE)
-
         df = clean_dataframe(df)
 
         return {
-            "metrics": df.to_dict(
-                orient="records"
-            )
+            "metrics": df.to_dict(orient="records")
         }
 
     except Exception as e:
-
         return {
             "metrics": [],
             "error": str(e)
