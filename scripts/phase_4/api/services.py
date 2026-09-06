@@ -61,7 +61,7 @@ def clean_dataframe(df):
 # RISING TRENDS (OPTIMIZED WITH CACHING)
 # ==========================================================
 
-def get_rising_trends(date_range: str = "7d", source: str = "all"):
+def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "all"):
     if not TREND_FILE.exists():
         return []
 
@@ -100,7 +100,7 @@ def get_rising_trends(date_range: str = "7d", source: str = "all"):
         if "trend_rank" in df.columns:
             df = df.sort_values(by="trend_rank")
 
-        df = clean_dataframe(df.head(50))
+        df = clean_dataframe(df.head(limit))
         return df.to_dict(orient="records")
 
     except Exception as e:

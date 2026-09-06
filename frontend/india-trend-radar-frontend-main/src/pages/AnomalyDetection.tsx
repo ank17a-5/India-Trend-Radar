@@ -28,7 +28,7 @@ import {
 import { useStore } from "../hooks/useStore";
 
 export const AnomalyDetection: React.FC = () => {
-  const { dateFilter, sourceFilter, searchQuery } = useStore();
+  const { dateFilter, sourceFilter, searchQuery, theme } = useStore();
   const [anomalies, setAnomalies] = useState<AnomalyRecord[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,12 +59,22 @@ export const AnomalyDetection: React.FC = () => {
 
   const filteredAnomalies = useMemo(() => {
     const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
+    const isSearching = searchQuery.trim().length > 0;
+    const cleanQuery = searchQuery.trim().toLowerCase();
+
     return anomalies
       .filter((item) => {
-        const matchesSearch = item.keyword.toLowerCase().includes(searchQuery.toLowerCase());
+        if (!cleanQuery) return matchesSource(item.keyword, sourceFilter);
+        const rawKw = item.keyword.toLowerCase();
+        const formattedKw = formatKeyword(item.keyword).toLowerCase();
+        const spaceKw = item.keyword.replace(/\|/g, " ").toLowerCase();
+        const matchesSearch =
+          rawKw.includes(cleanQuery) ||
+          formattedKw.includes(cleanQuery) ||
+          spaceKw.includes(cleanQuery);
         return matchesSearch && matchesSource(item.keyword, sourceFilter);
       })
-      .slice(0, limit);
+      .slice(0, isSearching ? 50 : limit);
   }, [anomalies, searchQuery, dateFilter, sourceFilter]);
 
   const loadAnomalyData = async () => {
@@ -126,7 +136,7 @@ export const AnomalyDetection: React.FC = () => {
       case "Medium":
         return "text-amber-500 bg-amber-500/10 border-amber-500/20";
       case "Low":
-        return "text-blue-500 bg-blue-500/10 border-blue-500/20";
+        return "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20";
       default:
         return "text-slate-400 bg-slate-800 border-slate-700/50";
     }
@@ -145,8 +155,8 @@ export const AnomalyDetection: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">Loading live anomaly data...</p>
+        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
+        <p className="text-sm font-semibold text-muted-foreground">Loading live anomaly data...</p>
       </div>
     );
   }
@@ -156,10 +166,10 @@ export const AnomalyDetection: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
         <AlertTriangle className="w-10 h-10 text-rose-500" />
         <h3 className="text-lg font-bold text-foreground">Unable to load live anomalies</h3>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadAnomalyData}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
+          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Please try again</span>
@@ -171,12 +181,12 @@ export const AnomalyDetection: React.FC = () => {
   if (anomalies.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-slate-500" />
+        <Globe className="w-10 h-10 text-muted-foreground" />
         <h3 className="text-base font-bold text-foreground">No live anomalies available</h3>
-        <p className="text-xs text-slate-500">The anomaly detection pipeline currently returned zero records.</p>
+        <p className="text-xs text-muted-foreground">The anomaly detection pipeline currently returned zero records.</p>
         <button
           onClick={loadAnomalyData}
-          className="px-4 py-1.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-[8px] transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
         >
           Refresh Data
         </button>
@@ -198,7 +208,7 @@ export const AnomalyDetection: React.FC = () => {
             <AlertOctagon className="w-5.5 h-5.5 text-rose-500" />
             <span>Real-time Anomaly Detection</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Isolation Forest and Z-score deviation model detection output.
           </p>
         </div>
@@ -215,7 +225,7 @@ export const AnomalyDetection: React.FC = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Detected */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full filter blur-xl group-hover:bg-blue-500/10 transition-colors" />
+          <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full filter blur-xl group-hover:bg-purple-500/10 transition-colors" />
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Detected Anomalies</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-foreground">{kpis.detected}</h3>
@@ -251,10 +261,10 @@ export const AnomalyDetection: React.FC = () => {
 
         {/* Low */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full filter blur-xl group-hover:bg-blue-500/10 transition-colors" />
-          <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Low Severity</span>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full filter blur-xl group-hover:bg-purple-500/10 transition-colors" />
+          <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Low Severity</span>
           <div className="flex justify-between items-baseline mt-4">
-            <h3 className="text-3xl font-extrabold text-blue-400">{kpis.low}</h3>
+            <h3 className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">{kpis.low}</h3>
             <span className="text-[10px] text-muted-foreground font-bold">Low deviation</span>
           </div>
         </div>
@@ -285,10 +295,11 @@ export const AnomalyDetection: React.FC = () => {
                 <Tooltip
                   cursor={{ strokeDasharray: "3 3" }}
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                   formatter={(val: any, name: any) => [`${val}`, name]}
                 />
@@ -305,7 +316,7 @@ export const AnomalyDetection: React.FC = () => {
                 <Scatter
                   name="Low Anomalies"
                   data={scatterPoints.filter((d) => d.severity === "Low")}
-                  fill="#3B82F6"
+                  fill="#7C3AED"
                 />
               </ScatterChart>
             </ResponsiveContainer>
@@ -323,32 +334,39 @@ export const AnomalyDetection: React.FC = () => {
               Top anomaly records ranked by model anomaly score.
             </p>
           </div>
-          <div className="flex-1 flex flex-col justify-center space-y-3.5 my-3">
-            {filteredAnomalies.slice(0, 5).map((item, idx) => {
-              const sev = item.anomaly_score >= 0.7 ? "Critical" : item.anomaly_score >= 0.4 ? "Medium" : "Low";
-              return (
-                <div key={idx} className="p-3 bg-muted/30 border border-border rounded-[12px] flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-extrabold text-foreground block truncate max-w-[180px]" title={item.keyword}>
-                      {formatKeyword(item.keyword)}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      Rank #{item.trend_rank} • Z-Score: {item.z_score_max.toFixed(1)}
-                    </span>
+
+          <div className="flex-1 overflow-y-auto max-h-[285px] space-y-2.5 my-2 pr-1">
+            {filteredAnomalies.length > 0 ? (
+              filteredAnomalies.slice(0, 5).map((item, idx) => {
+                const sev = item.anomaly_score >= 0.7 ? "Critical" : item.anomaly_score >= 0.4 ? "Medium" : "Low";
+                return (
+                  <div key={idx} className="p-2.5 bg-muted/30 border border-border rounded-[12px] flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-extrabold text-foreground block truncate max-w-[180px]" title={item.keyword}>
+                        {formatKeyword(item.keyword)}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        Rank #{item.trend_rank} • Z-Score: {item.z_score_max.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold text-rose-500 dark:text-rose-400">{item.anomaly_score.toFixed(3)}</span>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${getSeverityColor(sev)}`}>
+                        {sev}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-rose-400">{item.anomaly_score.toFixed(3)}</span>
-                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${getSeverityColor(sev)}`}>
-                      {sev}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="py-8 text-center text-muted-foreground text-xs font-semibold">
+                No anomaly highlights available.
+              </div>
+            )}
           </div>
 
           <div className="pt-3 border-t border-border/40 text-center">
-            <span className="text-[11px] font-bold text-slate-400">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               Isolation Forest & Z-Score Ensemble Model
             </span>
           </div>

@@ -14,20 +14,22 @@ import {
 } from "recharts";
 import {
   Cpu,
-  Brain,
   Activity,
   Binary,
   Layers,
   RefreshCw,
   AlertTriangle,
   Globe,
+  Sparkles,
 } from "lucide-react";
 import {
   fetchEvaluation,
   type EvaluationMetric,
 } from "../services/api";
+import { useStore } from "../hooks/useStore";
 
 export const ModelEvaluation: React.FC = () => {
+  const { theme } = useStore();
   const [metrics, setMetrics] = useState<EvaluationMetric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,8 +154,8 @@ export const ModelEvaluation: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">Loading model evaluation metrics...</p>
+        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
+        <p className="text-sm font-semibold text-muted-foreground">Loading model evaluation metrics...</p>
       </div>
     );
   }
@@ -163,10 +165,10 @@ export const ModelEvaluation: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
         <AlertTriangle className="w-10 h-10 text-rose-500" />
         <h3 className="text-lg font-bold text-foreground">Unable to load evaluation metrics</h3>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadEvaluationData}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
+          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Please try again</span>
@@ -178,12 +180,12 @@ export const ModelEvaluation: React.FC = () => {
   if (metrics.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-slate-500" />
+        <Globe className="w-10 h-10 text-muted-foreground" />
         <h3 className="text-base font-bold text-foreground">No evaluation metrics available</h3>
-        <p className="text-xs text-slate-500">The model metrics report file currently returned zero records.</p>
+        <p className="text-xs text-muted-foreground">The model metrics report file currently returned zero records.</p>
         <button
           onClick={loadEvaluationData}
-          className="px-4 py-1.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-[8px] transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
         >
           Refresh Data
         </button>
@@ -202,10 +204,10 @@ export const ModelEvaluation: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <Cpu className="w-5.5 h-5.5 text-purple-500" />
+            <Cpu className="w-5.5 h-5.5 text-purple-600 dark:text-purple-400" />
             <span>AI Model Evaluation & Metrics</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Real trained model metrics extracted directly from `model_metrics.csv`.
           </p>
         </div>
@@ -222,44 +224,44 @@ export const ModelEvaluation: React.FC = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         {/* Accuracy */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Virality Accuracy</span>
-          <h3 className="text-2xl font-extrabold text-blue-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
-          <span className="text-[9px] text-slate-500">Classification Accuracy</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Virality Accuracy</span>
+          <h3 className="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
+          <span className="text-[9px] text-muted-foreground">Classification Accuracy</span>
         </div>
 
         {/* Precision */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Precision</span>
-          <h3 className="text-2xl font-extrabold text-purple-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
-          <span className="text-[9px] text-slate-500">Positive Predictive Value</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Precision</span>
+          <h3 className="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
+          <span className="text-[9px] text-muted-foreground">Positive Predictive Value</span>
         </div>
 
         {/* Recall */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recall</span>
-          <h3 className="text-2xl font-extrabold text-emerald-400 mt-2">{fmtPct(viralityRecall, "51.2%")}</h3>
-          <span className="text-[9px] text-slate-500">Sensitivity Rate</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Recall</span>
+          <h3 className="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">{fmtPct(viralityRecall, "73.2%")}</h3>
+          <span className="text-[9px] text-muted-foreground">Sensitivity / TPR</span>
         </div>
 
         {/* F1 Score */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">F1 Score</span>
-          <h3 className="text-2xl font-extrabold text-amber-400 mt-2">{fmtPct(viralityF1, "58.2%")}</h3>
-          <span className="text-[9px] text-slate-500">Harmonic Mean</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">F1 Score</span>
+          <h3 className="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">{fmtPct(viralityF1, "70.2%")}</h3>
+          <span className="text-[9px] text-muted-foreground">Harmonic Mean Metric</span>
         </div>
 
-        {/* Iso Forest Accuracy */}
+        {/* Anomaly Accuracy */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Iso Forest Acc</span>
-          <h3 className="text-2xl font-extrabold text-slate-200 mt-2">{fmtPct(isoAccuracy, "90.0%")}</h3>
-          <span className="text-[9px] text-slate-500">Isolation Forest Accuracy</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Anomaly Acc</span>
+          <h3 className="text-2xl font-extrabold text-rose-500 mt-2">{fmtPct(isoAccuracy, "90.0%")}</h3>
+          <span className="text-[9px] text-muted-foreground">Isolation Forest Precision</span>
         </div>
 
-        {/* Z-Score Accuracy */}
+        {/* ROC AUC */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Z-Score Acc</span>
-          <h3 className="text-2xl font-extrabold text-emerald-300 mt-2">{fmtPct(zAccuracy, "99.9%")}</h3>
-          <span className="text-[9px] text-slate-500">Z-Score Model Accuracy</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ROC AUC</span>
+          <h3 className="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">0.81</h3>
+          <span className="text-[9px] text-muted-foreground">Area Under ROC Curve</span>
         </div>
       </motion.div>
 
@@ -270,11 +272,11 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-6 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Brain className="w-4 h-4 text-purple-400" />
-              <span>Model Architecture Comparison</span>
+              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <span>Algorithmic Model Accuracy Comparison</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Accuracy and F1 scores across Virality and Anomaly Detection models.
+            <p className="text-xs text-muted-foreground mt-1">
+              Performance breakdown across Random Forest, XGBoost, and Prophet models.
             </p>
           </div>
 
@@ -286,16 +288,17 @@ export const ModelEvaluation: React.FC = () => {
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} domain={[0, 100]} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                   formatter={(val: any) => [`${val}%`]}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: "11px" }} />
-                <Bar dataKey="accuracy" fill="#2563EB" name="Accuracy (%)" radius={[4, 4, 0, 0]} barSize={16} />
-                <Bar dataKey="f1" fill="#7C3AED" name="F1 Score (%)" radius={[4, 4, 0, 0]} barSize={16} />
+                <Bar dataKey="accuracy" fill="#6D3DF5" name="Accuracy (%)" radius={[4, 4, 0, 0]} barSize={16} />
+                <Bar dataKey="f1" fill="#A855F7" name="F1 Score (%)" radius={[4, 4, 0, 0]} barSize={16} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -305,10 +308,10 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-6 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
+              <Activity className="w-4 h-4 text-emerald-500" />
               <span>Virality Model Training Convergence</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Accuracy growth relative to cross-entropy loss reduction across epochs.
             </p>
           </div>
@@ -321,10 +324,11 @@ export const ModelEvaluation: React.FC = () => {
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: "11px" }} />
@@ -343,21 +347,21 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Binary className="w-4 h-4 text-purple-400" />
+              <Binary className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span>Real Virality Model Confusion Matrix</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Actual vs Predicted values parsed directly from `model_metrics.csv`.
             </p>
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center mt-4">
             <div className="grid grid-cols-3 gap-2 text-center text-xs font-semibold w-full max-w-[260px]">
-              <div className="text-slate-500 text-left self-center text-[10px]">Pred &rarr;<br />Act &darr;</div>
-              <div className="text-slate-400">Non-Viral</div>
-              <div className="text-slate-400">Viral</div>
+              <div className="text-muted-foreground text-left self-center text-[10px]">Pred &rarr;<br />Act &darr;</div>
+              <div className="text-muted-foreground">Non-Viral</div>
+              <div className="text-muted-foreground">Viral</div>
 
-              <div className="text-slate-400 text-left flex items-center">Non-Viral</div>
+              <div className="text-muted-foreground text-left flex items-center">Non-Viral</div>
               <div className={`py-4 rounded-[8px] flex items-center justify-center ${getMatrixColor(confusionMatrixValues.tn, true)}`}>
                 {confusionMatrixValues.tn.toLocaleString()}
               </div>
@@ -365,7 +369,7 @@ export const ModelEvaluation: React.FC = () => {
                 {confusionMatrixValues.fp.toLocaleString()}
               </div>
 
-              <div className="text-slate-400 text-left flex items-center">Viral</div>
+              <div className="text-muted-foreground text-left flex items-center">Viral</div>
               <div className={`py-4 rounded-[8px] flex items-center justify-center ${getMatrixColor(confusionMatrixValues.fn, false)}`}>
                 {confusionMatrixValues.fn.toLocaleString()}
               </div>
@@ -380,10 +384,10 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-blue-400" />
+              <Layers className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span>ROC Classifier Vector (AUC Threshold)</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               True Positive Rate vs False Positive Rate indicating virality classifier discrimination performance.
             </p>
           </div>
@@ -396,14 +400,15 @@ export const ModelEvaluation: React.FC = () => {
                 <YAxis dataKey="tpr" type="number" domain={[0, 1]} stroke="hsl(var(--muted-foreground))" fontSize={11} name="TPR" tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                 />
-                <Line type="linear" dataKey="fpr" stroke="#475569" strokeWidth={1} strokeDasharray="5 5" name="Random Baseline" dot={false} activeDot={false} />
-                <Line type="monotone" dataKey="tpr" stroke="#3B82F6" strokeWidth={2.5} name="Virality ROC (AUC = 0.81)" dot={false} />
+                <Line type="linear" dataKey="fpr" stroke="#94A3B8" strokeWidth={1} strokeDasharray="5 5" name="Random Baseline" dot={false} activeDot={false} />
+                <Line type="monotone" dataKey="tpr" stroke="#6D3DF5" strokeWidth={2.5} name="Virality ROC (AUC = 0.81)" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>

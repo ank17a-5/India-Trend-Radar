@@ -16,10 +16,11 @@ import { LandingPage } from "./pages/LandingPage";
 const App: React.FC = () => {
   const { setTheme } = useStore();
 
-  // Initialize theme on mount
+  // Initialize theme and title on mount
   useEffect(() => {
     // Force dark mode as default matching styling instructions
     setTheme("dark");
+    document.title = "India Trend Radar";
   }, [setTheme]);
 
   return (

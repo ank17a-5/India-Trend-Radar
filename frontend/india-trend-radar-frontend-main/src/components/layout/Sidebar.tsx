@@ -42,7 +42,7 @@ export const Sidebar: React.FC = () => {
       <div>
         <div className="h-20 flex items-center px-5 border-b border-border justify-between relative">
           <div className="flex items-center space-x-3 overflow-hidden">
-            <div className="min-w-10 w-10 min-h-10 h-10 rounded-[12px] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+            <div className="min-w-10 w-10 min-h-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
               <Activity className="w-5 h-5 animate-pulse" />
             </div>
             {sidebarOpen && (
@@ -76,8 +76,8 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-medium transition-all group relative ${
                     isActive
-                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold shadow-sm"
-                      : "text-slate-500 dark:text-slate-400 hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/30"
+                      ? "bg-purple-100/80 dark:bg-blue-950/40 text-purple-700 dark:text-blue-400 font-bold shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:text-purple-700 dark:hover:text-foreground hover:bg-purple-50/70 dark:hover:bg-slate-800/30"
                   }`
                 }
               >
@@ -98,7 +98,7 @@ export const Sidebar: React.FC = () => {
       <div className="p-3 border-t border-border">
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-medium text-slate-400 hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-all group relative"
+          className="w-full flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-purple-700 dark:hover:text-foreground hover:bg-purple-50/70 dark:hover:bg-slate-800/40 transition-all group relative"
         >
           {theme === "dark" ? (
             <Sun className="w-5 h-5 text-amber-400" />

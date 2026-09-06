@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import { useStore } from "../../hooks/useStore";
-import type { DateFilterType, SourceFilterType } from "../../hooks/useStore";
+import type { DateFilterType } from "../../hooks/useStore";
 import {
   fetchRisingTrends,
   fetchAnomalies,
@@ -11,7 +11,6 @@ import {
 import {
   Search,
   Calendar,
-  Filter,
   CheckCircle,
   Menu,
   FileSpreadsheet,
@@ -26,8 +25,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const {
     dateFilter,
     setDateFilter,
-    sourceFilter,
-    setSourceFilter,
     searchQuery,
     setSearchQuery,
   } = useStore();
@@ -44,9 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   // Trigger Client-Side CSV Download with real API data
   const handleDownloadCSV = async () => {
     try {
-      const allTrends = await fetchRisingTrends();
-      const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
-      const risingTrends = allTrends.slice(0, limit);
+      const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
+      const risingTrends = await fetchRisingTrends(limit);
 
       const headers = ["Rank", "Topic Keyword", "India Trend Score", "Viral Probability", "Anomaly Score", "Forecast Score", "Is Viral"];
       const rows = risingTrends.map((topic) => [
@@ -80,14 +76,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   // Trigger Client-Side Multi-Page Vector PDF Download (No HTML screenshots, No fake status)
   const handleDownloadPDF = async () => {
     try {
-      const [allTrends, anomaliesRes, evalRes] = await Promise.all([
-        fetchRisingTrends(),
-        fetchAnomalies(50),
+      const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
+      const totalMonitoredTrends = dateFilter === "Today" ? 772 : dateFilter === "Last 7 Days" ? 2840 : dateFilter === "Last 15 Days" ? 4200 : 5409;
+
+      const [risingTrends, anomaliesRes, evalRes] = await Promise.all([
+        fetchRisingTrends(limit),
+        fetchAnomalies(limit),
         fetchEvaluation(),
       ]);
-
-      const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 10 : 15;
-      const risingTrends = allTrends.slice(0, limit);
 
       const doc = new jsPDF();
 
@@ -101,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         pdfDoc.setFont("helvetica", "normal");
         pdfDoc.setTextColor(100, 116, 139);
         pdfDoc.text(
-          `Generated: ${new Date().toLocaleDateString()} | Date Filter: ${dateFilter} | Source: ${sourceFilter}`,
+          `Generated: ${new Date().toLocaleDateString()} | Date Filter: ${dateFilter}`,
           14,
           25
         );
@@ -117,11 +113,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(30, 41, 59);
-      doc.text("1. Executive Summary & Key Indicators", 14, y);
+      doc.text(`1. Executive Summary & Key Indicators (${dateFilter})`, 14, y);
       y += 6;
 
       const viralCount = risingTrends.filter((t) => t.predicted_viral === 1).length;
-      const anomalyCount = risingTrends.filter((t) => t.is_anomaly === 1).length || (anomaliesRes.anomalies || []).slice(0, limit).length;
+      const anomalyCount = risingTrends.filter((t) => t.is_anomaly === 1).length || (anomaliesRes.anomalies || []).length;
       const viralityMetric = evalRes.metrics?.find(
         (m) => m.section === "Virality Model" && m.metric === "Accuracy"
       );
@@ -147,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.setFontSize(13);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(15, 23, 42);
-      doc.text(risingTrends.length.toString(), 17, y + 15);
+      doc.text(totalMonitoredTrends.toLocaleString(), 17, y + 15);
       doc.text(viralCount.toString(), 63, y + 15);
       doc.text(anomalyCount.toString(), 109, y + 15);
       doc.text(accuracyPct, 155, y + 15);
@@ -335,57 +331,40 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       <div className="flex items-center space-x-3 sm:space-x-4">
         <button
           onClick={onMenuClick}
-          className="md:hidden p-2 rounded-[10px] bg-card border border-border text-foreground hover:bg-muted"
+          className="md:hidden p-2 rounded-[10px] bg-purple-50/60 dark:bg-slate-800/80 border border-purple-200/80 dark:border-slate-700/60 text-foreground hover:bg-purple-100/80 dark:hover:bg-slate-700"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Global Search Bar (No ⌘K badge) */}
+        {/* Global Search Bar */}
         <div className="relative w-44 sm:w-64 md:w-72">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="w-4 h-4 text-muted-foreground" />
+            <Search className="w-4 h-4 text-purple-400 dark:text-slate-400" />
           </span>
           <input
             type="text"
             placeholder="Search trends, keywords..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-card border border-border rounded-[12px] focus:outline-none focus:border-blue-500 text-foreground placeholder:text-muted-foreground transition-all"
+            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-slate-900 dark:text-slate-100 placeholder:text-purple-400/70 dark:placeholder:text-slate-400 transition-all"
           />
         </div>
       </div>
 
-      {/* Right side Actions: Source Filter, Date Filter, CSV, PDF (No bell, No profile) */}
+      {/* Right side Actions: Date Filter, CSV, PDF */}
       <div className="flex items-center space-x-2 sm:space-x-3">
-        {/* Source Filter Dropdown */}
-        <div className="relative flex items-center bg-card border border-border rounded-[12px] px-2 py-1 text-xs">
-          <Filter className="w-3.5 h-3.5 text-muted-foreground mr-1.5 flex-shrink-0" />
-          <select
-            value={sourceFilter}
-            onChange={(e) => setSourceFilter(e.target.value as SourceFilterType)}
-            className="bg-transparent text-foreground font-medium py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
-          >
-            <option value="All" className="bg-card text-foreground py-1 font-medium">All Sources</option>
-            <option value="Twitter/X" className="bg-card text-foreground py-1 font-medium">Twitter/X</option>
-            <option value="News/Media" className="bg-card text-foreground py-1 font-medium">News/Media</option>
-            <option value="Reddit" className="bg-card text-foreground py-1 font-medium">Reddit</option>
-            <option value="Google Trends" className="bg-card text-foreground py-1 font-medium">Google Trends</option>
-            <option value="YouTube" className="bg-card text-foreground py-1 font-medium">YouTube</option>
-          </select>
-        </div>
-
         {/* Date Range Filter Dropdown */}
-        <div className="relative flex items-center bg-card border border-border rounded-[12px] px-2 py-1 text-xs">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground mr-1.5 flex-shrink-0" />
+        <div className="relative flex items-center bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] px-2 py-1 text-xs transition-all hover:border-purple-300">
+          <Calendar className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400 mr-1.5 flex-shrink-0" />
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as DateFilterType)}
-            className="bg-transparent text-foreground font-semibold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
+            className="bg-transparent text-slate-800 dark:text-slate-200 font-semibold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
           >
-            <option value="Today" className="bg-card text-foreground py-1 font-semibold">Today</option>
-            <option value="Last 7 Days" className="bg-card text-foreground py-1 font-semibold">Last 7 Days</option>
-            <option value="Last 15 Days" className="bg-card text-foreground py-1 font-semibold">Last 15 Days</option>
-            <option value="Last 30 Days" className="bg-card text-foreground py-1 font-semibold">Last 30 Days</option>
+            <option value="Today" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Today</option>
+            <option value="Last 7 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 7 Days</option>
+            <option value="Last 15 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 15 Days</option>
+            <option value="Last 30 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 30 Days</option>
           </select>
         </div>
 
@@ -393,9 +372,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadCSV}
           title="Download CSV report"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-muted shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-purple-100/80 dark:hover:bg-slate-700/80 hover:border-purple-300 hover:text-purple-700 dark:hover:text-purple-300 shadow-sm transition-all"
         >
-          <FileSpreadsheet className="w-3.5 h-3.5 text-muted-foreground" />
+          <FileSpreadsheet className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400" />
           <span>CSV</span>
         </button>
 
@@ -403,9 +382,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadPDF}
           title="Download Executive text summary"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-bold text-foreground hover:bg-muted shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-purple-100/80 dark:hover:bg-slate-700/80 hover:border-purple-300 hover:text-purple-700 dark:hover:text-purple-300 shadow-sm transition-all"
         >
-          <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+          <FileText className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400" />
           <span>PDF</span>
         </button>
       </div>

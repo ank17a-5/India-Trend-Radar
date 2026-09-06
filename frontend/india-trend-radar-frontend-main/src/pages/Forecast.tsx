@@ -31,7 +31,7 @@ import {
 import { useStore } from "../hooks/useStore";
 
 export const Forecast: React.FC = () => {
-  const { dateFilter } = useStore();
+  const { dateFilter, theme } = useStore();
   const targetDays = dateFilter === "Today" ? 1 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 15 : 30;
   const [activeTab, setActiveTab] = useState<number>(targetDays);
   const [forecastPoints, setForecastPoints] = useState<ForecastPoint[]>([]);
@@ -106,8 +106,8 @@ export const Forecast: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">Loading live forecast...</p>
+        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
+        <p className="text-sm font-semibold text-muted-foreground">Loading live forecast...</p>
       </div>
     );
   }
@@ -117,10 +117,10 @@ export const Forecast: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
         <AlertTriangle className="w-10 h-10 text-rose-500" />
         <h3 className="text-lg font-bold text-foreground">Unable to load live forecast</h3>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadForecastData}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
+          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Please try again</span>
@@ -132,12 +132,12 @@ export const Forecast: React.FC = () => {
   if (forecastPoints.length === 0 && risingTrends.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-slate-500" />
+        <Globe className="w-10 h-10 text-muted-foreground" />
         <h3 className="text-base font-bold text-foreground">No live forecast data available</h3>
-        <p className="text-xs text-slate-500">The Prophet prediction file currently returned zero records.</p>
+        <p className="text-xs text-muted-foreground">The Prophet prediction file currently returned zero records.</p>
         <button
           onClick={loadForecastData}
-          className="px-4 py-1.5 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-[8px] transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
         >
           Refresh Data
         </button>
@@ -156,10 +156,10 @@ export const Forecast: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <BrainCircuit className="w-5.5 h-5.5 text-purple-500" />
+            <BrainCircuit className="w-5.5 h-5.5 text-purple-600 dark:text-purple-400" />
             <span>AI Predictive Forecasting</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Prophet model projections & confidence bounds calculated over 7, 14, and 30-day forecast horizons.
           </p>
         </div>
@@ -178,7 +178,7 @@ export const Forecast: React.FC = () => {
           <button
             key={card.days}
             onClick={() => setActiveTab(card.days)}
-            className={`p-5 rounded-[18px] border text-left backdrop-blur-md transition-all flex flex-col justify-between h-40 group hover:border-slate-400 ${
+            className={`p-5 rounded-[18px] border text-left backdrop-blur-md transition-all flex flex-col justify-between h-40 group hover:border-purple-300 ${
               activeTab === card.days
                 ? "bg-card border-purple-500/50 shadow-lg shadow-purple-500/5"
                 : "bg-card/45 border-border"
@@ -190,8 +190,8 @@ export const Forecast: React.FC = () => {
                 <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
                 <span>{card.days} Days Horizon</span>
               </span>
-              <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-muted/40 border border-border text-[10px] font-bold text-muted-foreground">
-                <Target className="w-3 h-3 text-purple-400" />
+              <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40 text-[10px] font-bold text-purple-700 dark:text-purple-300">
+                <Target className="w-3 h-3 text-purple-600 dark:text-purple-400" />
                 <span>{card.accuracy}% Confidence</span>
               </div>
             </div>
@@ -202,8 +202,8 @@ export const Forecast: React.FC = () => {
                 Vector:
               </span>
               <div className="flex items-center space-x-1.5 bg-muted/40 border border-border rounded-[8px] px-2 py-0.5 text-xs font-bold">
-                <ArrowUp className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400">{card.direction}</span>
+                <ArrowUp className="w-4 h-4 text-emerald-500" />
+                <span className="text-emerald-500">{card.direction}</span>
               </div>
             </div>
 
@@ -220,7 +220,7 @@ export const Forecast: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
+              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span>Prophet Prediction Curve (Upper & Lower Confidence Bounds)</span>
             </h3>
             <p className="text-xs text-muted-foreground">
@@ -229,7 +229,7 @@ export const Forecast: React.FC = () => {
           </div>
           <div className="flex items-center bg-card border border-border rounded-[10px] p-1 text-[11px] font-bold">
             <span className="px-2 py-1 text-muted-foreground">View range:</span>
-            <span className="px-3 py-1 bg-muted/40 text-purple-400 border border-border rounded-[8px]">
+            <span className="px-3 py-1 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 rounded-[8px]">
               {activeTab} Days Projections
             </span>
           </div>
@@ -241,8 +241,8 @@ export const Forecast: React.FC = () => {
             <AreaChart data={filteredTimeline} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="confidenceFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#6D3DF5" stopOpacity={0.18} />
+                  <stop offset="95%" stopColor="#6D3DF5" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -250,10 +250,11 @@ export const Forecast: React.FC = () => {
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#0F172A",
-                  borderColor: "#334155",
+                  backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                  borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                   borderRadius: "12px",
-                  color: "#F8FAFC",
+                  color: theme === "dark" ? "#F8FAFC" : "#172033",
+                  boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                 }}
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: "11px", paddingTop: 10 }} />

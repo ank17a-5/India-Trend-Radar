@@ -126,10 +126,20 @@ async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
   }
 }
 export async function fetchRisingTrends(
-  dateRange: string = "7d",
+  limitOrDateRange: number | string = 50,
   source: string = "all"
 ): Promise<RisingTrend[]> {
+  let limit = 50;
+  let dateRange = "7d";
+
+  if (typeof limitOrDateRange === "number") {
+    limit = limitOrDateRange;
+  } else if (typeof limitOrDateRange === "string") {
+    dateRange = limitOrDateRange;
+  }
+
   const queryParams = new URLSearchParams({
+    limit: limit.toString(),
     date_range: dateRange,
     source: source,
   }).toString();

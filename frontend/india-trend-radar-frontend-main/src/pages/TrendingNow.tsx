@@ -22,7 +22,7 @@ import {
   RefreshCw,
   Search,
   SlidersHorizontal,
-  Flame,
+  TrendingUp,
   AlertTriangle,
   Globe,
 } from "lucide-react";
@@ -36,7 +36,7 @@ import {
 } from "../services/api";
 
 export const TrendingNow: React.FC = () => {
-  const { searchQuery, setSearchQuery } = useStore();
+  const { searchQuery, setSearchQuery, theme } = useStore();
   const [trends, setTrends] = useState<RisingTrend[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [forecastPoints, setForecastPoints] = useState<ForecastPoint[]>([]);
@@ -120,10 +120,10 @@ export const TrendingNow: React.FC = () => {
           const isViral = info.row.original.predicted_viral === 1;
           const val = isAnomaly ? "Anomaly" : isViral ? "Viral Spike" : "Active";
           const color = isAnomaly
-            ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+            ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
             : isViral
-            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-            : "bg-blue-500/10 text-blue-400 border-blue-500/20";
+            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+            : "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
           return <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border ${color}`}>{val}</span>;
         },
       }),
@@ -159,12 +159,22 @@ export const TrendingNow: React.FC = () => {
   // Filter topics list by search, date range, and source filter
   const filteredData = useMemo(() => {
     const limit = dateFilter === "Today" ? 3 : dateFilter === "Last 7 Days" ? 7 : dateFilter === "Last 15 Days" ? 15 : 30;
+    const isSearching = searchQuery.trim().length > 0;
+    const cleanQuery = searchQuery.trim().toLowerCase();
+
     return trends
       .filter((topic) => {
-        const matchesSearch = topic.keyword.toLowerCase().includes(searchQuery.toLowerCase());
+        if (!cleanQuery) return matchesSource(topic.keyword, sourceFilter);
+        const rawKw = topic.keyword.toLowerCase();
+        const formattedKw = formatKeyword(topic.keyword).toLowerCase();
+        const spaceKw = topic.keyword.replace(/\|/g, " ").toLowerCase();
+        const matchesSearch =
+          rawKw.includes(cleanQuery) ||
+          formattedKw.includes(cleanQuery) ||
+          spaceKw.includes(cleanQuery);
         return matchesSearch && matchesSource(topic.keyword, sourceFilter);
       })
-      .slice(0, limit);
+      .slice(0, isSearching ? 50 : limit);
   }, [trends, searchQuery, dateFilter, sourceFilter]);
 
   // TanStack Table Core configuration
@@ -207,7 +217,7 @@ export const TrendingNow: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
         <p className="text-sm font-semibold text-muted-foreground">Loading live data...</p>
       </div>
     );
@@ -221,7 +231,7 @@ export const TrendingNow: React.FC = () => {
         <p className="text-xs text-muted-foreground max-w-md">{error}</p>
         <button
           onClick={loadData}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-[10px] transition-colors flex items-center space-x-2"
+          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Please try again</span>
@@ -234,7 +244,7 @@ export const TrendingNow: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
         <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No live data available</h3>
+        <h3 className="text-base font-bold text-foreground">No live trending data available</h3>
         <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
         <button
           onClick={loadData}
@@ -257,11 +267,11 @@ export const TrendingNow: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <Flame className="w-5 h-5 text-red-500 animate-pulse" />
-            <span>Live Trending Analytics</span>
+            <TrendingUp className="w-5.5 h-5.5 text-purple-600 dark:text-purple-400" />
+            <span>Trending Now — Real-time Feed</span>
           </h2>
           <p className="text-xs text-muted-foreground">
-            Real viral growth predictions and Prophet forecast curves from live dataset.
+            Live tracked search keywords with algorithmic virality probability and anomaly status.
           </p>
         </div>
 
@@ -296,7 +306,7 @@ export const TrendingNow: React.FC = () => {
         {/* Timeline Chart (7/12 width) */}
         <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
-            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider block">
+            <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">
               {formatKeyword(selectedTopic) || "Overall Forecast"}
             </span>
             <h3 className="text-sm font-bold text-foreground">Prophet Forecast Timeline (Predicted Trend Trajectory)</h3>
@@ -306,8 +316,8 @@ export const TrendingNow: React.FC = () => {
               <AreaChart data={timelineChartData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#6D3DF5" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#6D3DF5" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
@@ -315,16 +325,17 @@ export const TrendingNow: React.FC = () => {
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="Predicted"
-                  stroke="#3B82F6"
+                  stroke="#6D3DF5"
                   strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorPredicted)"
@@ -338,7 +349,7 @@ export const TrendingNow: React.FC = () => {
         <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground">India Trend Score Comparison</h3>
-            <p className="text-[11px] text-slate-500">Score comparison for top live trends.</p>
+            <p className="text-[11px] text-muted-foreground">Score comparison for top live trends.</p>
           </div>
           <div className="flex-1 w-full h-[250px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -348,13 +359,14 @@ export const TrendingNow: React.FC = () => {
                 <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} width={90} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F172A",
-                    borderColor: "#334155",
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
                     borderRadius: "12px",
-                    color: "#F8FAFC",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
                   }}
                 />
-                <Bar dataKey="Score" fill="#7C3AED" radius={[0, 6, 6, 0]} barSize={12} />
+                <Bar dataKey="Score" fill="#6D3DF5" radius={[0, 6, 6, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
