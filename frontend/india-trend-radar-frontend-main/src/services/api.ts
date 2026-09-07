@@ -63,7 +63,7 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const RAW_API_URL = import.meta.env.VITE_API_URL || "/api";
+const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api";
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
 export const formatKeyword = (rawKeyword: string): string => {
