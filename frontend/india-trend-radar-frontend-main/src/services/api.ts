@@ -66,6 +66,8 @@ export interface EvaluationResponse {
 const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api";
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
+console.log(`[India Trend Radar API] Resolved API Base URL: "${API_BASE}"`);
+
 export const formatKeyword = (rawKeyword: string): string => {
   if (!rawKeyword) return "";
   const parts = rawKeyword
@@ -91,13 +93,14 @@ async function apiFetch<T>(
 ): Promise<T> {
   const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
   const maxTimeoutMs = options?.maxTimeoutMs ?? 90000;
-  const attemptTimeoutMs = options?.attemptTimeoutMs ?? 20000;
+  const attemptTimeoutMs = options?.attemptTimeoutMs ?? 15000;
   const startTime = Date.now();
 
   let attempt = 0;
   let lastError: Error | null = null;
+  const maxAttempts = 12;
 
-  while (Date.now() - startTime < maxTimeoutMs) {
+  while (Date.now() - startTime < maxTimeoutMs && attempt < maxAttempts) {
     attempt++;
     const controller = new AbortController();
     const remainingTime = maxTimeoutMs - (Date.now() - startTime);
@@ -127,7 +130,7 @@ async function apiFetch<T>(
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.includes("text/html")) {
         throw new Error(
-          `${errorMessage}: Received HTML response instead of JSON. Check backend routing or VITE_API_URL configuration.`
+          `${errorMessage}: Received HTML response instead of JSON. Check backend routing.`
         );
       }
 
@@ -142,7 +145,7 @@ async function apiFetch<T>(
       }
 
       const elapsed = Date.now() - startTime;
-      if (elapsed >= maxTimeoutMs) {
+      if (elapsed >= maxTimeoutMs || attempt >= maxAttempts) {
         break;
       }
 
@@ -150,7 +153,7 @@ async function apiFetch<T>(
         options.onRetry(attempt, elapsed);
       }
 
-      // Progressive delay before next retry attempt (3s to 5s)
+      // Delay before next retry attempt (3s to 5s)
       const delayMs = Math.min(3000 + attempt * 500, 5000);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
@@ -159,10 +162,11 @@ async function apiFetch<T>(
   throw (
     lastError ||
     new Error(
-      `${errorMessage}: Analytics engine took longer than 90 seconds to respond. Please check backend status.`
+      `Backend connection is taking longer than expected. Please check that the analytics server is online at ${API_BASE}.`
     )
   );
 }
+
 
 export async function fetchRisingTrends(
   limitOrDateRange: number | string = 50,
