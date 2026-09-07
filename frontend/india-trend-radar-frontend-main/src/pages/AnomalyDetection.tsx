@@ -24,7 +24,7 @@ import {
   formatKeyword,
   type AnomalyRecord,
 } from "../services/api";
-
+import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const AnomalyDetection: React.FC = () => {
@@ -33,6 +33,7 @@ export const AnomalyDetection: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   // Helper function for source filtering matching existing categories
   const matchesSource = (keyword: string, source: string) => {
@@ -80,16 +81,20 @@ export const AnomalyDetection: React.FC = () => {
   const loadAnomalyData = async () => {
     setLoading(true);
     setError(null);
+    setAttemptCount(1);
+    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
+
     try {
-      const res = await fetchAnomalies(50);
+      const res = await fetchAnomalies(50, { onRetry });
       setAnomalies(res.anomalies || []);
       setTotalCount(res.count || 0);
     } catch (err: any) {
-      setError(err.message || "Unable to load live anomaly data. Please try again.");
+      setError(err.message || "Unable to connect to the analytics engine.");
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     loadAnomalyData();
@@ -153,30 +158,13 @@ export const AnomalyDetection: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
-        <p className="text-sm font-semibold text-muted-foreground">Loading live anomaly data...</p>
-      </div>
-    );
+    return <ColdStartLoader attemptCount={attemptCount} title="Loading Live Anomaly Detection..." />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
-        <AlertTriangle className="w-10 h-10 text-rose-500" />
-        <h3 className="text-lg font-bold text-foreground">Unable to load live anomalies</h3>
-        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
-        <button
-          onClick={loadAnomalyData}
-          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Please try again</span>
-        </button>
-      </div>
-    );
+    return <ColdStartLoader error={error} onRetry={loadAnomalyData} />;
   }
+
 
   if (anomalies.length === 0) {
     return (

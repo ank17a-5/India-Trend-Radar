@@ -17,7 +17,6 @@ import {
   Target,
   Sparkles,
   RefreshCw,
-  AlertTriangle,
   Globe,
 } from "lucide-react";
 import {
@@ -27,7 +26,7 @@ import {
   type ForecastPoint,
   type RisingTrend,
 } from "../services/api";
-
+import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const Forecast: React.FC = () => {
@@ -38,6 +37,7 @@ export const Forecast: React.FC = () => {
   const [risingTrends, setRisingTrends] = useState<RisingTrend[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   useEffect(() => {
     setActiveTab(targetDays);
@@ -46,19 +46,23 @@ export const Forecast: React.FC = () => {
   const loadForecastData = async () => {
     setLoading(true);
     setError(null);
+    setAttemptCount(1);
+    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
+
     try {
       const [forecastRes, trendsRes] = await Promise.all([
-        fetchForecast("overall"),
-        fetchRisingTrends(),
+        fetchForecast("overall", { onRetry }),
+        fetchRisingTrends(50, "all", { onRetry }),
       ]);
       setForecastPoints(forecastRes.forecast || []);
       setRisingTrends(trendsRes || []);
     } catch (err: any) {
-      setError(err.message || "Unable to load forecast data. Please try again.");
+      setError(err.message || "Unable to connect to the analytics engine.");
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     loadForecastData();
@@ -104,30 +108,13 @@ export const Forecast: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
-        <p className="text-sm font-semibold text-muted-foreground">Loading live forecast...</p>
-      </div>
-    );
+    return <ColdStartLoader attemptCount={attemptCount} title="Loading Live AI Forecast..." />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
-        <AlertTriangle className="w-10 h-10 text-rose-500" />
-        <h3 className="text-lg font-bold text-foreground">Unable to load live forecast</h3>
-        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
-        <button
-          onClick={loadForecastData}
-          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Please try again</span>
-        </button>
-      </div>
-    );
+    return <ColdStartLoader error={error} onRetry={loadForecastData} />;
   }
+
 
   if (forecastPoints.length === 0 && risingTrends.length === 0) {
     return (

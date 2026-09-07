@@ -18,7 +18,6 @@ import {
   Binary,
   Layers,
   RefreshCw,
-  AlertTriangle,
   Globe,
   Sparkles,
 } from "lucide-react";
@@ -26,6 +25,7 @@ import {
   fetchEvaluation,
   type EvaluationMetric,
 } from "../services/api";
+import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const ModelEvaluation: React.FC = () => {
@@ -33,19 +33,24 @@ export const ModelEvaluation: React.FC = () => {
   const [metrics, setMetrics] = useState<EvaluationMetric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   const loadEvaluationData = async () => {
     setLoading(true);
     setError(null);
+    setAttemptCount(1);
+    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
+
     try {
-      const res = await fetchEvaluation();
+      const res = await fetchEvaluation({ onRetry });
       setMetrics(res.metrics || []);
     } catch (err: any) {
-      setError(err.message || "Unable to load model evaluation metrics. Please try again.");
+      setError(err.message || "Unable to connect to the analytics engine.");
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     loadEvaluationData();
@@ -152,30 +157,13 @@ export const ModelEvaluation: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
-        <p className="text-sm font-semibold text-muted-foreground">Loading model evaluation metrics...</p>
-      </div>
-    );
+    return <ColdStartLoader attemptCount={attemptCount} title="Loading Model Evaluation Metrics..." />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
-        <AlertTriangle className="w-10 h-10 text-rose-500" />
-        <h3 className="text-lg font-bold text-foreground">Unable to load evaluation metrics</h3>
-        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
-        <button
-          onClick={loadEvaluationData}
-          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Please try again</span>
-        </button>
-      </div>
-    );
+    return <ColdStartLoader error={error} onRetry={loadEvaluationData} />;
   }
+
 
   if (metrics.length === 0) {
     return (

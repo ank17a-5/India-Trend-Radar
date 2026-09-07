@@ -35,6 +35,7 @@ import {
   type AnomalyRecord,
   type EvaluationMetric,
 } from "../services/api";
+import { ColdStartLoader } from "../components/common/ColdStartLoader";
 
 export const Home: React.FC = () => {
   const { searchQuery, dateFilter, sourceFilter, theme } = useStore();
@@ -47,6 +48,7 @@ export const Home: React.FC = () => {
   const [evalMetrics, setEvalMetrics] = useState<EvaluationMetric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   const getSourceParam = (filter: string) => {
     if (filter === "All") return "all";
@@ -56,19 +58,24 @@ export const Home: React.FC = () => {
   const loadLiveData = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setAttemptCount(1);
+    const onRetry = (attempt: number) => {
+      setAttemptCount(attempt + 1);
+    };
+
     try {
       const sourceParam = getSourceParam(sourceFilter);
 
       const [trends, anomalies, evaluation] = await Promise.all([
-        fetchRisingTrends(50, sourceParam),
-        fetchAnomalies(50),
-        fetchEvaluation(),
+        fetchRisingTrends(50, sourceParam, { onRetry }),
+        fetchAnomalies(50, { onRetry }),
+        fetchEvaluation({ onRetry }),
       ]);
       setRisingTrends(trends || []);
       setAnomalyData(anomalies || { count: 0, anomalies: [] });
       setEvalMetrics(evaluation?.metrics || []);
     } catch (err: any) {
-      setError(err.message || "Unable to load live data. Please try again.");
+      setError(err.message || "Unable to connect to the analytics engine.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +84,7 @@ export const Home: React.FC = () => {
   useEffect(() => {
     loadLiveData();
   }, [loadLiveData]);
+
 
   // Helper function for source category matching (fallback client-side match)
   const matchesSource = (keyword: string, source: string) => {
@@ -265,30 +273,13 @@ export const Home: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-sm font-semibold text-muted-foreground">Loading live data...</p>
-      </div>
-    );
+    return <ColdStartLoader attemptCount={attemptCount} />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
-        <AlertTriangle className="w-10 h-10 text-rose-500" />
-        <h3 className="text-lg font-bold text-foreground">Unable to load live data</h3>
-        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
-        <button
-          onClick={loadLiveData}
-          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Please try again</span>
-        </button>
-      </div>
-    );
+    return <ColdStartLoader error={error} onRetry={loadLiveData} />;
   }
+
 
   if (risingTrends.length === 0) {
     return (

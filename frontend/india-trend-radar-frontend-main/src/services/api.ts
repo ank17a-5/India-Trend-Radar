@@ -78,56 +78,96 @@ export const formatKeyword = (rawKeyword: string): string => {
     .join(" • ");
 };
 
-async function apiFetch<T>(path: string, errorMessage: string): Promise<T> {
+export interface ApiFetchOptions {
+  maxTimeoutMs?: number;
+  attemptTimeoutMs?: number;
+  onRetry?: (attempt: number, elapsedMs: number) => void;
+}
+
+async function apiFetch<T>(
+  path: string,
+  errorMessage: string,
+  options?: ApiFetchOptions
+): Promise<T> {
   const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const maxTimeoutMs = options?.maxTimeoutMs ?? 90000;
+  const attemptTimeoutMs = options?.attemptTimeoutMs ?? 20000;
+  const startTime = Date.now();
 
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
+  let attempt = 0;
+  let lastError: Error | null = null;
 
-    if (!res.ok) {
-      if (res.status === 502) {
+  while (Date.now() - startTime < maxTimeoutMs) {
+    attempt++;
+    const controller = new AbortController();
+    const remainingTime = maxTimeoutMs - (Date.now() - startTime);
+    if (remainingTime <= 0) break;
+
+    const currentAttemptTimeout = Math.min(attemptTimeoutMs, remainingTime);
+    const timeoutId = setTimeout(() => controller.abort(), currentAttemptTimeout);
+
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        // Cold start status codes (Render sleeping: 502, 503, 504)
+        if (res.status === 502 || res.status === 503 || res.status === 504) {
+          throw new Error(
+            `${errorMessage}: Server waking up (HTTP ${res.status}).`
+          );
+        }
+        // Permanent 4xx errors (404, 400, 401, 403) should fail immediately
+        if (res.status >= 400 && res.status < 500) {
+          throw new Error(`${errorMessage}: Endpoint error (HTTP ${res.status} ${res.statusText}).`);
+        }
+        throw new Error(`${errorMessage}: Server error (HTTP ${res.status} ${res.statusText}).`);
+      }
+
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("text/html")) {
         throw new Error(
-          `${errorMessage}: Bad Gateway (502). The backend API server is offline or unreachable. Please verify backend server status.`
+          `${errorMessage}: Received HTML response instead of JSON. Check backend routing or VITE_API_URL configuration.`
         );
       }
-      if (res.status === 504) {
-        throw new Error(`${errorMessage}: Gateway Timeout (504). The backend server took too long to respond.`);
-      }
-      if (res.status === 404) {
-        throw new Error(`${errorMessage}: Endpoint not found (404) at ${url}.`);
-      }
-      throw new Error(`${errorMessage}: HTTP ${res.status} ${res.statusText}`);
-    }
 
-    const contentType = res.headers.get("content-type");
-    if (contentType && contentType.includes("text/html")) {
-      throw new Error(
-        `${errorMessage}: Received HTML response instead of JSON. Check backend routing or VITE_API_URL configuration.`
-      );
-    }
+      return (await res.json()) as T;
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      lastError = err;
 
-    return (await res.json()) as T;
-  } catch (err: any) {
-    clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error(
-        `${errorMessage}: Request timed out (5s). The backend server took too long to respond.`
-      );
+      // Fail fast on non-retryable 4xx or HTML errors
+      if (err.message && (err.message.includes("Endpoint error") || err.message.includes("Received HTML"))) {
+        throw err;
+      }
+
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= maxTimeoutMs) {
+        break;
+      }
+
+      if (options?.onRetry) {
+        options.onRetry(attempt, elapsed);
+      }
+
+      // Progressive delay before next retry attempt (3s to 5s)
+      const delayMs = Math.min(3000 + attempt * 500, 5000);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-    if (err instanceof TypeError && err.message.toLowerCase().includes("failed to fetch")) {
-      throw new Error(
-        `${errorMessage}: Network connection failed. Please ensure backend server is running.`
-      );
-    }
-    throw err;
   }
+
+  throw (
+    lastError ||
+    new Error(
+      `${errorMessage}: Analytics engine took longer than 90 seconds to respond. Please check backend status.`
+    )
+  );
 }
+
 export async function fetchRisingTrends(
   limitOrDateRange: number | string = 50,
-  source: string = "all"
+  source: string = "all",
+  options?: ApiFetchOptions
 ): Promise<RisingTrend[]> {
   let limit = 50;
   let dateRange = "7d";
@@ -146,24 +186,43 @@ export async function fetchRisingTrends(
 
   return apiFetch<RisingTrend[]>(
     `/trends/rising?${queryParams}`,
-    "Failed to fetch rising trends"
+    "Failed to fetch rising trends",
+    options
   );
 }
 
-
-export async function fetchTopNiches(): Promise<TopNiche[]> {
-  return apiFetch<TopNiche[]>("/niches/top", "Failed to fetch top niches");
+export async function fetchTopNiches(options?: ApiFetchOptions): Promise<TopNiche[]> {
+  return apiFetch<TopNiche[]>("/niches/top", "Failed to fetch top niches", options);
 }
 
-export async function fetchForecast(topic: string = "overall"): Promise<ForecastResponse> {
+export async function fetchForecast(
+  topic: string = "overall",
+  options?: ApiFetchOptions
+): Promise<ForecastResponse> {
   const encodedTopic = encodeURIComponent(topic);
-  return apiFetch<ForecastResponse>(`/trends/forecast/${encodedTopic}`, "Failed to fetch forecast");
+  return apiFetch<ForecastResponse>(
+    `/trends/forecast/${encodedTopic}`,
+    "Failed to fetch forecast",
+    options
+  );
 }
 
-export async function fetchAnomalies(limit: number = 20): Promise<AnomalyResponse> {
-  return apiFetch<AnomalyResponse>(`/anomalies?limit=${limit}`, "Failed to fetch anomalies");
+export async function fetchAnomalies(
+  limit: number = 20,
+  options?: ApiFetchOptions
+): Promise<AnomalyResponse> {
+  return apiFetch<AnomalyResponse>(
+    `/anomalies?limit=${limit}`,
+    "Failed to fetch anomalies",
+    options
+  );
 }
 
-export async function fetchEvaluation(): Promise<EvaluationResponse> {
-  return apiFetch<EvaluationResponse>("/evaluation", "Failed to fetch evaluation metrics");
+export async function fetchEvaluation(options?: ApiFetchOptions): Promise<EvaluationResponse> {
+  return apiFetch<EvaluationResponse>(
+    "/evaluation",
+    "Failed to fetch evaluation metrics",
+    options
+  );
 }
+
