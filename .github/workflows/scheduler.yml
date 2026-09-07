@@ -117,19 +117,6 @@ jobs:
       # COMMIT CHANGES
       # -----------------------------
       - name: Commit and Push Updated Files
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-
-          git add .
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Automated weekly pipeline & model retraining update"
-          
-          git pull --rebase origin main
-
-          git push origin main
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated weekly pipeline & model retraining update [skip ci]"
