@@ -219,31 +219,6 @@ export const TrendingNow: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  if (loading) {
-    return <ColdStartLoader attemptCount={attemptCount} />;
-  }
-
-  if (error) {
-    return <ColdStartLoader error={error} onRetry={loadData} />;
-  }
-
-
-  if (trends.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No live trending data available</h3>
-        <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
-        <button
-          onClick={loadData}
-          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-        >
-          Refresh Data
-        </button>
-      </div>
-    );
-  }
-
   return (
     <motion.div
       variants={containerVariants}
@@ -288,7 +263,23 @@ export const TrendingNow: React.FC = () => {
         </div>
       </div>
 
-      {/* Primary Graphs Row */}
+      {loading || error ? (
+        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadData} title="Loading Live Trends Feed..." />
+      ) : trends.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
+          <Globe className="w-10 h-10 text-muted-foreground" />
+          <h3 className="text-base font-bold text-foreground">No live trending data available</h3>
+          <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
+          <button
+            onClick={loadData}
+            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
+          >
+            Refresh Data
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* Primary Graphs Row */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Timeline Chart (7/12 width) */}
@@ -416,6 +407,8 @@ export const TrendingNow: React.FC = () => {
           </table>
         </div>
       </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };

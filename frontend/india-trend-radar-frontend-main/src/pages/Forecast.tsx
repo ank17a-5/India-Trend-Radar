@@ -107,31 +107,6 @@ export const Forecast: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  if (loading) {
-    return <ColdStartLoader attemptCount={attemptCount} title="Loading Live AI Forecast..." />;
-  }
-
-  if (error) {
-    return <ColdStartLoader error={error} onRetry={loadForecastData} />;
-  }
-
-
-  if (forecastPoints.length === 0 && risingTrends.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No live forecast data available</h3>
-        <p className="text-xs text-muted-foreground">The Prophet prediction file currently returned zero records.</p>
-        <button
-          onClick={loadForecastData}
-          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-        >
-          Refresh Data
-        </button>
-      </div>
-    );
-  }
-
   return (
     <motion.div
       variants={containerVariants}
@@ -158,6 +133,23 @@ export const Forecast: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
+
+      {loading || error ? (
+        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadForecastData} title="Loading Live AI Forecast..." />
+      ) : forecastPoints.length === 0 && risingTrends.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
+          <Globe className="w-10 h-10 text-muted-foreground" />
+          <h3 className="text-base font-bold text-foreground">No live forecast data available</h3>
+          <p className="text-xs text-muted-foreground">The Prophet prediction file currently returned zero records.</p>
+          <button
+            onClick={loadForecastData}
+            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
+          >
+            Refresh Data
+          </button>
+        </div>
+      ) : (
+        <>
 
       {/* Forecast cards selection row */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -325,6 +317,8 @@ export const Forecast: React.FC = () => {
           </table>
         </div>
       </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };

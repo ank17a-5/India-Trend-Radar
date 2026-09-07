@@ -154,8 +154,9 @@ export async function ensureBackendReady(
     }
 
     activeHealthCheckPromise = null;
-    throw new Error(`Backend connection is taking longer than expected. Please check that the analytics server is online.`);
+    throw new Error(`Live data temporarily unavailable. Retrying automatically...`);
   })();
+
 
   return activeHealthCheckPromise;
 }

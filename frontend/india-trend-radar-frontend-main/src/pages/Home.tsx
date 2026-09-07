@@ -20,7 +20,6 @@ import {
   ArrowUpRight,
   Sparkles,
   Flame,
-  Globe,
   RefreshCw,
   Clock,
   Search,
@@ -272,30 +271,7 @@ export const Home: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
-  if (loading) {
-    return <ColdStartLoader attemptCount={attemptCount} />;
-  }
 
-  if (error) {
-    return <ColdStartLoader error={error} onRetry={loadLiveData} />;
-  }
-
-
-  if (risingTrends.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No live data available</h3>
-        <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
-        <button
-          onClick={loadLiveData}
-          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-        >
-          Refresh Data
-        </button>
-      </div>
-    );
-  }
 
   return (
     <motion.div
@@ -327,7 +303,11 @@ export const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Row 1: 4 KPI Cards Grid */}
+      {loading || error ? (
+        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadLiveData} title="Connecting to live analytics..." />
+      ) : (
+        <>
+          {/* Row 1: 4 KPI Cards Grid */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {customKPIData.map((kpi, idx) => {
           const IconComponent = kpi.icon;
@@ -650,6 +630,8 @@ export const Home: React.FC = () => {
           </div>
         </div>
       </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };

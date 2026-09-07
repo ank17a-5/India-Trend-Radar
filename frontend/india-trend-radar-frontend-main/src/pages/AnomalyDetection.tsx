@@ -157,31 +157,6 @@ export const AnomalyDetection: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  if (loading) {
-    return <ColdStartLoader attemptCount={attemptCount} title="Loading Live Anomaly Detection..." />;
-  }
-
-  if (error) {
-    return <ColdStartLoader error={error} onRetry={loadAnomalyData} />;
-  }
-
-
-  if (anomalies.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No live anomalies available</h3>
-        <p className="text-xs text-muted-foreground">The anomaly detection pipeline currently returned zero records.</p>
-        <button
-          onClick={loadAnomalyData}
-          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-        >
-          Refresh Data
-        </button>
-      </div>
-    );
-  }
-
   return (
     <motion.div
       variants={containerVariants}
@@ -208,6 +183,23 @@ export const AnomalyDetection: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
+
+      {loading || error ? (
+        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadAnomalyData} title="Loading Live Anomaly Detection..." />
+      ) : anomalies.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
+          <Globe className="w-10 h-10 text-muted-foreground" />
+          <h3 className="text-base font-bold text-foreground">No live anomalies available</h3>
+          <p className="text-xs text-muted-foreground">The anomaly detection pipeline currently returned zero records.</p>
+          <button
+            onClick={loadAnomalyData}
+            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
+          >
+            Refresh Data
+          </button>
+        </div>
+      ) : (
+        <>
 
       {/* Stats Cards Row */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
@@ -404,6 +396,8 @@ export const AnomalyDetection: React.FC = () => {
           </table>
         </div>
       </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };

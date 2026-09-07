@@ -156,31 +156,6 @@ export const ModelEvaluation: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  if (loading) {
-    return <ColdStartLoader attemptCount={attemptCount} title="Loading Model Evaluation Metrics..." />;
-  }
-
-  if (error) {
-    return <ColdStartLoader error={error} onRetry={loadEvaluationData} />;
-  }
-
-
-  if (metrics.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-        <Globe className="w-10 h-10 text-muted-foreground" />
-        <h3 className="text-base font-bold text-foreground">No evaluation metrics available</h3>
-        <p className="text-xs text-muted-foreground">The model metrics report file currently returned zero records.</p>
-        <button
-          onClick={loadEvaluationData}
-          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-        >
-          Refresh Data
-        </button>
-      </div>
-    );
-  }
-
   return (
     <motion.div
       variants={containerVariants}
@@ -207,6 +182,23 @@ export const ModelEvaluation: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
+
+      {loading || error ? (
+        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadEvaluationData} title="Loading Model Evaluation Metrics..." />
+      ) : metrics.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
+          <Globe className="w-10 h-10 text-muted-foreground" />
+          <h3 className="text-base font-bold text-foreground">No evaluation metrics available</h3>
+          <p className="text-xs text-muted-foreground">The model metrics report file currently returned zero records.</p>
+          <button
+            onClick={loadEvaluationData}
+            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
+          >
+            Refresh Data
+          </button>
+        </div>
+      ) : (
+        <>
 
       {/* 6 KPI Cards Grid */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-6 gap-4">
@@ -402,6 +394,8 @@ export const ModelEvaluation: React.FC = () => {
           </div>
         </div>
       </motion.div>
+        </>
+      )}
     </motion.div>
   );
 };
