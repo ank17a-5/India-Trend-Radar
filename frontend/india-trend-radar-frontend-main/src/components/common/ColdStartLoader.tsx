@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { RefreshCw, Cpu, Radio, ShieldAlert } from "lucide-react";
+import { resetBackendReadyState } from "../../services/api";
 
 interface ColdStartLoaderProps {
   error?: string | null;
@@ -26,39 +27,46 @@ export const ColdStartLoader: React.FC<ColdStartLoaderProps> = ({
     return () => clearInterval(interval);
   }, [error]);
 
-  // Progressive messages based on elapsed time
+  const handleRetryClick = () => {
+    resetBackendReadyState();
+    if (onRetry) {
+      onRetry();
+    }
+  };
+
+  // Progressive connection states matching requirement 6 & 16
   const getProgressiveMessage = (seconds: number) => {
     if (seconds < 10) {
       return {
-        heading: "Starting India Trend Radar...",
-        subheading: "Connecting to India Trend Radar analytics engine...",
-        stage: "Establishing connection",
+        heading: "Connecting to Live Analytics...",
+        subheading: "Starting the analytics engine...",
+        stage: "Establishing server handshake",
       };
-    } else if (seconds < 25) {
+    } else if (seconds < 30) {
       return {
-        heading: "Waking up the analytics engine...",
-        subheading: "Waking up the backend service. Render free-tier takes a few moments to spin up.",
-        stage: "Starting Python FastAPI backend",
+        heading: "Waking up analytics engine...",
+        subheading: "Render is starting the backend. Your live data will appear automatically. Please keep this page open.",
+        stage: "Spinning up Python FastAPI backend",
       };
-    } else if (seconds < 45) {
+    } else if (seconds < 60) {
       return {
         heading: "Almost ready — preparing live trend data...",
         subheading: "Compiling trend scores, virality probability, and anomaly signals...",
-        stage: "Processing ML trend pipelines",
+        stage: "Processing ML prediction models",
       };
     } else {
       return {
         heading: "Finishing backend connection...",
-        subheading: "The analytics engine is taking a little longer than usual. Please stay on this page while we reconnect.",
-        stage: "Finalizing server handshake",
+        subheading: "The analytics engine is taking a little longer than usual to wake up. Please stay on this page while we reconnect.",
+        stage: "Awaiting backend response",
       };
     }
   };
 
   const currentMsg = getProgressiveMessage(elapsedSeconds);
-  const progressPercent = Math.min(Math.round((elapsedSeconds / 60) * 100), 95);
+  const progressPercent = Math.min(Math.round((elapsedSeconds / 70) * 100), 95);
 
-  // If there's an unrecoverable error after retries fail
+  // Error state after 120s+ timeout or server failure
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] w-full p-6 text-center">
@@ -73,10 +81,10 @@ export const ColdStartLoader: React.FC<ColdStartLoaderProps> = ({
 
           <div className="space-y-2">
             <h3 className="text-lg font-bold text-white tracking-tight">
-              We couldn't connect to the analytics engine.
+              Backend connection is taking longer than expected.
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              The backend may be temporarily unavailable or taking longer than expected to respond.
+              Please check that the analytics server is online.
             </p>
           </div>
 
@@ -86,15 +94,13 @@ export const ColdStartLoader: React.FC<ColdStartLoaderProps> = ({
             </p>
           </div>
 
-          {onRetry && (
-            <button
-              onClick={onRetry}
-              className="w-full py-3 px-4 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all shadow-lg shadow-purple-600/25 flex items-center justify-center space-x-2 active:scale-[0.98]"
-            >
-              <RefreshCw className="w-4 h-4" />
-              <span>Retry Connection</span>
-            </button>
-          )}
+          <button
+            onClick={handleRetryClick}
+            className="w-full py-3 px-4 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all shadow-lg shadow-purple-600/25 flex items-center justify-center space-x-2 active:scale-[0.98]"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Retry Connection</span>
+          </button>
         </motion.div>
       </div>
     );
@@ -158,11 +164,11 @@ export const ColdStartLoader: React.FC<ColdStartLoaderProps> = ({
         <div className="flex items-center space-x-3 pt-2 text-[10px] text-slate-400">
           <span className="px-2.5 py-1 bg-slate-950/80 border border-slate-800 rounded-lg flex items-center space-x-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-            <span>Server Status: Cold Starting</span>
+            <span>Server Status: Waking Up</span>
           </span>
           {attemptCount > 1 && (
             <span className="px-2.5 py-1 bg-purple-950/50 border border-purple-800/40 text-purple-300 rounded-lg">
-              Auto-retry #{attemptCount}
+              Ping Attempt #{attemptCount}
             </span>
           )}
         </div>

@@ -66,7 +66,7 @@ export interface EvaluationResponse {
 const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api";
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
-console.log(`[India Trend Radar API] Resolved API Base URL: "${API_BASE}"`);
+console.log(`[API Config] Resolved API Base URL: "${API_BASE}"`);
 
 export const formatKeyword = (rawKeyword: string): string => {
   if (!rawKeyword) return "";
@@ -86,87 +86,118 @@ export interface ApiFetchOptions {
   onRetry?: (attempt: number, elapsedMs: number) => void;
 }
 
+// Global state to track whether backend health has been established
+let backendIsReady = false;
+let activeHealthCheckPromise: Promise<boolean> | null = null;
+
+/**
+ * Pings backend /health endpoint to wake up Render free tier container safely
+ * before executing heavier data endpoints. Uses controlled exponential backoff.
+ */
+
+export function resetBackendReadyState() {
+  backendIsReady = false;
+  activeHealthCheckPromise = null;
+}
+
+export async function ensureBackendReady(
+  onRetry?: (attempt: number, elapsedMs: number) => void,
+  maxTimeoutMs: number = 120000
+): Promise<boolean> {
+  if (backendIsReady) return true;
+
+  if (activeHealthCheckPromise) {
+    return activeHealthCheckPromise;
+  }
+
+  activeHealthCheckPromise = (async () => {
+    const healthUrl = `${API_BASE}/health`;
+    const startTime = Date.now();
+    let attempt = 0;
+    const maxAttempts = 15;
+
+    console.log(`[API Init] Pinging backend health check at: ${healthUrl}`);
+
+    while (Date.now() - startTime < maxTimeoutMs && attempt < maxAttempts) {
+      attempt++;
+      const elapsed = Date.now() - startTime;
+      console.log(`[API Init] Health check ping attempt #${attempt} (${Math.round(elapsed / 1000)}s elapsed)...`);
+
+      const controller = new AbortController();
+      const attemptTimeout = setTimeout(() => controller.abort(), 12000);
+
+      try {
+        const res = await fetch(healthUrl, { signal: controller.signal });
+        clearTimeout(attemptTimeout);
+
+        if (res.ok) {
+          console.log(`[API Init] Backend is healthy & online! (Status ${res.status})`);
+          backendIsReady = true;
+          activeHealthCheckPromise = null;
+          return true;
+        }
+      } catch (err: any) {
+        clearTimeout(attemptTimeout);
+        console.warn(`[API Init] Health ping #${attempt} pending:`, err?.message || err);
+      }
+
+      if (onRetry) {
+        onRetry(attempt, Date.now() - startTime);
+      }
+
+      // Controlled exponential backoff (3s, 4s, 5s, 6s...)
+      const delayMs = Math.min(3000 + attempt * 500, 6000);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    activeHealthCheckPromise = null;
+    throw new Error(`Backend connection is taking longer than expected. Please check that the analytics server is online at ${API_BASE}.`);
+  })();
+
+  return activeHealthCheckPromise;
+}
+
 async function apiFetch<T>(
   path: string,
   errorMessage: string,
   options?: ApiFetchOptions
 ): Promise<T> {
+  const maxTimeoutMs = options?.maxTimeoutMs ?? 120000;
+
+  // Step 1: Ensure backend is healthy first
+  await ensureBackendReady(options?.onRetry, maxTimeoutMs);
+
+  // Step 2: Execute actual API data request
   const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-  const maxTimeoutMs = options?.maxTimeoutMs ?? 90000;
-  const attemptTimeoutMs = options?.attemptTimeoutMs ?? 15000;
-  const startTime = Date.now();
+  console.log(`[API Request] Fetching data: ${url}`);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), options?.attemptTimeoutMs ?? 30000);
 
-  let attempt = 0;
-  let lastError: Error | null = null;
-  const maxAttempts = 12;
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
 
-  while (Date.now() - startTime < maxTimeoutMs && attempt < maxAttempts) {
-    attempt++;
-    const controller = new AbortController();
-    const remainingTime = maxTimeoutMs - (Date.now() - startTime);
-    if (remainingTime <= 0) break;
-
-    const currentAttemptTimeout = Math.min(attemptTimeoutMs, remainingTime);
-    const timeoutId = setTimeout(() => controller.abort(), currentAttemptTimeout);
-
-    try {
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
-
-      if (!res.ok) {
-        // Cold start status codes (Render sleeping: 502, 503, 504)
-        if (res.status === 502 || res.status === 503 || res.status === 504) {
-          throw new Error(
-            `${errorMessage}: Server waking up (HTTP ${res.status}).`
-          );
-        }
-        // Permanent 4xx errors (404, 400, 401, 403) should fail immediately
-        if (res.status >= 400 && res.status < 500) {
-          throw new Error(`${errorMessage}: Endpoint error (HTTP ${res.status} ${res.statusText}).`);
-        }
-        throw new Error(`${errorMessage}: Server error (HTTP ${res.status} ${res.statusText}).`);
+    if (!res.ok) {
+      if (res.status >= 400 && res.status < 500) {
+        throw new Error(`${errorMessage}: Endpoint error (HTTP ${res.status} ${res.statusText}).`);
       }
-
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("text/html")) {
-        throw new Error(
-          `${errorMessage}: Received HTML response instead of JSON. Check backend routing.`
-        );
-      }
-
-      return (await res.json()) as T;
-    } catch (err: any) {
-      clearTimeout(timeoutId);
-      lastError = err;
-
-      // Fail fast on non-retryable 4xx or HTML errors
-      if (err.message && (err.message.includes("Endpoint error") || err.message.includes("Received HTML"))) {
-        throw err;
-      }
-
-      const elapsed = Date.now() - startTime;
-      if (elapsed >= maxTimeoutMs || attempt >= maxAttempts) {
-        break;
-      }
-
-      if (options?.onRetry) {
-        options.onRetry(attempt, elapsed);
-      }
-
-      // Delay before next retry attempt (3s to 5s)
-      const delayMs = Math.min(3000 + attempt * 500, 5000);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      throw new Error(`${errorMessage}: Server error (HTTP ${res.status} ${res.statusText}).`);
     }
+
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("text/html")) {
+      throw new Error(`${errorMessage}: Received HTML response instead of JSON. Check backend routing.`);
+    }
+
+    const data = await res.json();
+    console.log(`[API Response] Successfully loaded data from: ${path}`);
+    return data as T;
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    console.error(`[API Error] Request failed for ${path}:`, err);
+    throw err;
   }
-
-  throw (
-    lastError ||
-    new Error(
-      `Backend connection is taking longer than expected. Please check that the analytics server is online at ${API_BASE}.`
-    )
-  );
 }
-
 
 export async function fetchRisingTrends(
   limitOrDateRange: number | string = 50,
@@ -229,4 +260,3 @@ export async function fetchEvaluation(options?: ApiFetchOptions): Promise<Evalua
     options
   );
 }
-
