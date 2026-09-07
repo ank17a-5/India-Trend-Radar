@@ -1,0 +1,389 @@
+import React, { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+import {
+  Star,
+  Award,
+  Compass,
+  RefreshCw,
+  AlertTriangle,
+  Globe,
+} from "lucide-react";
+import {
+  fetchRisingTrends,
+  formatKeyword,
+  type RisingTrend,
+} from "../services/api";
+
+import { useStore } from "../hooks/useStore";
+
+export const IndiaTrendScore: React.FC = () => {
+  const { dateFilter, sourceFilter, searchQuery, theme } = useStore();
+  const [trends, setTrends] = useState<RisingTrend[]>([]);
+  const [selectedKeyword, setSelectedKeyword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Helper function for source filtering matching existing categories
+  const matchesSource = (keyword: string, source: string) => {
+    if (source === "All") return true;
+    const kw = keyword.toLowerCase();
+    const src = source.toLowerCase();
+    if (src.includes("twitter")) {
+      return kw.includes("twitter") || kw.includes("mod") || kw.includes("secret") || kw.includes("shorts") || kw.includes("live");
+    }
+    if (src.includes("news")) {
+      return kw.includes("news") || kw.includes("truck") || kw.includes("mcqueen") || kw.includes("flatbed") || kw.includes("transportation");
+    }
+    if (src.includes("reddit")) {
+      return kw.includes("reddit") || kw.includes("wwe") || kw.includes("2k25") || kw.includes("match") || kw.includes("unbelievable");
+    }
+    if (src.includes("google")) {
+      return kw.includes("google") || kw.includes("free") || kw.includes("fire") || kw.includes("ranked") || kw.includes("awm");
+    }
+    if (src.includes("youtube")) {
+      return kw.includes("youtube") || kw.includes("gta") || kw.includes("gta5") || kw.includes("gaming") || kw.includes("gameplay");
+    }
+    return true;
+  };
+
+  const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
+
+  const filteredTrends = useMemo(() => {
+    const cleanQuery = searchQuery.trim().toLowerCase();
+
+    return trends.filter((topic) => {
+      if (!cleanQuery) return matchesSource(topic.keyword, sourceFilter);
+      const rawKw = topic.keyword.toLowerCase();
+      const formattedKw = formatKeyword(topic.keyword).toLowerCase();
+      const spaceKw = topic.keyword.replace(/\|/g, " ").toLowerCase();
+      const matchesSearch =
+        rawKw.includes(cleanQuery) ||
+        formattedKw.includes(cleanQuery) ||
+        spaceKw.includes(cleanQuery);
+      return matchesSearch && matchesSource(topic.keyword, sourceFilter);
+    });
+  }, [trends, searchQuery, sourceFilter]);
+
+  const loadTrendScoreData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchRisingTrends(limit);
+      setTrends(data);
+    } catch (err: any) {
+      setError(err.message || "Unable to load India Trend Score data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTrendScoreData();
+  }, [dateFilter]);
+
+  useEffect(() => {
+    if (filteredTrends.length > 0) {
+      if (!selectedKeyword || !filteredTrends.some((t) => t.keyword === selectedKeyword)) {
+        setSelectedKeyword(filteredTrends[0].keyword);
+      }
+    }
+  }, [filteredTrends, selectedKeyword]);
+
+  const activeTopic = useMemo(() => {
+    return filteredTrends.find((t) => t.keyword === selectedKeyword) || filteredTrends[0];
+  }, [filteredTrends, selectedKeyword]);
+
+  // Compute multi-dimensional radar metrics for the active selected topic
+  const radarMetrics = useMemo(() => {
+    if (!activeTopic) return [];
+    const viralityVal = Math.min(100, Math.round(activeTopic.viral_probability * 100));
+    const anomalyVal = Math.min(100, Math.round(activeTopic.anomaly_score * 100));
+    const scoreVal = Math.min(100, Math.round((activeTopic.india_trend_score / 11) * 100));
+    const forecastVal = Math.min(100, Math.round(activeTopic.forecast_score * 500));
+    const rankVal = Math.max(10, 100 - (activeTopic.trend_rank - 1) * 12);
+
+    return [
+      { subject: "Virality Prob", value: viralityVal, fullMark: 100 },
+      { subject: "Anomaly Score", value: anomalyVal, fullMark: 100 },
+      { subject: "Trend Score", value: scoreVal, fullMark: 100 },
+      { subject: "Forecast Weight", value: forecastVal, fullMark: 100 },
+      { subject: "Rank Priority", value: rankVal, fullMark: 100 },
+    ];
+  }, [activeTopic]);
+
+  // Compute real score distribution buckets from active filtered trends
+  const scoreDistributionData = useMemo(() => {
+    let r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;
+    filteredTrends.forEach((t) => {
+      const s = t.india_trend_score;
+      if (s <= 2) r1++;
+      else if (s <= 4) r2++;
+      else if (s <= 6) r3++;
+      else if (s <= 8) r4++;
+      else r5++;
+    });
+    return [
+      { range: "0 - 2", count: r1 },
+      { range: "2.1 - 4", count: r2 },
+      { range: "4.1 - 6", count: r3 },
+      { range: "6.1 - 8", count: r4 },
+      { range: "8.1 - 11", count: r5 },
+    ];
+  }, [filteredTrends]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
+        <RefreshCw className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
+        <p className="text-sm font-semibold text-muted-foreground">Loading India Trend Score leaderboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4 text-center p-6 bg-card border border-rose-500/30 rounded-[18px]">
+        <AlertTriangle className="w-10 h-10 text-rose-500" />
+        <h3 className="text-lg font-bold text-foreground">Unable to load live leaderboard</h3>
+        <p className="text-xs text-muted-foreground max-w-md">{error}</p>
+        <button
+          onClick={loadTrendScoreData}
+          className="px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-[10px] transition-colors flex items-center space-x-2 shadow-md shadow-purple-500/20"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Please try again</span>
+        </button>
+      </div>
+    );
+  }
+
+  if (trends.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
+        <Globe className="w-10 h-10 text-muted-foreground" />
+        <h3 className="text-base font-bold text-foreground">No live trend score data available</h3>
+        <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
+        <button
+          onClick={loadTrendScoreData}
+          className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
+        >
+          Refresh Data
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-6"
+    >
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
+            <Star className="w-5.5 h-5.5 text-amber-500 fill-amber-500/20" />
+            <span>India Trend Score Leaderboard</span>
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Composite score metric combining virality probabilities, anomaly weights, and forecast projections.
+          </p>
+        </div>
+        <button
+          onClick={loadTrendScoreData}
+          className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          title="Refresh Live Data"
+        >
+          <RefreshCw className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Row containing Radar Analysis and Score Distribution */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Radar Analysis (7/12 width) */}
+        <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[400px]">
+          <div>
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">
+                  {activeTopic ? formatKeyword(activeTopic.keyword) : "No Topic Selected"}
+                </span>
+                <h3 className="text-sm font-bold text-foreground">Trend Vector Dimensional Analysis</h3>
+              </div>
+              {activeTopic && (
+                <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-bold rounded-[8px]">
+                  Score: {activeTopic.india_trend_score.toFixed(2)}
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Multi-parameter dimensional inspection for the selected trend.
+            </p>
+          </div>
+
+          <div className="flex-1 w-full h-[260px] flex items-center justify-center mt-2">
+            {activeTopic ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarMetrics}>
+                  <PolarGrid stroke="hsl(var(--border))" opacity={0.3} />
+                  <PolarAngleAxis dataKey="subject" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="hsl(var(--border))" fontSize={9} />
+                  <Radar
+                    name={formatKeyword(activeTopic.keyword)}
+                    dataKey="value"
+                    stroke="#F59E0B"
+                    fill="#F59E0B"
+                    fillOpacity={0.25}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                      borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                      borderRadius: "12px",
+                      color: theme === "dark" ? "#F8FAFC" : "#172033",
+                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                    }}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-xs font-semibold text-muted-foreground">
+                No active trend selected.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Score Distribution (5/12 width) */}
+        <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[400px]">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Trend Score Distribution</h3>
+            <p className="text-xs text-muted-foreground">Frequency distribution of India Trend Scores in active range.</p>
+          </div>
+          <div className="flex-1 w-full h-[260px] mt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={scoreDistributionData} margin={{ left: -20, right: 10, top: 10, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.2} vertical={false} />
+                <XAxis dataKey="range" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
+                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                    borderRadius: "12px",
+                    color: theme === "dark" ? "#F8FAFC" : "#172033",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                  }}
+                />
+                <Bar dataKey="count" fill="#6D3DF5" radius={[6, 6, 0, 0]} barSize={25} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Leaderboard Table */}
+      <motion.div variants={itemVariants} className="p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Active Leaderboard ({filteredTrends.length})</h3>
+            <p className="text-xs text-muted-foreground">
+              Click on any row to inspect its dimensional radar vector above.
+            </p>
+          </div>
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-[10px] bg-muted/40 border border-border text-xs font-semibold text-muted-foreground">
+            <Compass className="w-4 h-4 text-amber-500" />
+            <span>Click rows to analyze dimensions</span>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm text-left text-foreground">
+            <thead className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase border-b border-border">
+              <tr>
+                <th className="py-3 px-4">Rank</th>
+                <th className="py-3 px-4">Topic Keyword</th>
+                <th className="py-3 px-4">India Trend Score</th>
+                <th className="py-3 px-4">Viral Probability</th>
+                <th className="py-3 px-4">Forecast Score</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {filteredTrends.length > 0 ? (
+                filteredTrends.map((item, idx) => (
+                  <tr
+                    key={idx}
+                    onClick={() => setSelectedKeyword(item.keyword)}
+                    className={`hover:bg-slate-100/80 dark:hover:bg-slate-800/40 transition-all font-medium cursor-pointer ${
+                      selectedKeyword === item.keyword
+                        ? "bg-amber-500/10 dark:bg-slate-800/80 border-l-4 border-amber-500"
+                        : ""
+                    }`}
+                  >
+                    <td className="py-3.5 px-4 font-bold text-slate-500 dark:text-slate-400">
+                      <span className="flex items-center space-x-1.5">
+                        <Award className={`w-4 h-4 ${idx === 0 ? "text-amber-400" : idx === 1 ? "text-slate-300" : "text-amber-700"}`} />
+                        <span>#{item.trend_rank}</span>
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-foreground">{formatKeyword(item.keyword)}</td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center space-x-3">
+                        <span className="font-bold text-amber-500 dark:text-amber-400">{item.india_trend_score.toFixed(2)}</span>
+                        <div className="w-24 bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 hidden md:block">
+                          <div
+                            className="bg-amber-500 h-1.5 rounded-full"
+                            style={{ width: `${Math.min(100, (item.india_trend_score / 11) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">{(item.viral_probability * 100).toFixed(1)}%</td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2.5 py-1 text-[11px] font-bold rounded-full border bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20">
+                        {item.forecast_score.toFixed(3)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-muted-foreground text-xs font-semibold">
+                    No matching trend score records found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
