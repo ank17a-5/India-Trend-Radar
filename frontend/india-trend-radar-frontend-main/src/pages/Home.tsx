@@ -34,7 +34,6 @@ import {
   type AnomalyRecord,
   type EvaluationMetric,
 } from "../services/api";
-import { ColdStartLoader } from "../components/common/ColdStartLoader";
 
 export const Home: React.FC = () => {
   const { searchQuery, dateFilter, sourceFilter, theme } = useStore();
@@ -46,8 +45,6 @@ export const Home: React.FC = () => {
   });
   const [evalMetrics, setEvalMetrics] = useState<EvaluationMetric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   const getSourceParam = (filter: string) => {
     if (filter === "All") return "all";
@@ -56,25 +53,20 @@ export const Home: React.FC = () => {
 
   const loadLiveData = useCallback(async () => {
     setLoading(true);
-    setError(null);
-    setAttemptCount(1);
-    const onRetry = (attempt: number) => {
-      setAttemptCount(attempt + 1);
-    };
 
     try {
       const sourceParam = getSourceParam(sourceFilter);
 
       const [trends, anomalies, evaluation] = await Promise.all([
-        fetchRisingTrends(50, sourceParam, { onRetry }),
-        fetchAnomalies(50, { onRetry }),
-        fetchEvaluation({ onRetry }),
+        fetchRisingTrends(50, sourceParam),
+        fetchAnomalies(50),
+        fetchEvaluation(),
       ]);
       setRisingTrends(trends || []);
       setAnomalyData(anomalies || { count: 0, anomalies: [] });
       setEvalMetrics(evaluation?.metrics || []);
     } catch (err: any) {
-      setError(err.message || "Unable to connect to the analytics engine.");
+      console.warn("Failed to load live data:", err);
     } finally {
       setLoading(false);
     }
@@ -289,10 +281,17 @@ export const Home: React.FC = () => {
           <span>Forecast Horizon: <strong className="text-purple-600 dark:text-purple-400">{forecastingDate}</strong></span>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>FastAPI Live Pipeline</span>
-          </span>
+          {loading ? (
+            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span>Connecting to Backend...</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>FastAPI Live Pipeline</span>
+            </span>
+          )}
           <button
             onClick={loadLiveData}
             className="p-1.5 rounded-[8px] bg-purple-50/60 dark:bg-slate-800/80 border border-purple-200/80 dark:border-slate-700/60 hover:bg-purple-100 dark:hover:bg-slate-700 text-purple-700 dark:text-slate-300 transition-colors"
@@ -303,11 +302,7 @@ export const Home: React.FC = () => {
         </div>
       </div>
 
-      {loading || error ? (
-        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadLiveData} title="Connecting to live analytics..." />
-      ) : (
-        <>
-          {/* Row 1: 4 KPI Cards Grid */}
+      {/* Row 1: 4 KPI Cards Grid */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {customKPIData.map((kpi, idx) => {
           const IconComponent = kpi.icon;
@@ -630,8 +625,6 @@ export const Home: React.FC = () => {
           </div>
         </div>
       </motion.div>
-        </>
-      )}
     </motion.div>
   );
 };

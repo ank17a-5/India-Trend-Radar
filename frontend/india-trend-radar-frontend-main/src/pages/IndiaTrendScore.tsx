@@ -19,23 +19,18 @@ import {
   Award,
   Compass,
   RefreshCw,
-  Globe,
 } from "lucide-react";
 import {
   fetchRisingTrends,
   formatKeyword,
   type RisingTrend,
 } from "../services/api";
-import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const IndiaTrendScore: React.FC = () => {
   const { dateFilter, sourceFilter, searchQuery, theme } = useStore();
   const [trends, setTrends] = useState<RisingTrend[]>([]);
   const [selectedKeyword, setSelectedKeyword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   // Helper function for source filtering matching existing categories
   const matchesSource = (keyword: string, source: string) => {
@@ -81,18 +76,11 @@ export const IndiaTrendScore: React.FC = () => {
   }, [trends, searchQuery, sourceFilter, limit]);
 
   const loadTrendScoreData = async () => {
-    setLoading(true);
-    setError(null);
-    setAttemptCount(1);
-    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
-
     try {
-      const data = await fetchRisingTrends(limit, "all", { onRetry });
+      const data = await fetchRisingTrends(limit, "all");
       setTrends(data);
     } catch (err: any) {
-      setError(err.message || "Unable to connect to the analytics engine.");
-    } finally {
-      setLoading(false);
+      console.warn("Failed to load trend score data:", err);
     }
   };
 
@@ -186,23 +174,6 @@ export const IndiaTrendScore: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
-
-      {loading || error ? (
-        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadTrendScoreData} title="Loading Trend Score Leaderboard..." />
-      ) : trends.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-          <Globe className="w-10 h-10 text-muted-foreground" />
-          <h3 className="text-base font-bold text-foreground">No live trend score data available</h3>
-          <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
-          <button
-            onClick={loadTrendScoreData}
-            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-          >
-            Refresh Data
-          </button>
-        </div>
-      ) : (
-        <>
 
       {/* Row containing Radar Analysis and Score Distribution */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -364,8 +335,6 @@ export const IndiaTrendScore: React.FC = () => {
           </table>
         </div>
       </motion.div>
-        </>
-      )}
     </motion.div>
   );
 };

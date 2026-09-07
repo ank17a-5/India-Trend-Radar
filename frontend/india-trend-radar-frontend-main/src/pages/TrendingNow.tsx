@@ -23,7 +23,6 @@ import {
   Search,
   SlidersHorizontal,
   TrendingUp,
-  Globe,
 } from "lucide-react";
 import { useStore } from "../hooks/useStore";
 import {
@@ -33,33 +32,22 @@ import {
   type RisingTrend,
   type ForecastPoint,
 } from "../services/api";
-import { ColdStartLoader } from "../components/common/ColdStartLoader";
 
 export const TrendingNow: React.FC = () => {
   const { searchQuery, setSearchQuery, theme } = useStore();
   const [trends, setTrends] = useState<RisingTrend[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [forecastPoints, setForecastPoints] = useState<ForecastPoint[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    setAttemptCount(1);
-    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
-
     try {
-      const data = await fetchRisingTrends(50, "all", { onRetry });
+      const data = await fetchRisingTrends(50, "all");
       setTrends(data);
       if (data.length > 0) {
         setSelectedTopic(data[0].keyword);
       }
     } catch (err: any) {
-      setError(err.message || "Unable to connect to the analytics engine.");
-    } finally {
-      setLoading(false);
+      console.warn("Failed to load trends data:", err);
     }
   };
 
@@ -263,23 +251,7 @@ export const TrendingNow: React.FC = () => {
         </div>
       </div>
 
-      {loading || error ? (
-        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadData} title="Loading Live Trends Feed..." />
-      ) : trends.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-          <Globe className="w-10 h-10 text-muted-foreground" />
-          <h3 className="text-base font-bold text-foreground">No live trending data available</h3>
-          <p className="text-xs text-muted-foreground">The trend pipeline dataset currently returned zero records.</p>
-          <button
-            onClick={loadData}
-            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-          >
-            Refresh Data
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* Primary Graphs Row */}
+      {/* Primary Graphs Row */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Timeline Chart (7/12 width) */}
@@ -407,8 +379,6 @@ export const TrendingNow: React.FC = () => {
           </table>
         </div>
       </motion.div>
-        </>
-      )}
     </motion.div>
   );
 };

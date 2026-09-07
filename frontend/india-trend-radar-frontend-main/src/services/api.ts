@@ -63,7 +63,8 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const DEFAULT_BACKEND_URL = "https://india-trend-radar-dvhs.onrender.com";
+const isDev = import.meta.env.DEV;
+const DEFAULT_BACKEND_URL = isDev ? "/api" : "https://india-trend-radar-dvhs.onrender.com";
 const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || DEFAULT_BACKEND_URL;
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
@@ -88,77 +89,10 @@ export interface ApiFetchOptions {
   onRetry?: (attempt: number, elapsedMs: number) => void;
 }
 
-// Global state to track whether backend health has been established
-let backendIsReady = false;
-let activeHealthCheckPromise: Promise<boolean> | null = null;
+export function resetBackendReadyState() {}
 
-/**
- * Pings backend /health endpoint to wake up Render free tier container safely
- * before executing heavier data endpoints. Uses controlled exponential backoff.
- */
-
-export function resetBackendReadyState() {
-  backendIsReady = false;
-  activeHealthCheckPromise = null;
-}
-
-export async function ensureBackendReady(
-  onRetry?: (attempt: number, elapsedMs: number) => void,
-  maxTimeoutMs: number = 120000
-): Promise<boolean> {
-  if (backendIsReady) return true;
-
-  if (activeHealthCheckPromise) {
-    return activeHealthCheckPromise;
-  }
-
-  activeHealthCheckPromise = (async () => {
-    const healthUrl = `${API_BASE}/health`;
-    const startTime = Date.now();
-    let attempt = 0;
-    const maxAttempts = 6;
-
-    console.log(`[API Init] Pinging backend health check at: ${healthUrl}`);
-
-    while (Date.now() - startTime < maxTimeoutMs && attempt < maxAttempts) {
-      attempt++;
-      const elapsed = Date.now() - startTime;
-      console.log(`[API Init] Health check ping attempt #${attempt} (${Math.round(elapsed / 1000)}s elapsed)...`);
-
-      const controller = new AbortController();
-      // Allow 65 seconds per attempt so Render free container finishes waking up
-      const attemptTimeout = setTimeout(() => controller.abort(), 65000);
-
-      try {
-        const res = await fetch(healthUrl, { signal: controller.signal });
-        clearTimeout(attemptTimeout);
-
-        if (res.ok) {
-          console.log(`[API Init] Backend is healthy & online! (Status ${res.status})`);
-          backendIsReady = true;
-          activeHealthCheckPromise = null;
-          return true;
-        }
-      } catch (err: any) {
-        clearTimeout(attemptTimeout);
-        console.warn(`[API Init] Health ping #${attempt} pending:`, err?.message || err);
-      }
-
-      if (onRetry) {
-        onRetry(attempt, Date.now() - startTime);
-      }
-
-      // Delay before next retry attempt (3s to 5s)
-      const delayMs = Math.min(3000 + attempt * 500, 5000);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
-
-    activeHealthCheckPromise = null;
-    throw new Error(`Live data temporarily unavailable. Retrying automatically...`);
-  })();
-
-
-  return activeHealthCheckPromise;
+export async function ensureBackendReady(): Promise<boolean> {
+  return true;
 }
 
 async function apiFetch<T>(
@@ -166,16 +100,12 @@ async function apiFetch<T>(
   errorMessage: string,
   options?: ApiFetchOptions
 ): Promise<T> {
-  const maxTimeoutMs = options?.maxTimeoutMs ?? 120000;
-
-  // Step 1: Ensure backend is healthy first
-  await ensureBackendReady(options?.onRetry, maxTimeoutMs);
-
-  // Step 2: Execute actual API data request
   const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-  console.log(`[API Request] Fetching data: ${url}`);
+  console.log(`[API Request] Fetching live data from: ${url}`);
+
+  const timeoutMs = options?.attemptTimeoutMs ?? 90000;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), options?.attemptTimeoutMs ?? 30000);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const res = await fetch(url, { signal: controller.signal });
@@ -194,11 +124,11 @@ async function apiFetch<T>(
     }
 
     const data = await res.json();
-    console.log(`[API Response] Successfully loaded data from: ${path}`);
+    console.log(`[API Response] Successfully loaded live data from: ${path}`);
     return data as T;
   } catch (err: any) {
     clearTimeout(timeoutId);
-    console.error(`[API Error] Request failed for ${path}:`, err);
+    console.warn(`[API Error] Request failed for ${path}:`, err?.message || err);
     throw err;
   }
 }

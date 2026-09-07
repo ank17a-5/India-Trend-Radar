@@ -17,7 +17,6 @@ import {
   Target,
   Sparkles,
   RefreshCw,
-  Globe,
 } from "lucide-react";
 import {
   fetchForecast,
@@ -26,7 +25,6 @@ import {
   type ForecastPoint,
   type RisingTrend,
 } from "../services/api";
-import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const Forecast: React.FC = () => {
@@ -35,31 +33,21 @@ export const Forecast: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(targetDays);
   const [forecastPoints, setForecastPoints] = useState<ForecastPoint[]>([]);
   const [risingTrends, setRisingTrends] = useState<RisingTrend[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   useEffect(() => {
     setActiveTab(targetDays);
   }, [targetDays]);
 
   const loadForecastData = async () => {
-    setLoading(true);
-    setError(null);
-    setAttemptCount(1);
-    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
-
     try {
       const [forecastRes, trendsRes] = await Promise.all([
-        fetchForecast("overall", { onRetry }),
-        fetchRisingTrends(50, "all", { onRetry }),
+        fetchForecast("overall"),
+        fetchRisingTrends(50, "all"),
       ]);
       setForecastPoints(forecastRes.forecast || []);
       setRisingTrends(trendsRes || []);
     } catch (err: any) {
-      setError(err.message || "Unable to connect to the analytics engine.");
-    } finally {
-      setLoading(false);
+      console.warn("Failed to load forecast data:", err);
     }
   };
 
@@ -133,23 +121,6 @@ export const Forecast: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
-
-      {loading || error ? (
-        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadForecastData} title="Loading Live AI Forecast..." />
-      ) : forecastPoints.length === 0 && risingTrends.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-          <Globe className="w-10 h-10 text-muted-foreground" />
-          <h3 className="text-base font-bold text-foreground">No live forecast data available</h3>
-          <p className="text-xs text-muted-foreground">The Prophet prediction file currently returned zero records.</p>
-          <button
-            onClick={loadForecastData}
-            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-          >
-            Refresh Data
-          </button>
-        </div>
-      ) : (
-        <>
 
       {/* Forecast cards selection row */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -317,8 +288,6 @@ export const Forecast: React.FC = () => {
           </table>
         </div>
       </motion.div>
-        </>
-      )}
     </motion.div>
   );
 };

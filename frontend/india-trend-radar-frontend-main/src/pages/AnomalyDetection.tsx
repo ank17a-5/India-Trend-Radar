@@ -17,23 +17,18 @@ import {
   Flame,
   Activity,
   RefreshCw,
-  Globe,
 } from "lucide-react";
 import {
   fetchAnomalies,
   formatKeyword,
   type AnomalyRecord,
 } from "../services/api";
-import { ColdStartLoader } from "../components/common/ColdStartLoader";
 import { useStore } from "../hooks/useStore";
 
 export const AnomalyDetection: React.FC = () => {
   const { dateFilter, sourceFilter, searchQuery, theme } = useStore();
   const [anomalies, setAnomalies] = useState<AnomalyRecord[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState<number>(1);
 
   // Helper function for source filtering matching existing categories
   const matchesSource = (keyword: string, source: string) => {
@@ -58,40 +53,33 @@ export const AnomalyDetection: React.FC = () => {
     return true;
   };
 
-  const filteredAnomalies = useMemo(() => {
-    const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
-    const isSearching = searchQuery.trim().length > 0;
-    const cleanQuery = searchQuery.trim().toLowerCase();
+  const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
 
+  const filteredAnomalies = useMemo(() => {
     return anomalies
-      .filter((item) => {
-        if (!cleanQuery) return matchesSource(item.keyword, sourceFilter);
-        const rawKw = item.keyword.toLowerCase();
-        const formattedKw = formatKeyword(item.keyword).toLowerCase();
-        const spaceKw = item.keyword.replace(/\|/g, " ").toLowerCase();
-        const matchesSearch =
-          rawKw.includes(cleanQuery) ||
-          formattedKw.includes(cleanQuery) ||
-          spaceKw.includes(cleanQuery);
-        return matchesSearch && matchesSource(item.keyword, sourceFilter);
+      .filter((a) => {
+        if (!searchQuery) return matchesSource(a.keyword, sourceFilter);
+        const cleanQuery = searchQuery.trim().toLowerCase();
+        const rawKw = a.keyword.toLowerCase();
+        const formattedKw = formatKeyword(a.keyword).toLowerCase();
+        const spaceKw = a.keyword.replace(/\|/g, " ").toLowerCase();
+        return (
+          (rawKw.includes(cleanQuery) ||
+            formattedKw.includes(cleanQuery) ||
+            spaceKw.includes(cleanQuery)) &&
+          matchesSource(a.keyword, sourceFilter)
+        );
       })
-      .slice(0, isSearching ? 50 : limit);
-  }, [anomalies, searchQuery, dateFilter, sourceFilter]);
+      .slice(0, limit);
+  }, [anomalies, searchQuery, sourceFilter, limit]);
 
   const loadAnomalyData = async () => {
-    setLoading(true);
-    setError(null);
-    setAttemptCount(1);
-    const onRetry = (attempt: number) => setAttemptCount(attempt + 1);
-
     try {
-      const res = await fetchAnomalies(50, { onRetry });
+      const res = await fetchAnomalies(50);
       setAnomalies(res.anomalies || []);
       setTotalCount(res.count || 0);
     } catch (err: any) {
-      setError(err.message || "Unable to connect to the analytics engine.");
-    } finally {
-      setLoading(false);
+      console.warn("Failed to load anomaly data:", err);
     }
   };
 
@@ -183,23 +171,6 @@ export const AnomalyDetection: React.FC = () => {
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
-
-      {loading || error ? (
-        <ColdStartLoader attemptCount={attemptCount} error={error} onRetry={loadAnomalyData} title="Loading Live Anomaly Detection..." />
-      ) : anomalies.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[350px] space-y-3 text-center p-6 bg-card border border-border rounded-[18px]">
-          <Globe className="w-10 h-10 text-muted-foreground" />
-          <h3 className="text-base font-bold text-foreground">No live anomalies available</h3>
-          <p className="text-xs text-muted-foreground">The anomaly detection pipeline currently returned zero records.</p>
-          <button
-            onClick={loadAnomalyData}
-            className="px-4 py-1.5 text-xs font-bold text-foreground bg-card hover:bg-muted border border-border rounded-[8px] transition-colors"
-          >
-            Refresh Data
-          </button>
-        </div>
-      ) : (
-        <>
 
       {/* Stats Cards Row */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
@@ -396,8 +367,6 @@ export const AnomalyDetection: React.FC = () => {
           </table>
         </div>
       </motion.div>
-        </>
-      )}
     </motion.div>
   );
 };
