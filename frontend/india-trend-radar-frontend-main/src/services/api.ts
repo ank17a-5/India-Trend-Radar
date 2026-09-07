@@ -63,8 +63,7 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const DEFAULT_BACKEND_URL = "https://india-trend-radar-dvhs.onrender.com";
-const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || DEFAULT_BACKEND_URL;
+const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api";
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
 console.log(`[India Trend Radar API] Resolved API Base URL: "${API_BASE}"`);
@@ -115,7 +114,7 @@ export async function ensureBackendReady(
     const healthUrl = `${API_BASE}/health`;
     const startTime = Date.now();
     let attempt = 0;
-    const maxAttempts = 15;
+    const maxAttempts = 6;
 
     console.log(`[API Init] Pinging backend health check at: ${healthUrl}`);
 
@@ -125,7 +124,8 @@ export async function ensureBackendReady(
       console.log(`[API Init] Health check ping attempt #${attempt} (${Math.round(elapsed / 1000)}s elapsed)...`);
 
       const controller = new AbortController();
-      const attemptTimeout = setTimeout(() => controller.abort(), 12000);
+      // Allow 65 seconds per attempt so Render free container finishes waking up
+      const attemptTimeout = setTimeout(() => controller.abort(), 65000);
 
       try {
         const res = await fetch(healthUrl, { signal: controller.signal });
@@ -146,13 +146,13 @@ export async function ensureBackendReady(
         onRetry(attempt, Date.now() - startTime);
       }
 
-      // Controlled exponential backoff (3s, 4s, 5s, 6s...)
-      const delayMs = Math.min(3000 + attempt * 500, 6000);
+      // Delay before next retry attempt (3s to 5s)
+      const delayMs = Math.min(3000 + attempt * 500, 5000);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
 
     activeHealthCheckPromise = null;
-    throw new Error(`Backend connection is taking longer than expected. Please check that the analytics server is online at ${API_BASE}.`);
+    throw new Error(`Backend connection is taking longer than expected. Please check that the analytics server is online.`);
   })();
 
   return activeHealthCheckPromise;
