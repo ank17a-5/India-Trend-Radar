@@ -23,22 +23,18 @@ if DATABASE_URL:
 # ==========================================================
 
 def get_project_root() -> Path:
-    # 1. Search upwards from this file location for a directory containing 'data'
     curr = Path(__file__).resolve().parent
     while curr != curr.parent:
         if (curr / "data" / "predictions").exists() or (curr / "data").exists():
             return curr
         curr = curr.parent
 
-
-    # 2. Search upwards from current working directory
     curr = Path.cwd()
     while curr != curr.parent:
         if (curr / "data" / "predictions").exists() or (curr / "data").exists():
             return curr
         curr = curr.parent
 
-    # Fallback to 3 parents up from scripts/phase_4/api
     return Path(__file__).resolve().parents[3]
 
 PROJECT_ROOT = get_project_root()
@@ -58,31 +54,15 @@ def resolve_data_file(relative_path: str) -> Path:
     return candidates[0]
 
 # ==========================================================
-# CSV FILE PATHS
-# ==========================================================
-
-TREND_FILE = resolve_data_file("data/predictions/india_trend_score.csv")
-FORECAST_FILE = resolve_data_file("data/predictions/prophet_predictions.csv")
-ANOMALY_FILE = resolve_data_file("data/predictions/anomaly_detection.csv")
-METRICS_FILE = resolve_data_file("data/reports/model_metrics.csv")
-
-print(f"[API Services] TREND_FILE: {TREND_FILE} (exists: {TREND_FILE.exists()})")
-print(f"[API Services] FORECAST_FILE: {FORECAST_FILE} (exists: {FORECAST_FILE.exists()})")
-print(f"[API Services] ANOMALY_FILE: {ANOMALY_FILE} (exists: {ANOMALY_FILE.exists()})")
-print(f"[API Services] METRICS_FILE: {METRICS_FILE} (exists: {METRICS_FILE.exists()})")
-
-# ==========================================================
 # HELPER FUNCTION
 # ==========================================================
 
 def clean_dataframe(df):
-    """
-    Clean DataFrame before converting it to JSON.
-    """
+    """Clean DataFrame before converting it to JSON."""
     df = df.where(pd.notna(df), None)
     return df
 
-# Default Fallback Datasets (used if CSV file path is missing in deployment environment)
+# Default Fallback Datasets
 FALLBACK_TRENDS = [
     {"keyword": "gta|live|gta5|gtav|gaming", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9995, "is_anomaly": 1, "anomaly_score": 0.8723, "india_trend_score": 11.5031, "trend_rank": 1},
     {"keyword": "flatbed|truck|mcqueen|transportation|pothole|car|beamng|drive", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9991, "is_anomaly": 1, "anomaly_score": 0.7621, "india_trend_score": 8.7001, "trend_rank": 2},
@@ -94,9 +74,6 @@ FALLBACK_TRENDS = [
     {"keyword": "spider|man|rescue|batman|iron|venom|funny|game", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9992, "is_anomaly": 1, "anomaly_score": 0.5987, "india_trend_score": 3.5047, "trend_rank": 8},
     {"keyword": "live|free|fire|rank|season|push", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9995, "is_anomaly": 1, "anomaly_score": 0.5422, "india_trend_score": 3.4898, "trend_rank": 9},
     {"keyword": "serious|rank|push|live|bin|zaid|gaming|binzaid", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9995, "is_anomaly": 1, "anomaly_score": 0.5420, "india_trend_score": 3.4882, "trend_rank": 10},
-    {"keyword": "lionel messi", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9996, "is_anomaly": 1, "anomaly_score": 0.3975, "india_trend_score": 0.8789, "trend_rank": 11},
-    {"keyword": "nainar nagendran", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9996, "is_anomaly": 1, "anomaly_score": 0.3975, "india_trend_score": 0.8789, "trend_rank": 12},
-    {"keyword": "mariners vs phillies", "prediction_date": "2026-09-07", "forecasting_date": "2026-10-07", "forecast_score": 0.1809, "predicted_viral": 1, "viral_probability": 0.9996, "is_anomaly": 1, "anomaly_score": 0.3975, "india_trend_score": 0.8789, "trend_rank": 13},
 ]
 
 FALLBACK_FORECAST = [
@@ -137,23 +114,25 @@ def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "al
     df = None
     if db_engine is not None:
         try:
-            df = pd.read_sql("SELECT * FROM google_trends LIMIT 500", db_engine)
-        except Exception as db_err:
-            print(f"[API Services] DB query error (google_trends): {db_err}")
+            df = pd.read_sql("SELECT * FROM india_trend_score LIMIT 500", db_engine)
+        except Exception:
+            try:
+                df = pd.read_sql("SELECT * FROM google_trends LIMIT 500", db_engine)
+            except Exception as err:
+                print(f"[API Services] DB read error (trends): {err}")
 
     if df is None or df.empty:
         file_path = resolve_data_file("data/predictions/india_trend_score.csv")
         if file_path.exists():
             try:
                 df = pd.read_csv(file_path)
-            except Exception as csv_err:
-                print(f"[API Services] CSV read error: {csv_err}")
+            except Exception as e:
+                print(f"[API Services] CSV read error: {e}")
 
     if df is None or df.empty:
         return FALLBACK_TRENDS[:limit]
 
-
-        # 1. DATE FILTERING LOGIC
+    try:
         if "prediction_date" in df.columns:
             df["prediction_date_dt"] = pd.to_datetime(df["prediction_date"], errors="coerce")
             max_date = df["prediction_date_dt"].max()
@@ -174,14 +153,12 @@ def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "al
 
             df = df.drop(columns=["prediction_date_dt"], errors="ignore")
 
-        # 2. SOURCE / KEYWORD FILTERING LOGIC
         if source and source.lower() != "all":
             if "source" in df.columns:
                 df = df[df["source"].astype(str).str.lower() == source.lower()]
             elif "keyword" in df.columns:
                 df = df[df["keyword"].astype(str).str.contains(source, case=False, na=False)]
 
-        # 3. SORT AND LIMIT
         if "trend_rank" in df.columns:
             df = df.sort_values(by="trend_rank")
 
@@ -197,14 +174,26 @@ def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "al
 # ==========================================================
 
 def get_top_niches():
-    file_path = resolve_data_file("data/predictions/india_trend_score.csv")
-    if not file_path.exists():
+    df = None
+    if db_engine is not None:
+        try:
+            df = pd.read_sql("SELECT * FROM india_trend_score LIMIT 100", db_engine)
+        except Exception as err:
+            print(f"[API Services] DB read error (niches): {err}")
+
+    if df is None or df.empty:
+        file_path = resolve_data_file("data/predictions/india_trend_score.csv")
+        if file_path.exists():
+            try:
+                df = pd.read_csv(file_path).head(100)
+            except Exception:
+                df = None
+
+    if df is None or df.empty:
         return FALLBACK_TRENDS[:10]
 
     try:
-        df = pd.read_csv(file_path).head(100)
         df = clean_dataframe(df)
-
         if "india_trend_score" in df.columns:
             df["india_trend_score"] = pd.to_numeric(df["india_trend_score"], errors="coerce")
             df = df.sort_values(by="india_trend_score", ascending=False)
@@ -227,18 +216,26 @@ def get_top_niches():
 # ==========================================================
 
 def get_forecast(topic: str):
-    file_path = resolve_data_file("data/predictions/prophet_predictions.csv")
-    if not file_path.exists():
-        return {
-            "topic": topic,
-            "forecast_type": "overall",
-            "forecast": FALLBACK_FORECAST
-        }
+    df = None
+    if db_engine is not None:
+        try:
+            df = pd.read_sql("SELECT * FROM prophet_predictions LIMIT 100", db_engine)
+        except Exception as err:
+            print(f"[API Services] DB read error (forecast): {err}")
+
+    if df is None or df.empty:
+        file_path = resolve_data_file("data/predictions/prophet_predictions.csv")
+        if file_path.exists():
+            try:
+                df = pd.read_csv(file_path).head(100)
+            except Exception:
+                df = None
+
+    if df is None or df.empty:
+        return {"topic": topic, "forecast_type": "overall", "forecast": FALLBACK_FORECAST}
 
     try:
-        df = pd.read_csv(file_path).head(100)
         df = clean_dataframe(df)
-
         columns = ["ds", "yhat", "yhat_lower", "yhat_upper"]
         available_columns = [col for col in columns if col in df.columns]
 
@@ -251,29 +248,33 @@ def get_forecast(topic: str):
             "forecast_type": "overall",
             "forecast": records if records else FALLBACK_FORECAST
         }
-
-    except Exception as e:
-        return {
-            "topic": topic,
-            "forecast_type": "overall",
-            "forecast": FALLBACK_FORECAST
-        }
+    except Exception:
+        return {"topic": topic, "forecast_type": "overall", "forecast": FALLBACK_FORECAST}
 
 # ==========================================================
 # ANOMALIES
 # ==========================================================
 
 def get_anomalies(limit: int = 20):
-    file_path = resolve_data_file("data/predictions/anomaly_detection.csv")
-    if not file_path.exists():
-        return {
-            "count": len(FALLBACK_ANOMALIES),
-            "anomalies": FALLBACK_ANOMALIES[:limit]
-        }
+    df = None
+    if db_engine is not None:
+        try:
+            df = pd.read_sql("SELECT * FROM anomaly_detection LIMIT 100", db_engine)
+        except Exception as err:
+            print(f"[API Services] DB read error (anomalies): {err}")
+
+    if df is None or df.empty:
+        file_path = resolve_data_file("data/predictions/anomaly_detection.csv")
+        if file_path.exists():
+            try:
+                df = pd.read_csv(file_path).head(100)
+            except Exception:
+                df = None
+
+    if df is None or df.empty:
+        return {"count": len(FALLBACK_ANOMALIES), "anomalies": FALLBACK_ANOMALIES[:limit]}
 
     try:
-        df = pd.read_csv(file_path).head(100)
-
         if "is_anomaly" in df.columns:
             df["is_anomaly"] = pd.to_numeric(df["is_anomaly"], errors="coerce")
             df = df[df["is_anomaly"] == 1]
@@ -289,34 +290,35 @@ def get_anomalies(limit: int = 20):
             "count": len(records) if records else len(FALLBACK_ANOMALIES),
             "anomalies": records if records else FALLBACK_ANOMALIES[:limit]
         }
-
-    except Exception as e:
-        return {
-            "count": len(FALLBACK_ANOMALIES),
-            "anomalies": FALLBACK_ANOMALIES[:limit]
-        }
+    except Exception:
+        return {"count": len(FALLBACK_ANOMALIES), "anomalies": FALLBACK_ANOMALIES[:limit]}
 
 # ==========================================================
 # MODEL EVALUATION
 # ==========================================================
 
 def get_model_evaluation():
-    file_path = resolve_data_file("data/reports/model_metrics.csv")
-    if not file_path.exists():
-        return {
-            "metrics": FALLBACK_METRICS
-        }
+    df = None
+    if db_engine is not None:
+        try:
+            df = pd.read_sql("SELECT * FROM model_metrics LIMIT 100", db_engine)
+        except Exception as err:
+            print(f"[API Services] DB read error (metrics): {err}")
+
+    if df is None or df.empty:
+        file_path = resolve_data_file("data/reports/model_metrics.csv")
+        if file_path.exists():
+            try:
+                df = pd.read_csv(file_path)
+            except Exception:
+                df = None
+
+    if df is None or df.empty:
+        return {"metrics": FALLBACK_METRICS}
 
     try:
-        df = pd.read_csv(file_path)
         df = clean_dataframe(df)
         records = df.to_dict(orient="records")
-
-        return {
-            "metrics": records if records else FALLBACK_METRICS
-        }
-
-    except Exception as e:
-        return {
-            "metrics": FALLBACK_METRICS
-        }
+        return {"metrics": records if records else FALLBACK_METRICS}
+    except Exception:
+        return {"metrics": FALLBACK_METRICS}
