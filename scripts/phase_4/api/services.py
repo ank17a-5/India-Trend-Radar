@@ -27,37 +27,31 @@ def get_project_root() -> Path:
 PROJECT_ROOT = get_project_root()
 print(f"[API Services] Resolved PROJECT_ROOT to: {PROJECT_ROOT}")
 
+def resolve_data_file(relative_path: str) -> Path:
+    candidates = [
+        PROJECT_ROOT / relative_path,
+        Path(__file__).resolve().parents[3] / relative_path,
+        Path(__file__).resolve().parents[2] / relative_path,
+        Path.cwd() / relative_path,
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return candidates[0]
+
 # ==========================================================
 # CSV FILE PATHS
 # ==========================================================
 
-TREND_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "predictions"
-    / "india_trend_score.csv"
-)
+TREND_FILE = resolve_data_file("data/predictions/india_trend_score.csv")
+FORECAST_FILE = resolve_data_file("data/predictions/prophet_predictions.csv")
+ANOMALY_FILE = resolve_data_file("data/predictions/anomaly_detection.csv")
+METRICS_FILE = resolve_data_file("data/reports/model_metrics.csv")
 
-FORECAST_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "predictions"
-    / "prophet_predictions.csv"
-)
-
-ANOMALY_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "predictions"
-    / "anomaly_detection.csv"
-)
-
-METRICS_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "reports"
-    / "model_metrics.csv"
-)
+print(f"[API Services] TREND_FILE: {TREND_FILE} (exists: {TREND_FILE.exists()})")
+print(f"[API Services] FORECAST_FILE: {FORECAST_FILE} (exists: {FORECAST_FILE.exists()})")
+print(f"[API Services] ANOMALY_FILE: {ANOMALY_FILE} (exists: {ANOMALY_FILE.exists()})")
+print(f"[API Services] METRICS_FILE: {METRICS_FILE} (exists: {METRICS_FILE.exists()})")
 
 # ==========================================================
 # HELPER FUNCTION
