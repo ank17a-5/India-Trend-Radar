@@ -10,17 +10,39 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Custom CORS and Exception Handling Middleware to guarantee headers on all responses (including 500 errors and preflight OPTIONS)
+# Explicitly allowed origins for production and local development
+ALLOWED_ORIGINS = [
+    "https://india-trend-radar-athenura.vercel.app",
+    "https://india-trend-radar-frontend.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+]
+
+env_origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
+for o in env_origins:
+    cleaned = o.strip()
+    if cleaned and cleaned not in ALLOWED_ORIGINS:
+        ALLOWED_ORIGINS.append(cleaned)
+
+# 1. Custom HTTP Middleware to guarantee CORS headers on preflight OPTIONS and error responses
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
-    origin = request.headers.get("origin", "*")
+    origin = request.headers.get("origin")
     
+    # Determine allowed origin to return
+    target_origin = "https://india-trend-radar-athenura.vercel.app"
+    if origin:
+        if origin in ALLOWED_ORIGINS or origin.endswith(".vercel.app") or "localhost" in origin or "127.0.0.1" in origin:
+            target_origin = origin
+
     # Handle preflight OPTIONS requests immediately
     if request.method == "OPTIONS":
         response = Response(status_code=204)
-        response.headers["Access-Control-Allow-Origin"] = origin if origin else "*"
+        response.headers["Access-Control-Allow-Origin"] = target_origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response
 
@@ -33,27 +55,18 @@ async def add_cors_headers(request: Request, call_next):
             content={"error": "Internal Server Error", "detail": str(exc)}
         )
 
-    response.headers["Access-Control-Allow-Origin"] = origin if origin else "*"
+    response.headers["Access-Control-Allow-Origin"] = target_origin
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
 
-# Also register standard CORSMiddleware for Starlette compatibility
-origins = [
-    "https://india-trend-radar-athenura.vercel.app",
-    "https://india-trend-radar-frontend.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:3000",
-]
-
+# 2. Starlette CORSMiddleware with explicit origins (no wildcard with credentials)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
