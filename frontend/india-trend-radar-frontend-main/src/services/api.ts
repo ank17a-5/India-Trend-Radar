@@ -63,15 +63,6 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const isDev = import.meta.env.DEV;
-const RAW_API_URL = isDev
-  ? (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000")
-  : (import.meta.env.VITE_API_BASE_URL || "https://india-trend-radar-dvhs.onrender.com");
-const API_BASE = RAW_API_URL.replace(/\/$/, "");
-
-console.log(`[India Trend Radar API] Resolved API Base URL: "${API_BASE}"`);
-
-
 export const formatKeyword = (rawKeyword: string): string => {
   if (!rawKeyword) return "";
   const parts = rawKeyword
@@ -101,37 +92,59 @@ async function apiFetch<T>(
   errorMessage: string,
   options?: ApiFetchOptions
 ): Promise<T> {
-  const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-  console.log(`[API Request] Fetching live data from: ${url}`);
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const isDev = import.meta.env.DEV;
 
-  const timeoutMs = options?.attemptTimeoutMs ?? 90000;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) {
-      if (res.status >= 400 && res.status < 500) {
-        throw new Error(`${errorMessage}: Endpoint error (HTTP ${res.status} ${res.statusText}).`);
-      }
-      throw new Error(`${errorMessage}: Server error (HTTP ${res.status} ${res.statusText}).`);
+  // Multi-candidate endpoint targets: same-origin Vercel proxy first (/api/...), then direct backend URL
+  const candidates: string[] = [];
+  
+  if (import.meta.env.VITE_API_BASE_URL) {
+    const customBase = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+    if (customBase.startsWith("http")) {
+      candidates.push(`${customBase}${cleanPath}`);
     }
-
-    const contentType = res.headers.get("content-type");
-    if (contentType && contentType.includes("text/html")) {
-      throw new Error(`${errorMessage}: Received HTML response instead of JSON. Check backend routing.`);
-    }
-
-    const data = await res.json();
-    console.log(`[API Response] Successfully loaded live data from: ${path}`);
-    return data as T;
-  } catch (err: any) {
-    clearTimeout(timeoutId);
-    console.warn(`[API Error] Request failed for ${path}:`, err?.message || err);
-    throw err;
   }
+
+  if (isDev) {
+    candidates.push(`http://localhost:8000${cleanPath}`);
+    candidates.push(`/api${cleanPath}`);
+    candidates.push(`https://india-trend-radar-dvhs.onrender.com${cleanPath}`);
+  } else {
+    candidates.push(`/api${cleanPath}`);
+    candidates.push(`https://india-trend-radar-dvhs.onrender.com${cleanPath}`);
+  }
+
+  let lastError: any = null;
+
+  for (const targetUrl of candidates) {
+    console.log(`[API Request] Attempting fetch from: ${targetUrl}`);
+    const timeoutMs = options?.attemptTimeoutMs ?? 90000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(targetUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("text/html")) {
+          console.warn(`[API Candidate Skip] ${targetUrl} returned HTML instead of JSON. Trying next candidate.`);
+          continue;
+        }
+        const data = await res.json();
+        console.log(`[API Response] Successfully loaded live data from: ${targetUrl}`);
+        return data as T;
+      }
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      lastError = err;
+      console.warn(`[API Candidate Error] Request failed for ${targetUrl}:`, err?.message || err);
+    }
+  }
+
+  console.error(`[API Error] All candidates failed for ${path}:`, lastError?.message || lastError);
+  throw lastError || new Error(`${errorMessage}: All backend API candidates failed.`);
 }
 
 export async function fetchRisingTrends(
