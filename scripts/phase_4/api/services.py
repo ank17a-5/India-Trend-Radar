@@ -3,16 +3,29 @@ from pathlib import Path
 from functools import lru_cache
 
 # ==========================================================
-# PROJECT ROOT
+# PROJECT ROOT DYNAMIC RESOLUTION
 # ==========================================================
 
-SCRIPT_DIR = Path(__file__).resolve().parent
+def get_project_root() -> Path:
+    # 1. Search upwards from this file location for a directory containing 'data'
+    curr = Path(__file__).resolve().parent
+    while curr != curr.parent:
+        if (curr / "data" / "predictions").exists() or (curr / "data").exists():
+            return curr
+        curr = curr.parent
 
-PROJECT_ROOT = (
-    Path.cwd()
-    if (Path.cwd() / "data").exists()
-    else SCRIPT_DIR.parents[2]
-)
+    # 2. Search upwards from current working directory
+    curr = Path.cwd()
+    while curr != curr.parent:
+        if (curr / "data" / "predictions").exists() or (curr / "data").exists():
+            return curr
+        curr = curr.parent
+
+    # Fallback to 3 parents up from scripts/phase_4/api
+    return Path(__file__).resolve().parents[3]
+
+PROJECT_ROOT = get_project_root()
+print(f"[API Services] Resolved PROJECT_ROOT to: {PROJECT_ROOT}")
 
 # ==========================================================
 # CSV FILE PATHS
@@ -63,40 +76,42 @@ def clean_dataframe(df):
 
 def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "all"):
     if not TREND_FILE.exists():
+        print(f"[API Error] TREND_FILE not found at: {TREND_FILE}")
         return []
 
     try:
-        # 1. Load CSV with limit to avoid unresponsiveness
-        df = pd.read_csv(TREND_FILE).head(200)
+        # Load full CSV for accurate ranking & filtering
+        df = pd.read_csv(TREND_FILE)
 
-        # 2. DATE FILTERING LOGIC
+        # 1. DATE FILTERING LOGIC
         if "prediction_date" in df.columns:
             df["prediction_date_dt"] = pd.to_datetime(df["prediction_date"], errors="coerce")
             max_date = df["prediction_date_dt"].max()
 
-            if pd.notnull(max_date):
-                if date_range == "today":
+            if pd.notnull(max_date) and date_range and date_range.lower() != "all":
+                dr = date_range.lower()
+                if dr == "today":
                     df = df[df["prediction_date_dt"].dt.date == max_date.date()]
-                elif date_range == "7d":
+                elif dr in ["7d", "last 7 days"]:
                     start_date = max_date - pd.Timedelta(days=7)
                     df = df[df["prediction_date_dt"] >= start_date]
-                elif date_range == "15d":
+                elif dr in ["15d", "last 15 days"]:
                     start_date = max_date - pd.Timedelta(days=15)
                     df = df[df["prediction_date_dt"] >= start_date]
-                elif date_range == "30d":
+                elif dr in ["30d", "last 30 days"]:
                     start_date = max_date - pd.Timedelta(days=30)
                     df = df[df["prediction_date_dt"] >= start_date]
 
             df = df.drop(columns=["prediction_date_dt"], errors="ignore")
 
-        # 3. SOURCE / KEYWORD FILTERING LOGIC
+        # 2. SOURCE / KEYWORD FILTERING LOGIC
         if source and source.lower() != "all":
             if "source" in df.columns:
                 df = df[df["source"].astype(str).str.lower() == source.lower()]
             elif "keyword" in df.columns:
                 df = df[df["keyword"].astype(str).str.contains(source, case=False, na=False)]
 
-        # 4. SORT AND LIMIT
+        # 3. SORT AND LIMIT
         if "trend_rank" in df.columns:
             df = df.sort_values(by="trend_rank")
 
@@ -104,7 +119,7 @@ def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "al
         return df.to_dict(orient="records")
 
     except Exception as e:
-        print("Rising trends error:", e)
+        print("[Rising trends error]", e)
         return []
 
 # ==========================================================
