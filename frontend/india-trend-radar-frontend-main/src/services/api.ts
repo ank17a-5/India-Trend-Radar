@@ -63,12 +63,11 @@ export interface EvaluationResponse {
   error?: string;
 }
 
-const isDev = import.meta.env.DEV;
-const DEFAULT_BACKEND_URL = isDev ? "/api" : "https://india-trend-radar-dvhs.onrender.com";
-const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || DEFAULT_BACKEND_URL;
+const RAW_API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api";
 const API_BASE = RAW_API_URL.replace(/\/$/, "");
 
 console.log(`[India Trend Radar API] Resolved API Base URL: "${API_BASE}"`);
+
 
 
 export const formatKeyword = (rawKeyword: string): string => {
