@@ -53,7 +53,12 @@ prophet
 joblib
 matplotlib
 
+# Database
+sqlalchemy
+psycopg2-binary
+
 # phase 4
 fastapi
 uvicorn
 requests
+

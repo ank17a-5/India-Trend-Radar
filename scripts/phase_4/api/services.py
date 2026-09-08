@@ -1,6 +1,22 @@
+import os
 import pandas as pd
 from pathlib import Path
 from functools import lru_cache
+
+# ==========================================================
+# NEON DATABASE ENGINE INITIALIZATION
+# ==========================================================
+db_engine = None
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    try:
+        from sqlalchemy import create_engine
+        if DATABASE_URL.startswith("postgres://"):
+            DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        db_engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+        print(f"[API Services] Connected to Neon DB via DATABASE_URL")
+    except Exception as err:
+        print(f"[API Services] Failed to initialize Neon DB engine: {err}")
 
 # ==========================================================
 # PROJECT ROOT DYNAMIC RESOLUTION
@@ -13,6 +29,7 @@ def get_project_root() -> Path:
         if (curr / "data" / "predictions").exists() or (curr / "data").exists():
             return curr
         curr = curr.parent
+
 
     # 2. Search upwards from current working directory
     curr = Path.cwd()
@@ -117,13 +134,24 @@ FALLBACK_METRICS = [
 # ==========================================================
 
 def get_rising_trends(limit: int = 50, date_range: str = "7d", source: str = "all"):
-    file_path = resolve_data_file("data/predictions/india_trend_score.csv")
-    if not file_path.exists():
-        print(f"[API Warning] {file_path} not found. Returning fallback dataset.")
+    df = None
+    if db_engine is not None:
+        try:
+            df = pd.read_sql("SELECT * FROM google_trends LIMIT 500", db_engine)
+        except Exception as db_err:
+            print(f"[API Services] DB query error (google_trends): {db_err}")
+
+    if df is None or df.empty:
+        file_path = resolve_data_file("data/predictions/india_trend_score.csv")
+        if file_path.exists():
+            try:
+                df = pd.read_csv(file_path)
+            except Exception as csv_err:
+                print(f"[API Services] CSV read error: {csv_err}")
+
+    if df is None or df.empty:
         return FALLBACK_TRENDS[:limit]
 
-    try:
-        df = pd.read_csv(file_path)
 
         # 1. DATE FILTERING LOGIC
         if "prediction_date" in df.columns:
