@@ -210,14 +210,14 @@ export const Home: React.FC = () => {
 
   const donutData = totalCountForDonut > 0 ? [
     { name: "YouTube Trends", value: Math.round((youtubeCount / totalCountForDonut) * 100), color: "#EF4444" },
-    { name: "Google Trends", value: Math.round((googleCount / totalCountForDonut) * 100), color: "#3B82F6" },
+    { name: "Google Trends", value: Math.round((googleCount / totalCountForDonut) * 100), color: "#FF6B00" },
     { name: "News Feeds", value: Math.round((newsCount / totalCountForDonut) * 100), color: "#F59E0B" },
-    { name: "Social Signals", value: Math.round((redditCount / totalCountForDonut) * 100), color: "#8B5CF6" },
+    { name: "Social Signals", value: Math.round((redditCount / totalCountForDonut) * 100), color: "#0F172A" },
   ] : [
     { name: "YouTube Trends", value: 0, color: "#EF4444" },
-    { name: "Google Trends", value: 0, color: "#3B82F6" },
+    { name: "Google Trends", value: 0, color: "#FF6B00" },
     { name: "News Feeds", value: 0, color: "#F59E0B" },
-    { name: "Social Signals", value: 0, color: "#8B5CF6" },
+    { name: "Social Signals", value: 0, color: "#0F172A" },
   ];
 
   // Generate dynamic AI Insights from active filtered topics
@@ -273,12 +273,12 @@ export const Home: React.FC = () => {
       className="space-y-6"
     >
       {/* Top Status Bar with Real Timestamp */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border/60 rounded-[14px] px-4 py-2.5">
-        <div className="flex items-center space-x-2 text-xs text-muted-foreground font-medium">
-          <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-card border border-border rounded-[14px] px-4 py-2.5 shadow-xs">
+        <div className="flex items-center space-x-2 text-xs text-muted-foreground font-semibold">
+          <Clock className="w-4 h-4 text-[#FF6B00] dark:text-orange-400" />
           <span>Last Updated: <strong className="text-foreground">{lastPredictionDate}</strong></span>
           <span className="text-muted-foreground">•</span>
-          <span>Forecast Horizon: <strong className="text-purple-600 dark:text-purple-400">{forecastingDate}</strong></span>
+          <span>Forecast Horizon: <strong className="text-[#FF6B00] dark:text-orange-400">{forecastingDate}</strong></span>
         </div>
         <div className="flex items-center space-x-2">
           {loading ? (
@@ -294,7 +294,7 @@ export const Home: React.FC = () => {
           )}
           <button
             onClick={loadLiveData}
-            className="p-1.5 rounded-[8px] bg-purple-50/60 dark:bg-slate-800/80 border border-purple-200/80 dark:border-slate-700/60 hover:bg-purple-100 dark:hover:bg-slate-700 text-purple-700 dark:text-slate-300 transition-colors"
+            className="p-1.5 rounded-[8px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shadow-xs"
             title="Refresh Live Data"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -309,7 +309,7 @@ export const Home: React.FC = () => {
           return (
             <div
               key={idx}
-              className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md relative overflow-hidden flex items-center justify-between h-32 transition-all duration-300 hover:border-purple-300/60"
+              className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md relative overflow-hidden flex items-center justify-between h-32 transition-all duration-300 hover:border-[#FF6B00]/40"
             >
               <div className="flex flex-col justify-between h-full py-1 z-10">
                 <div>
@@ -317,11 +317,11 @@ export const Home: React.FC = () => {
                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                       {kpi.title}
                     </span>
-                    <div className="p-1 rounded-[6px] bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40 flex items-center justify-center">
-                      <IconComponent className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                    <div className="p-1 rounded-[6px] bg-[#FFF1E6] dark:bg-purple-950/40 border border-[#FF6B00]/30 dark:border-purple-800/40 flex items-center justify-center">
+                      <IconComponent className="w-3.5 h-3.5 text-[#FF6B00] dark:text-orange-400" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-extrabold tracking-tight text-foreground mt-2.5">
+                  <h3 className="text-2xl font-extrabold tracking-tight text-[#0F172A] dark:text-foreground mt-2.5">
                     {kpi.value}
                   </h3>
                 </div>
@@ -373,7 +373,7 @@ export const Home: React.FC = () => {
                 {isSearching ? `Filtered trend scores matching "${searchQuery}"` : "Real India Trend Score values for top ranked keywords."}
               </p>
             </div>
-            <div className="text-[10px] font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 rounded-[8px] px-2 py-0.5 bg-slate-100 dark:bg-slate-800/80">
+            <div className="text-[10px] font-bold text-[#475569] dark:text-slate-300 border border-border rounded-[8px] px-2 py-0.5 bg-muted/60">
               Score Vector
             </div>
           </div>
@@ -389,32 +389,32 @@ export const Home: React.FC = () => {
                 <AreaChart data={trendVolumeChartData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorMain" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6D3DF5" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#6D3DF5" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#FF6B00" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
-                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.6} />
+                  <XAxis dataKey="name" stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 10, fontWeight: 600 }} tickLine={false} />
+                  <YAxis stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 10, fontWeight: 600 }} tickLine={false} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                      borderColor: theme === "dark" ? "#334155" : "#E2E8F0",
                       borderRadius: "12px",
-                      color: theme === "dark" ? "#F8FAFC" : "#172033",
-                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                      color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
                     }}
                     formatter={(val: any) => [`${val}`, "India Trend Score"]}
                   />
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="#6D3DF5"
+                    stroke="#FF6B00"
                     strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#colorMain)"
-                    dot={{ r: 4, strokeWidth: 2, fill: "var(--card)", stroke: "#6D3DF5" }}
-                    activeDot={{ r: 6, strokeWidth: 0, fill: "#6D3DF5" }}
+                    dot={{ r: 4, strokeWidth: 2, fill: "var(--card)", stroke: "#FF6B00" }}
+                    activeDot={{ r: 6, strokeWidth: 0, fill: "#FF6B00" }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -449,10 +449,10 @@ export const Home: React.FC = () => {
                   <Tooltip
                     contentStyle={{
                       backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                      borderColor: theme === "dark" ? "#334155" : "#E2E8F0",
                       borderRadius: "12px",
-                      color: theme === "dark" ? "#F8FAFC" : "#172033",
-                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                      color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
                     }}
                   />
                 </PieChart>
@@ -498,7 +498,7 @@ export const Home: React.FC = () => {
                   <div className={`p-1.5 rounded-[8px] border flex-shrink-0 mt-0.5 ${insight.color}`}>
                     <IconComponent className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-[11px] font-medium leading-normal text-slate-700 dark:text-slate-300">
+                  <span className="text-[11px] font-semibold leading-normal text-[#0F172A] dark:text-slate-200">
                     {insight.text}
                   </span>
                 </div>
@@ -507,7 +507,7 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-border/40 text-center">
-            <span className="text-[11px] font-bold text-blue-500 dark:text-blue-400">
+            <span className="text-[11px] font-bold text-[#FF6B00] dark:text-orange-400">
               Real Data Stream Verified
             </span>
           </div>
@@ -529,7 +529,7 @@ export const Home: React.FC = () => {
 
           <div className="overflow-x-auto overflow-y-auto max-h-[360px] w-full flex-1 pr-1">
             <table className="w-full text-sm text-left text-foreground">
-              <thead className="text-[11px] font-bold text-muted-foreground uppercase border-b border-border sticky top-0 bg-card z-10">
+              <thead className="text-[11px] font-extrabold text-[#475569] dark:text-slate-300 uppercase border-b border-border sticky top-0 bg-card z-10">
                 <tr>
                   <th className="py-2.5 px-3">Rank</th>
                   <th className="py-2.5 px-3">Topic Keyword</th>
@@ -543,23 +543,23 @@ export const Home: React.FC = () => {
               <tbody className="divide-y divide-border/60">
                 {filteredTopics.length > 0 ? (
                   filteredTopics.map((topic, idx) => (
-                    <tr key={idx} className="hover:bg-slate-100/60 dark:hover:bg-slate-800/40 transition-all font-medium text-xs">
-                      <td className="py-3 px-3 font-bold text-slate-500 dark:text-slate-400">#{topic.trend_rank}</td>
-                      <td className="py-3 px-3 font-extrabold text-foreground" title={topic.keyword}>
+                    <tr key={idx} className="hover:bg-[#FFF1E6]/60 dark:hover:bg-slate-800/40 transition-all font-medium text-xs">
+                      <td className="py-3 px-3 font-extrabold text-[#475569] dark:text-slate-400">#{topic.trend_rank}</td>
+                      <td className="py-3 px-3 font-extrabold text-[#0F172A] dark:text-slate-100" title={topic.keyword}>
                         {formatKeyword(topic.keyword)}
                       </td>
-                      <td className="py-3 px-3 font-bold text-amber-500 dark:text-amber-400">{(topic.india_trend_score || 0).toFixed(2)}</td>
-                      <td className="py-3 px-3 font-bold text-emerald-600 dark:text-emerald-400">{((topic.viral_probability || 0) * 100).toFixed(1)}%</td>
-                      <td className="py-3 px-3 font-bold text-rose-500 dark:text-rose-400">{(topic.anomaly_score || 0).toFixed(2)}</td>
-                      <td className="py-3 px-3 font-semibold text-purple-600 dark:text-purple-400">{(topic.forecast_score || 0).toFixed(3)}</td>
+                      <td className="py-3 px-3 font-bold text-amber-600 dark:text-amber-400">{(topic.india_trend_score || 0).toFixed(2)}</td>
+                      <td className="py-3 px-3 font-bold text-emerald-700 dark:text-emerald-400">{((topic.viral_probability || 0) * 100).toFixed(1)}%</td>
+                      <td className="py-3 px-3 font-bold text-rose-600 dark:text-rose-400">{(topic.anomaly_score || 0).toFixed(2)}</td>
+                      <td className="py-3 px-3 font-semibold text-[#FF6B00] dark:text-orange-400">{(topic.forecast_score || 0).toFixed(3)}</td>
                       <td className="py-3 px-3">
                         <span
                           className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${
                             topic.is_anomaly === 1
-                              ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                              ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30"
                               : topic.predicted_viral === 1
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                              : "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20"
+                              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                              : "bg-[#FFF1E6] text-[#FF6B00] dark:text-orange-300 border-[#FF6B00]/30 font-extrabold"
                           }`}
                         >
                           {topic.is_anomaly === 1 ? "Anomaly" : topic.predicted_viral === 1 ? "Viral" : "Active"}
@@ -589,7 +589,7 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="flex-1 flex flex-col justify-center space-y-2.5 my-2">
-            <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+            <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-extrabold text-[#475569] dark:text-slate-400 uppercase tracking-wider mb-1">
               <div className="text-left">Topic</div>
               <div>Virality %</div>
               <div>Anomaly Score</div>
@@ -599,13 +599,13 @@ export const Home: React.FC = () => {
               {filteredTopics.length > 0 ? (
                 filteredTopics.slice(0, 5).map((row, idx) => (
                   <div key={idx} className="grid grid-cols-3 gap-2 items-center text-xs">
-                    <div className="text-left text-[11px] font-bold text-foreground truncate pr-1" title={row.keyword}>
+                    <div className="text-left text-[11px] font-extrabold text-[#0F172A] dark:text-foreground truncate pr-1" title={row.keyword}>
                       {formatKeyword(row.keyword)}
                     </div>
-                    <div className="h-6 rounded-[6px] bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center">
+                    <div className="h-6 rounded-[6px] bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center justify-center">
                       {((row.viral_probability || 0) * 100).toFixed(0)}%
                     </div>
-                    <div className="h-6 rounded-[6px] bg-rose-500/15 dark:bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-bold flex items-center justify-center">
+                    <div className="h-6 rounded-[6px] bg-rose-500/15 dark:bg-rose-500/20 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-extrabold flex items-center justify-center">
                       {(row.anomaly_score || 0).toFixed(2)}
                     </div>
                   </div>
@@ -618,7 +618,7 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground uppercase pt-3 border-t border-border/40">
+          <div className="flex justify-between items-center text-[10px] font-extrabold text-muted-foreground uppercase pt-3 border-t border-border/40">
             <span>Low Intensity</span>
             <div className="w-44 h-1.5 bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 rounded-full" />
             <span>High Intensity</span>

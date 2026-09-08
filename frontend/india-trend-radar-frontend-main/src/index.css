@@ -31,29 +31,29 @@
   }
 
   .light {
-    /* Royal Purple Premium Light Theme Tokens */
-    --background: 260 100% 99%; /* #FAF8FF - Very Light Lavender */
-    --foreground: 222 38% 15%;  /* #172033 - Deep Navy-Purple */
-    --card: 0 0% 100%;          /* #FFFFFF - Pure White Surface */
-    --card-foreground: 222 38% 15%;
+    /* Orange + Deep Navy SaaS Analytics Light Theme Tokens */
+    --background: 210 40% 98%;  /* #F8FAFC - Main Light Background */
+    --foreground: 222 47% 11%;  /* #0F172A - Deep Navy Primary Text (WCAG AAA) */
+    --card: 0 0% 100%;          /* #FFFFFF - Pure White Card Surface */
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 38% 15%;
-    --primary: 255 90% 60%;      /* #6D3DF5 - Deep Royal Purple */
+    --popover-foreground: 222 47% 11%;
+    --primary: 25 100% 50%;      /* #FF6B00 - Energetic Orange Accent */
     --primary-foreground: 0 0% 100%;
-    --secondary: 260 100% 97%;   /* #F3EEFF - Soft Lavender */
-    --secondary-foreground: 263 68% 35%; /* #4C1D95 - Deep Purple */
-    --muted: 260 100% 97%;       /* #F3EEFF - Soft Lavender */
-    --muted-foreground: 220 13% 46%; /* #667085 - Muted Slate-Purple */
-    --accent: 260 100% 97%;
-    --accent-foreground: 255 90% 60%;
-    --destructive: 0 84% 60%;
+    --secondary: 25 100% 95%;   /* #FFF1E6 - Soft Light Orange Accent */
+    --secondary-foreground: 25 100% 38%; /* #C25100 - Deep Orange Accent Text */
+    --muted: 210 40% 96%;       /* #F1F5F9 - Secondary Light Background */
+    --muted-foreground: 215 16% 37%; /* #475569 - Slate Secondary Text (7:1 Contrast) */
+    --accent: 25 100% 95%;      /* #FFF1E6 */
+    --accent-foreground: 25 100% 50%;
+    --destructive: 0 84% 60%;   /* #EF4444 - Error Red */
     --destructive-foreground: 0 0% 100%;
-    --border: 260 55% 92%;       /* #E5DDF7 - Soft Lavender-Gray Border */
-    --input: 260 55% 92%;
-    --ring: 255 90% 60%;
+    --border: 214 32% 91%;       /* #E2E8F0 - Subtle Light Border */
+    --input: 214 32% 91%;
+    --ring: 25 100% 50%;         /* #FF6B00 */
     
-    --sidebar: 260 100% 99%;     /* #FAF8FF - Very Light Lavender Surface */
-    --sidebar-foreground: 222 38% 15%;
+    --sidebar: 0 0% 100%;        /* #FFFFFF - Pure White Sidebar Surface */
+    --sidebar-foreground: 222 47% 11%; /* #0F172A - Deep Navy Sidebar Text */
   }
 }
 
@@ -139,11 +139,12 @@
 
 /* Premium Light Mode Shadows for Card and Sidebar */
 .light .bg-card {
-  box-shadow: 0 10px 30px -10px rgba(109, 61, 245, 0.04), 0 1px 3px 0 rgba(76, 29, 149, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(255, 107, 0, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  border-color: rgba(226, 232, 240, 0.9);
 }
 
 .light .bg-sidebar {
-  box-shadow: 1px 0 3px 0 rgba(109, 61, 245, 0.04);
+  box-shadow: 2px 0 12px 0 rgba(15, 23, 42, 0.04);
 }
 
 /* Premium Card Scaling & Glow Overlay Hover Effect */
@@ -156,7 +157,7 @@
 
 .bg-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(109, 61, 245, 0.25);
+  border-color: rgba(255, 107, 0, 0.3);
 }
 
 .dark .bg-card:hover {
@@ -165,8 +166,9 @@
 }
 
 .light .bg-card:hover {
-  box-shadow: 0 20px 35px -10px rgba(109, 61, 245, 0.08), 
-              0 0 25px -5px rgba(124, 58, 237, 0.05);
+  box-shadow: 0 12px 28px -4px rgba(255, 107, 0, 0.08), 
+              0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border-color: rgba(255, 107, 0, 0.35);
 }
 
 /* Active Nav Bar link indicators */

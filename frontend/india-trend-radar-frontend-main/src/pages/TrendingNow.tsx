@@ -73,16 +73,16 @@ export const TrendingNow: React.FC = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("trend_rank", {
-        header: () => <span className="text-xs font-bold">Rank</span>,
-        cell: (info) => <span className="font-bold text-slate-400">#{info.getValue()}</span>,
+        header: () => <span className="text-xs font-extrabold">Rank</span>,
+        cell: (info) => <span className="font-extrabold text-[#475569] dark:text-slate-400">#{info.getValue()}</span>,
       }),
       columnHelper.accessor("keyword", {
-        header: () => <span className="text-xs font-bold">Topic Keyword</span>,
+        header: () => <span className="text-xs font-extrabold">Topic Keyword</span>,
         cell: (info) => (
           <button
             onClick={() => setSelectedTopic(info.getValue())}
-            className={`font-bold hover:text-blue-400 transition-colors text-left ${
-              selectedTopic === info.getValue() ? "text-blue-500 underline decoration-2 underline-offset-4" : "text-white"
+            className={`font-extrabold hover:text-[#FF6B00] dark:hover:text-blue-400 transition-colors text-left ${
+              selectedTopic === info.getValue() ? "text-[#FF6B00] dark:text-blue-400 underline decoration-2 underline-offset-4" : "text-[#0F172A] dark:text-white"
             }`}
             title={info.getValue()}
           >
@@ -91,33 +91,33 @@ export const TrendingNow: React.FC = () => {
         ),
       }),
       columnHelper.accessor("india_trend_score", {
-        header: () => <span className="text-xs font-bold">Trend Score</span>,
-        cell: (info) => <span className="font-bold text-amber-400">{info.getValue().toFixed(2)}</span>,
+        header: () => <span className="text-xs font-extrabold">Trend Score</span>,
+        cell: (info) => <span className="font-extrabold text-amber-600 dark:text-amber-400">{info.getValue().toFixed(2)}</span>,
       }),
       columnHelper.accessor("viral_probability", {
-        header: () => <span className="text-xs font-bold">Viral Prob</span>,
-        cell: (info) => <span className="font-bold text-emerald-400">{(info.getValue() * 100).toFixed(1)}%</span>,
+        header: () => <span className="text-xs font-extrabold">Viral Prob</span>,
+        cell: (info) => <span className="font-extrabold text-emerald-700 dark:text-emerald-400">{(info.getValue() * 100).toFixed(1)}%</span>,
       }),
       columnHelper.accessor("anomaly_score", {
-        header: () => <span className="text-xs font-bold">Anomaly Score</span>,
-        cell: (info) => <span className="font-semibold text-rose-400">{info.getValue().toFixed(2)}</span>,
+        header: () => <span className="text-xs font-extrabold">Anomaly Score</span>,
+        cell: (info) => <span className="font-bold text-rose-600 dark:text-rose-400">{info.getValue().toFixed(2)}</span>,
       }),
       columnHelper.accessor("forecast_score", {
-        header: () => <span className="text-xs font-bold">Forecast Score</span>,
-        cell: (info) => <span className="font-semibold text-purple-400">{info.getValue().toFixed(3)}</span>,
+        header: () => <span className="text-xs font-extrabold">Forecast Score</span>,
+        cell: (info) => <span className="font-semibold text-[#FF6B00] dark:text-orange-400">{info.getValue().toFixed(3)}</span>,
       }),
       columnHelper.accessor("is_anomaly", {
-        header: () => <span className="text-xs font-bold">Status</span>,
+        header: () => <span className="text-xs font-extrabold">Status</span>,
         cell: (info) => {
           const isAnomaly = info.getValue() === 1;
           const isViral = info.row.original.predicted_viral === 1;
           const val = isAnomaly ? "Anomaly" : isViral ? "Viral Spike" : "Active";
           const color = isAnomaly
-            ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+            ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30"
             : isViral
-            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-            : "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
-          return <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border ${color}`}>{val}</span>;
+            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+            : "bg-[#FFF1E6] text-[#FF6B00] dark:text-orange-300 border-[#FF6B00]/30 font-extrabold";
+          return <span className={`px-2.5 py-1 text-[11px] font-extrabold rounded-full border ${color}`}>{val}</span>;
         },
       }),
     ],
@@ -218,7 +218,7 @@ export const TrendingNow: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <TrendingUp className="w-5.5 h-5.5 text-purple-600 dark:text-purple-400" />
+            <TrendingUp className="w-5.5 h-5.5 text-[#FF6B00] dark:text-orange-400" />
             <span>Trending Now — Real-time Feed</span>
           </h2>
           <p className="text-xs text-muted-foreground">
@@ -257,7 +257,7 @@ export const TrendingNow: React.FC = () => {
         {/* Timeline Chart (7/12 width) */}
         <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
-            <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">
+            <span className="text-[10px] font-bold text-[#FF6B00] dark:text-orange-400 uppercase tracking-wider block">
               {formatKeyword(selectedTopic) || "Overall Forecast"}
             </span>
             <h3 className="text-sm font-bold text-foreground">Prophet Forecast Timeline (Predicted Trend Trajectory)</h3>
@@ -267,26 +267,26 @@ export const TrendingNow: React.FC = () => {
               <AreaChart data={timelineChartData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6D3DF5" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#6D3DF5" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#FF6B00" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.6} />
+                <XAxis dataKey="date" stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 10, fontWeight: 600 }} tickLine={false} />
+                <YAxis stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 10, fontWeight: 600 }} tickLine={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                    borderColor: theme === "dark" ? "#334155" : "#E2E8F0",
                     borderRadius: "12px",
-                    color: theme === "dark" ? "#F8FAFC" : "#172033",
-                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                    color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="Predicted"
-                  stroke="#6D3DF5"
+                  stroke="#FF6B00"
                   strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#colorPredicted)"
@@ -305,19 +305,19 @@ export const TrendingNow: React.FC = () => {
           <div className="flex-1 w-full h-[250px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={frequencyData} layout="vertical" margin={{ left: 20, right: 10, top: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} horizontal={false} />
-                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} />
-                <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} width={90} />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.6} horizontal={false} />
+                <XAxis type="number" stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 10, fontWeight: 600 }} tickLine={false} />
+                <YAxis dataKey="name" type="category" stroke={theme === "dark" ? "#475569" : "#94A3B8"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#475569", fontSize: 9, fontWeight: 600 }} tickLine={false} width={90} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                    borderColor: theme === "dark" ? "#334155" : "#E2E8F0",
                     borderRadius: "12px",
-                    color: theme === "dark" ? "#F8FAFC" : "#172033",
-                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                    color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
                   }}
                 />
-                <Bar dataKey="Score" fill="#6D3DF5" radius={[0, 6, 6, 0]} barSize={12} />
+                <Bar dataKey="Score" fill="#FF6B00" radius={[0, 6, 6, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -329,17 +329,17 @@ export const TrendingNow: React.FC = () => {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-foreground">Live Active Trends List ({filteredData.length})</h3>
-            <p className="text-xs text-slate-500">Select any keyword in the list to inspect its forecast curve.</p>
+            <p className="text-xs text-muted-foreground font-medium">Select any keyword in the list to inspect its forecast curve.</p>
           </div>
-          <div className="flex items-center space-x-1 bg-slate-950/60 border border-border rounded-[10px] px-2.5 py-1 text-xs text-slate-400">
+          <div className="flex items-center space-x-1 bg-card border border-border rounded-[10px] px-2.5 py-1 text-xs text-muted-foreground font-semibold">
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Interactive Table</span>
           </div>
         </div>
 
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm text-left text-slate-300">
-            <thead className="text-xs font-bold text-slate-400 uppercase border-b border-border">
+          <table className="w-full text-sm text-left text-foreground">
+            <thead className="text-xs font-extrabold text-[#475569] dark:text-slate-400 uppercase border-b border-border">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -357,8 +357,8 @@ export const TrendingNow: React.FC = () => {
                 table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    className={`hover:bg-slate-800/20 transition-all font-medium ${
-                      selectedTopic === row.original.keyword ? "bg-slate-800/20 border-l-2 border-blue-500" : ""
+                    className={`hover:bg-[#FFF1E6]/60 dark:hover:bg-slate-800/40 transition-all font-medium ${
+                      selectedTopic === row.original.keyword ? "bg-[#FFF1E6] dark:bg-slate-800/40 border-l-4 border-[#FF6B00] dark:border-blue-500" : ""
                     }`}
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -370,7 +370,7 @@ export const TrendingNow: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length} className="py-6 text-center text-slate-500 text-xs">
+                  <td colSpan={columns.length} className="py-6 text-center text-muted-foreground text-xs font-semibold">
                     No matching trends found.
                   </td>
                 </tr>

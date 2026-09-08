@@ -125,13 +125,13 @@ export const AnomalyDetection: React.FC = () => {
   const getSeverityColor = (sev: string) => {
     switch (sev) {
       case "Critical":
-        return "text-rose-500 bg-rose-500/10 border-rose-500/20";
+        return "text-rose-700 dark:text-rose-400 bg-rose-500/10 border-rose-500/30";
       case "Medium":
-        return "text-amber-500 bg-amber-500/10 border-amber-500/20";
+        return "text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/30";
       case "Low":
-        return "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20";
+        return "text-[#FF6B00] dark:text-purple-300 bg-[#FFF1E6] dark:bg-purple-500/10 border-[#FF6B00]/30 dark:border-purple-500/30";
       default:
-        return "text-slate-400 bg-slate-800 border-slate-700/50";
+        return "text-slate-700 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700/50";
     }
   };
 
@@ -176,7 +176,7 @@ export const AnomalyDetection: React.FC = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Detected */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full filter blur-xl group-hover:bg-purple-500/10 transition-colors" />
+          <div className="absolute top-0 right-0 w-16 h-16 bg-[#FF6B00]/5 rounded-full filter blur-xl group-hover:bg-[#FF6B00]/10 transition-colors" />
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Detected Anomalies</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-foreground">{kpis.detected}</h3>
@@ -187,10 +187,10 @@ export const AnomalyDetection: React.FC = () => {
         {/* Critical */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-16 h-16 bg-rose-500/5 rounded-full filter blur-xl group-hover:bg-rose-500/10 transition-colors" />
-          <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">Critical Severity (≥0.70)</span>
+          <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Critical Severity (≥0.70)</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-rose-500">{kpis.critical}</h3>
-            <span className="text-[10px] text-rose-500 font-bold flex items-center space-x-1">
+            <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold flex items-center space-x-1">
               <ShieldAlert className="w-3 h-3 text-rose-500" />
               <span>High score</span>
             </span>
@@ -200,10 +200,10 @@ export const AnomalyDetection: React.FC = () => {
         {/* Medium */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full filter blur-xl group-hover:bg-amber-500/10 transition-colors" />
-          <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Medium Severity</span>
+          <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Medium Severity</span>
           <div className="flex justify-between items-baseline mt-4">
             <h3 className="text-3xl font-extrabold text-amber-500">{kpis.medium}</h3>
-            <span className="text-[10px] text-amber-500 font-bold flex items-center space-x-1">
+            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold flex items-center space-x-1">
               <AlertTriangle className="w-3 h-3 text-amber-500" />
               <span>Medium score</span>
             </span>
@@ -212,10 +212,10 @@ export const AnomalyDetection: React.FC = () => {
 
         {/* Low */}
         <div className="p-5 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-32 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full filter blur-xl group-hover:bg-purple-500/10 transition-colors" />
-          <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Low Severity</span>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-[#FF6B00]/5 rounded-full filter blur-xl group-hover:bg-[#FF6B00]/10 transition-colors" />
+          <span className="text-xs font-bold text-[#FF6B00] dark:text-purple-400 uppercase tracking-wider">Low Severity</span>
           <div className="flex justify-between items-baseline mt-4">
-            <h3 className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">{kpis.low}</h3>
+            <h3 className="text-3xl font-extrabold text-[#FF6B00] dark:text-purple-400">{kpis.low}</h3>
             <span className="text-[10px] text-muted-foreground font-bold">Low deviation</span>
           </div>
         </div>
@@ -239,18 +239,18 @@ export const AnomalyDetection: React.FC = () => {
           <div className="flex-1 w-full h-[280px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ left: -10, right: 20, top: 15, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis dataKey="zScore" name="Z-Score Max" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
-                <YAxis dataKey="anomalyScore" name="Anomaly Score" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.6} />
+                <XAxis dataKey="zScore" name="Z-Score Max" stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
+                <YAxis dataKey="anomalyScore" name="Anomaly Score" stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
                 <ZAxis dataKey="trendScore" range={[60, 400]} name="Trend Score" />
                 <Tooltip
                   cursor={{ strokeDasharray: "3 3" }}
                   contentStyle={{
                     backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                    borderColor: theme === "dark" ? "#334155" : "#FF6B00",
                     borderRadius: "12px",
-                    color: theme === "dark" ? "#F8FAFC" : "#172033",
-                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                    color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(255, 107, 0, 0.15)",
                   }}
                   formatter={(val: any, name: any) => [`${val}`, name]}
                 />
@@ -267,7 +267,7 @@ export const AnomalyDetection: React.FC = () => {
                 <Scatter
                   name="Low Anomalies"
                   data={scatterPoints.filter((d) => d.severity === "Low")}
-                  fill="#7C3AED"
+                  fill="#FF6B00"
                 />
               </ScatterChart>
             </ResponsiveContainer>
@@ -291,18 +291,18 @@ export const AnomalyDetection: React.FC = () => {
               filteredAnomalies.slice(0, 5).map((item, idx) => {
                 const sev = item.anomaly_score >= 0.7 ? "Critical" : item.anomaly_score >= 0.4 ? "Medium" : "Low";
                 return (
-                  <div key={idx} className="p-2.5 bg-muted/30 border border-border rounded-[12px] flex items-center justify-between text-xs">
+                  <div key={idx} className="p-2.5 bg-muted/40 border border-border rounded-[12px] flex items-center justify-between text-xs">
                     <div>
-                      <span className="font-extrabold text-foreground block truncate max-w-[180px]" title={item.keyword}>
+                      <span className="font-extrabold text-[#0F172A] dark:text-foreground block truncate max-w-[180px]" title={item.keyword}>
                         {formatKeyword(item.keyword)}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-muted-foreground font-medium">
                         Rank #{item.trend_rank} • Z-Score: {item.z_score_max.toFixed(1)}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="font-bold text-rose-500 dark:text-rose-400">{item.anomaly_score.toFixed(3)}</span>
-                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${getSeverityColor(sev)}`}>
+                      <span className="font-extrabold text-rose-600 dark:text-rose-400">{item.anomaly_score.toFixed(3)}</span>
+                      <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full border ${getSeverityColor(sev)}`}>
                         {sev}
                       </span>
                     </div>
@@ -317,7 +317,7 @@ export const AnomalyDetection: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-border/40 text-center">
-            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-[11px] font-bold text-[#0F172A] dark:text-slate-400">
               Isolation Forest & Z-Score Ensemble Model
             </span>
           </div>
@@ -328,12 +328,12 @@ export const AnomalyDetection: React.FC = () => {
       <motion.div variants={itemVariants} className="p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col space-y-4">
         <div>
           <h3 className="text-sm font-bold text-foreground">Detected Anomalies Register ({filteredAnomalies.length})</h3>
-          <p className="text-xs text-slate-500">Live feed of detected anomalies sorted by model anomaly score.</p>
+          <p className="text-xs text-muted-foreground font-medium">Live feed of detected anomalies sorted by model anomaly score.</p>
         </div>
 
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm text-left text-slate-300">
-            <thead className="text-xs font-bold text-slate-400 uppercase border-b border-border">
+          <table className="w-full text-sm text-left text-foreground">
+            <thead className="text-xs font-extrabold text-[#475569] dark:text-slate-400 uppercase border-b border-border">
               <tr>
                 <th className="py-3 px-4">Rank</th>
                 <th className="py-3 px-4">Topic Keyword</th>
@@ -348,18 +348,18 @@ export const AnomalyDetection: React.FC = () => {
               {filteredAnomalies.map((item, idx) => {
                 const sev = item.anomaly_score >= 0.7 ? "Critical" : item.anomaly_score >= 0.4 ? "Medium" : "Low";
                 return (
-                  <tr key={idx} className="hover:bg-slate-800/20 transition-all font-medium">
-                    <td className="py-3.5 px-4 font-bold text-slate-400">#{item.trend_rank}</td>
-                    <td className="py-3.5 px-4 font-bold text-foreground">{formatKeyword(item.keyword)}</td>
-                    <td className="py-3.5 px-4 font-bold text-rose-400">{item.anomaly_score.toFixed(3)}</td>
+                  <tr key={idx} className="hover:bg-[#FFF1E6]/60 dark:hover:bg-slate-800/20 transition-all font-medium text-xs">
+                    <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-slate-400">#{item.trend_rank}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-foreground">{formatKeyword(item.keyword)}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-rose-600 dark:text-rose-400">{item.anomaly_score.toFixed(3)}</td>
                     <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border ${getSeverityColor(sev)}`}>
+                      <span className={`px-2.5 py-1 text-[11px] font-extrabold rounded-full border ${getSeverityColor(sev)}`}>
                         {sev}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-amber-400">{item.z_score_max.toFixed(1)}</td>
-                    <td className="py-3.5 px-4 text-xs font-semibold text-purple-400">{item.iso_score.toFixed(4)}</td>
-                    <td className="py-3.5 px-4 font-bold text-slate-200">{item.trend_score.toFixed(2)}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-amber-600 dark:text-amber-400">{item.z_score_max.toFixed(1)}</td>
+                    <td className="py-3.5 px-4 text-xs font-semibold text-[#FF6B00] dark:text-purple-400">{item.iso_score.toFixed(4)}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-slate-200">{item.trend_score.toFixed(2)}</td>
                   </tr>
                 );
               })}

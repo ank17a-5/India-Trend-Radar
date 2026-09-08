@@ -331,7 +331,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       <div className="flex items-center space-x-3 sm:space-x-4">
         <button
           onClick={onMenuClick}
-          className="md:hidden p-2 rounded-[10px] bg-purple-50/60 dark:bg-slate-800/80 border border-purple-200/80 dark:border-slate-700/60 text-foreground hover:bg-purple-100/80 dark:hover:bg-slate-700"
+          className="md:hidden p-2 rounded-[10px] bg-card border border-border text-foreground hover:bg-[#FFF1E6] dark:hover:bg-slate-700 transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -339,14 +339,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         {/* Global Search Bar */}
         <div className="relative w-44 sm:w-64 md:w-72">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="w-4 h-4 text-purple-400 dark:text-slate-400" />
+            <Search className="w-4 h-4 text-[#FF6B00] dark:text-orange-400" />
           </span>
           <input
             type="text"
             placeholder="Search trends, keywords..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-slate-900 dark:text-slate-100 placeholder:text-purple-400/70 dark:placeholder:text-slate-400 transition-all"
+            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-card border border-border rounded-[12px] focus:outline-none focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00] text-[#0F172A] dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 font-medium transition-all shadow-xs"
           />
         </div>
       </div>
@@ -354,17 +354,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       {/* Right side Actions: Date Filter, CSV, PDF */}
       <div className="flex items-center space-x-2 sm:space-x-3">
         {/* Date Range Filter Dropdown */}
-        <div className="relative flex items-center bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] px-2 py-1 text-xs transition-all hover:border-purple-300">
-          <Calendar className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400 mr-1.5 flex-shrink-0" />
+        <div className="relative flex items-center bg-card border border-border rounded-[12px] px-2.5 py-1 text-xs transition-all hover:border-[#FF6B00] shadow-xs">
+          <Calendar className="w-3.5 h-3.5 text-[#FF6B00] dark:text-orange-400 mr-1.5 flex-shrink-0" />
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as DateFilterType)}
-            className="bg-transparent text-slate-800 dark:text-slate-200 font-semibold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
+            className="bg-transparent text-[#0F172A] dark:text-slate-200 font-bold py-1 pr-1 border-none outline-none cursor-pointer focus:ring-0 text-xs"
           >
-            <option value="Today" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Today</option>
-            <option value="Last 7 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 7 Days</option>
-            <option value="Last 15 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 15 Days</option>
-            <option value="Last 30 Days" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 py-1 font-semibold">Last 30 Days</option>
+            <option value="Today" className="bg-white dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 py-1 font-semibold">Today</option>
+            <option value="Last 7 Days" className="bg-white dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 py-1 font-semibold">Last 7 Days</option>
+            <option value="Last 15 Days" className="bg-white dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 py-1 font-semibold">Last 15 Days</option>
+            <option value="Last 30 Days" className="bg-white dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 py-1 font-semibold">Last 30 Days</option>
           </select>
         </div>
 
@@ -372,9 +372,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadCSV}
           title="Download CSV report"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-purple-100/80 dark:hover:bg-slate-700/80 hover:border-purple-300 hover:text-purple-700 dark:hover:text-purple-300 shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-extrabold text-[#0F172A] dark:text-slate-200 hover:bg-[#FFF1E6] dark:hover:bg-slate-700/80 hover:border-[#FF6B00] hover:text-[#C25100] dark:hover:text-orange-300 shadow-xs transition-all"
         >
-          <FileSpreadsheet className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400" />
+          <FileSpreadsheet className="w-3.5 h-3.5 text-[#FF6B00] dark:text-orange-400" />
           <span>CSV</span>
         </button>
 
@@ -382,9 +382,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
         <button
           onClick={handleDownloadPDF}
           title="Download Executive text summary"
-          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-purple-50/50 dark:bg-slate-800/60 border border-purple-200/80 dark:border-slate-700/60 rounded-[12px] text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-purple-100/80 dark:hover:bg-slate-700/80 hover:border-purple-300 hover:text-purple-700 dark:hover:text-purple-300 shadow-sm transition-all"
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-2 bg-card border border-border rounded-[12px] text-xs font-extrabold text-[#0F172A] dark:text-slate-200 hover:bg-[#FFF1E6] dark:hover:bg-slate-700/80 hover:border-[#FF6B00] hover:text-[#C25100] dark:hover:text-orange-300 shadow-xs transition-all"
         >
-          <FileText className="w-3.5 h-3.5 text-purple-500 dark:text-slate-400" />
+          <FileText className="w-3.5 h-3.5 text-[#FF6B00] dark:text-orange-400" />
           <span>PDF</span>
         </button>
       </div>

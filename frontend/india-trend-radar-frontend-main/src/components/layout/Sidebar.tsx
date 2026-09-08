@@ -42,11 +42,11 @@ export const Sidebar: React.FC = () => {
       <div>
         <div className="h-20 flex items-center px-5 border-b border-border justify-between relative">
           <div className="flex items-center space-x-3 overflow-hidden">
-            <div className="min-w-10 w-10 min-h-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+            <div className="min-w-10 w-10 min-h-10 h-10 rounded-[12px] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-md">
               <Activity className="w-5 h-5 animate-pulse" />
             </div>
             {sidebarOpen && (
-              <span className="text-base font-bold tracking-tight text-foreground whitespace-nowrap">
+              <span className="text-base font-extrabold tracking-tight text-[#0F172A] dark:text-foreground whitespace-nowrap">
                 India Trend Radar
               </span>
             )}
@@ -55,7 +55,7 @@ export const Sidebar: React.FC = () => {
           {/* Toggle Button for Desktop */}
           <button
             onClick={toggleSidebar}
-            className="hidden md:flex absolute -right-3 top-8 w-6 h-6 rounded-full bg-card border border-border items-center justify-center text-slate-400 hover:text-foreground"
+            className="hidden md:flex absolute -right-3 top-8 w-6 h-6 rounded-full bg-card border border-border items-center justify-center text-[#475569] dark:text-slate-400 hover:text-[#FF6B00] dark:hover:text-foreground shadow-xs transition-colors"
           >
             {sidebarOpen ? (
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -74,17 +74,17 @@ export const Sidebar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-medium transition-all group relative ${
+                  `flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm transition-all group relative ${
                     isActive
-                      ? "bg-purple-100/80 dark:bg-blue-950/40 text-purple-700 dark:text-blue-400 font-bold shadow-sm"
-                      : "text-slate-600 dark:text-slate-400 hover:text-purple-700 dark:hover:text-foreground hover:bg-purple-50/70 dark:hover:bg-slate-800/30"
+                      ? "bg-[#FFF1E6] dark:bg-blue-950/40 text-[#0F172A] dark:text-blue-400 font-extrabold border-l-4 border-[#FF6B00] dark:border-transparent shadow-xs"
+                      : "text-[#475569] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-foreground hover:bg-[#FFF1E6]/70 dark:hover:bg-slate-800/30 font-semibold"
                   }`
                 }
               >
-                <Icon className="w-5 h-5" />
+                <Icon className={`w-5 h-5 flex-shrink-0 transition-colors`} />
                 {sidebarOpen && <span>{item.name}</span>}
                 {!sidebarOpen && (
-                  <div className="absolute left-[70px] bg-slate-950 text-white text-xs px-2.5 py-1.5 rounded-[6px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-xl">
+                  <div className="absolute left-[70px] bg-[#0F172A] text-white text-xs px-2.5 py-1.5 rounded-[6px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-xl">
                     {item.name}
                   </div>
                 )}
@@ -98,16 +98,16 @@ export const Sidebar: React.FC = () => {
       <div className="p-3 border-t border-border">
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-purple-700 dark:hover:text-foreground hover:bg-purple-50/70 dark:hover:bg-slate-800/40 transition-all group relative"
+          className="w-full flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-sm font-semibold text-[#475569] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-foreground hover:bg-[#FFF1E6]/70 dark:hover:bg-slate-800/40 transition-all group relative"
         >
           {theme === "dark" ? (
-            <Sun className="w-5 h-5 text-amber-400" />
+            <Sun className="w-5 h-5 text-amber-400 flex-shrink-0" />
           ) : (
-            <Moon className="w-5 h-5 text-indigo-400" />
+            <Moon className="w-5 h-5 text-[#FF6B00] dark:text-indigo-400 flex-shrink-0" />
           )}
           {sidebarOpen && <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>}
           {!sidebarOpen && (
-            <div className="absolute left-[70px] bg-slate-950 text-white text-xs px-2.5 py-1.5 rounded-[6px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-xl">
+            <div className="absolute left-[70px] bg-[#0F172A] text-white text-xs px-2.5 py-1.5 rounded-[6px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-xl">
               {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </div>
           )}

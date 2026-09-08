@@ -183,13 +183,13 @@ export const IndiaTrendScore: React.FC = () => {
           <div>
             <div className="flex justify-between items-center">
               <div>
-                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">
+                <span className="text-[10px] font-bold text-[#FF6B00] uppercase tracking-wider block">
                   {activeTopic ? formatKeyword(activeTopic.keyword) : "No Topic Selected"}
                 </span>
                 <h3 className="text-sm font-bold text-foreground">Trend Vector Dimensional Analysis</h3>
               </div>
               {activeTopic && (
-                <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-bold rounded-[8px]">
+                <div className="px-3 py-1 bg-[#FFF1E6] dark:bg-amber-500/10 border border-[#FF6B00]/30 dark:border-amber-500/30 text-[#FF6B00] dark:text-amber-400 text-xs font-bold rounded-[8px]">
                   Score: {activeTopic.india_trend_score.toFixed(2)}
                 </div>
               )}
@@ -203,23 +203,23 @@ export const IndiaTrendScore: React.FC = () => {
             {activeTopic ? (
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarMetrics}>
-                  <PolarGrid stroke="hsl(var(--border))" opacity={0.3} />
-                  <PolarAngleAxis dataKey="subject" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="hsl(var(--border))" fontSize={9} />
+                  <PolarGrid stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.7} />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} fontSize={9} />
                   <Radar
                     name={formatKeyword(activeTopic.keyword)}
                     dataKey="value"
-                    stroke="#F59E0B"
-                    fill="#F59E0B"
+                    stroke="#FF6B00"
+                    fill="#FF6B00"
                     fillOpacity={0.25}
                   />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                      borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                      borderColor: theme === "dark" ? "#334155" : "#FF6B00",
                       borderRadius: "12px",
-                      color: theme === "dark" ? "#F8FAFC" : "#172033",
-                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                      color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                      boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(255, 107, 0, 0.15)",
                     }}
                   />
                 </RadarChart>
@@ -241,19 +241,19 @@ export const IndiaTrendScore: React.FC = () => {
           <div className="flex-1 w-full h-[260px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={scoreDistributionData} margin={{ left: -20, right: 10, top: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.2} vertical={false} />
-                <XAxis dataKey="range" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.2 : 0.6} vertical={false} />
+                <XAxis dataKey="range" stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
+                <YAxis stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                    borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                    borderColor: theme === "dark" ? "#334155" : "#FF6B00",
                     borderRadius: "12px",
-                    color: theme === "dark" ? "#F8FAFC" : "#172033",
-                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                    color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                    boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(255, 107, 0, 0.15)",
                   }}
                 />
-                <Bar dataKey="count" fill="#6D3DF5" radius={[6, 6, 0, 0]} barSize={25} />
+                <Bar dataKey="count" fill="#FF6B00" radius={[6, 6, 0, 0]} barSize={25} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -269,15 +269,15 @@ export const IndiaTrendScore: React.FC = () => {
               Click on any row to inspect its dimensional radar vector above.
             </p>
           </div>
-          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-[10px] bg-muted/40 border border-border text-xs font-semibold text-muted-foreground">
-            <Compass className="w-4 h-4 text-amber-500" />
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-[10px] bg-card border border-border text-xs font-semibold text-muted-foreground">
+            <Compass className="w-4 h-4 text-[#FF6B00]" />
             <span>Click rows to analyze dimensions</span>
           </div>
         </div>
 
         <div className="overflow-x-auto w-full">
           <table className="w-full text-sm text-left text-foreground">
-            <thead className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase border-b border-border">
+            <thead className="text-xs font-extrabold text-[#475569] dark:text-slate-400 uppercase border-b border-border">
               <tr>
                 <th className="py-3 px-4">Rank</th>
                 <th className="py-3 px-4">Topic Keyword</th>
@@ -292,33 +292,33 @@ export const IndiaTrendScore: React.FC = () => {
                   <tr
                     key={idx}
                     onClick={() => setSelectedKeyword(item.keyword)}
-                    className={`hover:bg-slate-100/80 dark:hover:bg-slate-800/40 transition-all font-medium cursor-pointer ${
+                    className={`hover:bg-[#FFF1E6]/60 dark:hover:bg-slate-800/40 transition-all font-medium cursor-pointer text-xs ${
                       selectedKeyword === item.keyword
-                        ? "bg-amber-500/10 dark:bg-slate-800/80 border-l-4 border-amber-500"
+                        ? "bg-[#FFF1E6] dark:bg-slate-800/80 border-l-4 border-[#FF6B00]"
                         : ""
                     }`}
                   >
-                    <td className="py-3.5 px-4 font-bold text-slate-500 dark:text-slate-400">
+                    <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-slate-400">
                       <span className="flex items-center space-x-1.5">
-                        <Award className={`w-4 h-4 ${idx === 0 ? "text-amber-400" : idx === 1 ? "text-slate-300" : "text-amber-700"}`} />
+                        <Award className={`w-4 h-4 ${idx === 0 ? "text-[#FF6B00]" : idx === 1 ? "text-slate-400" : "text-amber-700"}`} />
                         <span>#{item.trend_rank}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-foreground">{formatKeyword(item.keyword)}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-foreground">{formatKeyword(item.keyword)}</td>
                     <td className="py-3.5 px-4">
                       <div className="flex items-center space-x-3">
-                        <span className="font-bold text-amber-500 dark:text-amber-400">{item.india_trend_score.toFixed(2)}</span>
+                        <span className="font-extrabold text-[#FF6B00] dark:text-amber-400">{item.india_trend_score.toFixed(2)}</span>
                         <div className="w-24 bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 hidden md:block">
                           <div
-                            className="bg-amber-500 h-1.5 rounded-full"
+                            className="bg-[#FF6B00] h-1.5 rounded-full"
                             style={{ width: `${Math.min(100, (item.india_trend_score / 11) * 100)}%` }}
                           />
                         </div>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">{(item.viral_probability * 100).toFixed(1)}%</td>
+                    <td className="py-3.5 px-4 text-emerald-700 dark:text-emerald-400 font-extrabold">{(item.viral_probability * 100).toFixed(1)}%</td>
                     <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-1 text-[11px] font-bold rounded-full border bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20">
+                      <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-full border bg-[#FFF1E6] text-[#FF6B00] dark:bg-purple-500/10 dark:text-purple-400 border-[#FF6B00]/30 dark:border-purple-500/30">
                         {item.forecast_score.toFixed(3)}
                       </span>
                     </td>

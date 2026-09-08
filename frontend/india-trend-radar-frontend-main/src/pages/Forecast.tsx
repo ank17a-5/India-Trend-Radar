@@ -106,7 +106,7 @@ export const Forecast: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <BrainCircuit className="w-5.5 h-5.5 text-purple-600 dark:text-purple-400" />
+            <BrainCircuit className="w-5.5 h-5.5 text-[#FF6B00] dark:text-purple-400" />
             <span>AI Predictive Forecasting</span>
           </h2>
           <p className="text-xs text-muted-foreground">
@@ -128,9 +128,9 @@ export const Forecast: React.FC = () => {
           <button
             key={card.days}
             onClick={() => setActiveTab(card.days)}
-            className={`p-5 rounded-[18px] border text-left backdrop-blur-md transition-all flex flex-col justify-between h-40 group hover:border-purple-300 ${
+            className={`p-5 rounded-[18px] border text-left backdrop-blur-md transition-all flex flex-col justify-between h-40 group hover:border-[#FF6B00]/40 ${
               activeTab === card.days
-                ? "bg-card border-purple-500/50 shadow-lg shadow-purple-500/5"
+                ? "bg-card border-[#FF6B00] shadow-md shadow-orange-500/5"
                 : "bg-card/45 border-border"
             }`}
           >
@@ -140,8 +140,8 @@ export const Forecast: React.FC = () => {
                 <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
                 <span>{card.days} Days Horizon</span>
               </span>
-              <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40 text-[10px] font-bold text-purple-700 dark:text-purple-300">
-                <Target className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+              <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#FFF1E6] dark:bg-purple-950/40 border border-[#FF6B00]/30 dark:border-purple-800/40 text-[10px] font-bold text-[#FF6B00] dark:text-purple-300">
+                <Target className="w-3 h-3 text-[#FF6B00] dark:text-purple-400" />
                 <span>{card.accuracy}% Confidence</span>
               </div>
             </div>
@@ -170,7 +170,7 @@ export const Forecast: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <Sparkles className="w-4 h-4 text-[#FF6B00] dark:text-purple-400" />
               <span>Prophet Prediction Curve (Upper & Lower Confidence Bounds)</span>
             </h3>
             <p className="text-xs text-muted-foreground">
@@ -179,7 +179,7 @@ export const Forecast: React.FC = () => {
           </div>
           <div className="flex items-center bg-card border border-border rounded-[10px] p-1 text-[11px] font-bold">
             <span className="px-2 py-1 text-muted-foreground">View range:</span>
-            <span className="px-3 py-1 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/40 rounded-[8px]">
+            <span className="px-3 py-1 bg-[#FFF1E6] dark:bg-purple-950/40 text-[#FF6B00] dark:text-purple-300 border border-[#FF6B00]/30 dark:border-purple-800/40 rounded-[8px]">
               {activeTab} Days Projections
             </span>
           </div>
@@ -191,23 +191,23 @@ export const Forecast: React.FC = () => {
             <AreaChart data={filteredTimeline} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="confidenceFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6D3DF5" stopOpacity={0.18} />
-                  <stop offset="95%" stopColor="#6D3DF5" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#FF6B00" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke={theme === "dark" ? "hsl(var(--border))" : "#E2E8F0"} opacity={theme === "dark" ? 0.3 : 0.6} />
+              <XAxis dataKey="date" stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
+              <YAxis stroke={theme === "dark" ? "#475569" : "#64748B"} tick={{ fill: theme === "dark" ? "#94A3B8" : "#0F172A", fontSize: 11, fontWeight: 600 }} tickLine={false} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                  borderColor: theme === "dark" ? "#334155" : "#E5DDF7",
+                  borderColor: theme === "dark" ? "#334155" : "#FF6B00",
                   borderRadius: "12px",
-                  color: theme === "dark" ? "#F8FAFC" : "#172033",
-                  boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(109, 61, 245, 0.08)",
+                  color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                  boxShadow: theme === "dark" ? "0 10px 25px -5px rgba(0,0,0,0.5)" : "0 10px 25px -5px rgba(255, 107, 0, 0.15)",
                 }}
               />
-              <Legend iconType="circle" wrapperStyle={{ fontSize: "11px", paddingTop: 10 }} />
+              <Legend iconType="circle" wrapperStyle={{ color: theme === "dark" ? "#F8FAFC" : "#0F172A", fontSize: "11px", fontWeight: 600, paddingTop: 10 }} />
               
               <Area
                 type="monotone"
@@ -226,7 +226,7 @@ export const Forecast: React.FC = () => {
               <Area
                 type="monotone"
                 dataKey="predicted"
-                stroke="#A78BFA"
+                stroke="#FF6B00"
                 strokeWidth={2.5}
                 fill="none"
                 name="Predicted Trend Score (yhat)"
@@ -240,14 +240,14 @@ export const Forecast: React.FC = () => {
       <motion.div variants={itemVariants} className="p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col space-y-4">
         <div>
           <h3 className="text-sm font-bold text-foreground">Specific Trend Prediction Details ({risingTrends.length})</h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground font-medium">
             Real prediction scores, virality probabilities, and rankings from the trained virality model.
           </p>
         </div>
 
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm text-left text-slate-300">
-            <thead className="text-xs font-bold text-slate-400 uppercase border-b border-border">
+          <table className="w-full text-sm text-left text-foreground">
+            <thead className="text-xs font-extrabold text-[#475569] dark:text-slate-400 uppercase border-b border-border">
               <tr>
                 <th className="py-3 px-4">Rank</th>
                 <th className="py-3 px-4">Topic Keyword</th>
@@ -259,24 +259,24 @@ export const Forecast: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-border/60">
               {risingTrends.map((item, idx) => (
-                <tr key={idx} className="hover:bg-slate-800/20 transition-all font-medium">
-                  <td className="py-3.5 px-4 font-bold text-slate-400">#{item.trend_rank}</td>
-                  <td className="py-3.5 px-4 font-bold text-foreground">{formatKeyword(item.keyword)}</td>
-                  <td className="py-3.5 px-4 font-bold text-amber-400">
+                <tr key={idx} className="hover:bg-[#FFF1E6]/60 dark:hover:bg-slate-800/20 transition-all font-medium text-xs">
+                  <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-slate-400">#{item.trend_rank}</td>
+                  <td className="py-3.5 px-4 font-extrabold text-[#0F172A] dark:text-foreground">{formatKeyword(item.keyword)}</td>
+                  <td className="py-3.5 px-4 font-extrabold text-amber-600 dark:text-amber-400">
                     {item.india_trend_score.toFixed(2)}
                   </td>
-                  <td className="py-3.5 px-4 font-bold text-emerald-400">
+                  <td className="py-3.5 px-4 font-extrabold text-emerald-700 dark:text-emerald-400">
                     {(item.viral_probability * 100).toFixed(1)}%
                   </td>
-                  <td className="py-3.5 px-4 font-semibold text-purple-400">
+                  <td className="py-3.5 px-4 font-semibold text-[#FF6B00] dark:text-purple-400">
                     {item.forecast_score.toFixed(4)}
                   </td>
                   <td className="py-3.5 px-4">
                     <span
-                      className={`px-2.5 py-1 text-[11px] font-bold rounded-full border ${
+                      className={`px-2.5 py-1 text-[11px] font-extrabold rounded-full border ${
                         item.predicted_viral === 1
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : "bg-slate-800 text-slate-400 border-slate-700/50"
+                          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                          : "bg-[#FFF1E6] text-[#FF6B00] dark:bg-purple-500/10 dark:text-purple-300 border-[#FF6B00]/30 dark:border-purple-500/30"
                       }`}
                     >
                       {item.predicted_viral === 1 ? "Predicted Viral" : "Standard Trend"}
