@@ -29,6 +29,7 @@ print(f"[API Services] Resolved PROJECT_ROOT to: {PROJECT_ROOT}")
 
 def resolve_data_file(relative_path: str) -> Path:
     candidates = [
+        Path(__file__).resolve().parent / relative_path,
         PROJECT_ROOT / relative_path,
         Path(__file__).resolve().parents[3] / relative_path,
         Path(__file__).resolve().parents[2] / relative_path,

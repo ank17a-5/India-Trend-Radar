@@ -17,4 +17,6 @@ data/raw/
 *.csv
 !data/processed/news_with_ner.csv
 !data/predictions/*.csv
-!data/reports/*.csv
+!data/reports/*.csv
+!scripts/phase_4/api/data/predictions/*.csv
+!scripts/phase_4/api/data/reports/*.csv

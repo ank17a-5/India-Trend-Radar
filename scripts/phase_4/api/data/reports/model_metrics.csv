@@ -1,0 +1,22 @@
+﻿section,metric,value
+Prophet Forecast,Forecast Count,30
+Prophet Forecast,Average Forecast,0.1728312119458179
+Prophet Forecast,Minimum Forecast,0.1644243218766002
+Prophet Forecast,Maximum Forecast,0.180923827941172
+Prophet Forecast,Forecast Std Dev,0.0049849032545798274
+Prophet Forecast,Average Confidence Width,0.004144915083128995
+Virality Model,Accuracy,0.6928735632183908
+Virality Model,Precision,0.5103448275862069
+Virality Model,Recall,0.32791728212703103
+Virality Model,F1 Score,0.39928057553956836
+Virality Model,Confusion Matrix,"[[2570, 426], [910, 444]]"
+Anomaly Detection (Isolation Forest vs Final),Accuracy,0.8898850574712643
+Anomaly Detection (Isolation Forest vs Final),Precision,1.0
+Anomaly Detection (Isolation Forest vs Final),Recall,0.3117816091954023
+Anomaly Detection (Isolation Forest vs Final),F1 Score,0.47535596933187296
+Anomaly Detection (Z-Score vs Final),Accuracy,0.9967816091954023
+Anomaly Detection (Z-Score vs Final),Precision,1.0
+Anomaly Detection (Z-Score vs Final),Recall,0.9798850574712644
+Anomaly Detection (Z-Score vs Final),F1 Score,0.9898403483309144
+India Trend Score,Describe,"{'forecast_score': {'count': 4350.0, 'mean': 0.180923827941172, 'std': 0.0, 'min': 0.180923827941172, '25%': 0.180923827941172, '50%': 0.180923827941172, '75%': 0.180923827941172, 'max': 0.180923827941172}, 'predicted_viral': {'count': 4350.0, 'mean': 0.2, 'std': 0.4000459849400842, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'viral_probability': {'count': 4350.0, 'mean': 0.1999560679597478, 'std': 0.39914322324828233, 'min': 8.264597e-05, '25%': 9.28302425e-05, '50%': 0.00046599357, '75%': 0.00050516875, 'max': 0.99965525}, 'is_anomaly': {'count': 4350.0, 'mean': 0.16, 'std': 0.3666482014902198, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'anomaly_score': {'count': 4350.0, 'mean': 0.09463437595219226, 'std': 0.1043495950729207, 'min': 0.0, '25%': 0.008161982664388074, '50%': 0.06490695570616845, '75%': 0.14134044557823383, 'max': 0.9721612005347544}, 'india_trend_score': {'count': 4350.0, 'mean': 0.2634056091954023, 'std': 0.336203690511738, 'min': 0.1466, '25%': 0.152, '50%': 0.2111, '75%': 0.2192, 'max': 11.5031}, 'trend_rank': {'count': 4350.0, 'mean': 2175.5, 'std': 1255.8811647604243, 'min': 1.0, '25%': 1088.25, '50%': 2175.5, '75%': 3262.75, 'max': 4350.0}}"
+India Trend Score,Correlation Matrix,"{'forecast_score': {'forecast_score': nan, 'predicted_viral': nan, 'viral_probability': nan, 'is_anomaly': nan, 'anomaly_score': nan, 'india_trend_score': nan, 'trend_rank': nan}, 'predicted_viral': {'forecast_score': nan, 'predicted_viral': 1.0, 'viral_probability': 0.9998728291643288, 'is_anomaly': 0.48409256109823756, 'anomaly_score': 0.4516426160889178, 'india_trend_score': 0.44048136277580896, 'trend_rank': -0.6922725107433907}, 'viral_probability': {'forecast_score': nan, 'predicted_viral': 0.9998728291643288, 'viral_probability': 1.0, 'is_anomaly': 0.48391115342824553, 'anomaly_score': 0.45148745890065317, 'india_trend_score': 0.44085508098765513, 'trend_rank': -0.692511835626743}, 'is_anomaly': {'forecast_score': nan, 'predicted_viral': 0.48409256109823756, 'viral_probability': 0.48391115342824553, 'is_anomaly': 1.0, 'anomaly_score': 0.7620650065466287, 'india_trend_score': 0.36656290009063613, 'trend_rank': -0.36159001693491755}, 'anomaly_score': {'forecast_score': nan, 'predicted_viral': 0.4516426160889178, 'viral_probability': 0.45148745890065317, 'is_anomaly': 0.7620650065466287, 'anomaly_score': 1.0, 'india_trend_score': 0.4716994127466162, 'trend_rank': -0.16191053485014795}, 'india_trend_score': {'forecast_score': nan, 'predicted_viral': 0.44048136277580896, 'viral_probability': 0.44085508098765513, 'is_anomaly': 0.36656290009063613, 'anomaly_score': 0.4716994127466162, 'india_trend_score': 1.0, 'trend_rank': -0.39898588633599974}, 'trend_rank': {'forecast_score': nan, 'predicted_viral': -0.6922725107433907, 'viral_probability': -0.692511835626743, 'is_anomaly': -0.36159001693491755, 'anomaly_score': -0.16191053485014795, 'india_trend_score': -0.39898588633599974, 'trend_rank': 1.0}}"
