@@ -20,9 +20,14 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
+# Read optional FRONTEND_URL or ALLOWED_ORIGINS environment variables
+frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+if frontend_url and frontend_url not in ALLOWED_ORIGINS:
+    ALLOWED_ORIGINS.append(frontend_url)
+
 env_origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
 for o in env_origins:
-    cleaned = o.strip()
+    cleaned = o.strip().rstrip("/")
     if cleaned and cleaned not in ALLOWED_ORIGINS:
         ALLOWED_ORIGINS.append(cleaned)
 
@@ -34,7 +39,8 @@ async def add_cors_headers(request: Request, call_next):
     # Determine allowed origin to return
     target_origin = "https://india-trend-radar-athenura.vercel.app"
     if origin:
-        if origin in ALLOWED_ORIGINS or origin.endswith(".vercel.app") or "localhost" in origin or "127.0.0.1" in origin:
+        cleaned_origin = origin.rstrip("/")
+        if cleaned_origin in ALLOWED_ORIGINS or origin.endswith(".vercel.app") or "localhost" in origin or "127.0.0.1" in origin:
             target_origin = origin
 
     # Handle preflight OPTIONS requests immediately
