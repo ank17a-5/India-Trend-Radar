@@ -39,7 +39,6 @@ export const ModelEvaluation: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
     loadEvaluationData();
   }, []);
@@ -106,16 +105,16 @@ export const ModelEvaluation: React.FC = () => {
     },
   ];
 
-  // ROC Curve Data points
+  // Fixed ROC Curve Data points with explicit baseline mapping
   const rocCurveData = [
-    { fpr: 0, tpr: 0 },
-    { fpr: 0.05, tpr: 0.51 },
-    { fpr: 0.1, tpr: 0.67 },
-    { fpr: 0.2, tpr: 0.81 },
-    { fpr: 0.3, tpr: 0.89 },
-    { fpr: 0.5, tpr: 0.94 },
-    { fpr: 0.7, tpr: 0.98 },
-    { fpr: 1.0, tpr: 1.0 },
+    { fpr: 0, tpr: 0, baseline: 0 },
+    { fpr: 0.05, tpr: 0.51, baseline: 0.05 },
+    { fpr: 0.1, tpr: 0.67, baseline: 0.1 },
+    { fpr: 0.2, tpr: 0.81, baseline: 0.2 },
+    { fpr: 0.3, tpr: 0.89, baseline: 0.3 },
+    { fpr: 0.5, tpr: 0.94, baseline: 0.5 },
+    { fpr: 0.7, tpr: 0.98, baseline: 0.7 },
+    { fpr: 1.0, tpr: 1.0, baseline: 1.0 },
   ];
 
   // Epoch metric trends
@@ -180,42 +179,42 @@ export const ModelEvaluation: React.FC = () => {
         {/* Accuracy */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Virality Accuracy</span>
-          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
+          <h3 className="text-2xl font-extrabold text-[#0F172A] dark:text-orange-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Classification Accuracy</span>
         </div>
 
         {/* Precision */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Precision</span>
-          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
+          <h3 className="text-2xl font-extrabold text-[#0F172A] dark:text-orange-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Positive Predictive Value</span>
         </div>
 
         {/* Recall */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Recall</span>
-          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityRecall, "73.2%")}</h3>
+          <h3 className="text-2xl font-extrabold text-[#0F172A] dark:text-orange-400 mt-2">{fmtPct(viralityRecall, "73.2%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Sensitivity / TPR</span>
         </div>
 
         {/* F1 Score */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">F1 Score</span>
-          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityF1, "70.2%")}</h3>
+          <h3 className="text-2xl font-extrabold text-[#0F172A] dark:text-orange-400 mt-2">{fmtPct(viralityF1, "70.2%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Harmonic Mean Metric</span>
         </div>
 
         {/* Anomaly Accuracy */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Anomaly Acc</span>
-          <h3 className="text-2xl font-extrabold text-rose-500 mt-2">{fmtPct(isoAccuracy, "90.0%")}</h3>
+          <h3 className="text-2xl font-extrabold text-rose-600 dark:text-rose-500 mt-2">{fmtPct(isoAccuracy, "90.0%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Isolation Forest Precision</span>
         </div>
 
         {/* ROC AUC */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ROC AUC</span>
-          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">0.81</h3>
+          <h3 className="text-2xl font-extrabold text-[#0F172A] dark:text-orange-400 mt-2">0.81</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Area Under ROC Curve</span>
         </div>
       </motion.div>
@@ -259,7 +258,7 @@ export const ModelEvaluation: React.FC = () => {
                  name="F1 Score (%)"
                  radius={[4, 4, 0, 0]}
                  barSize={16}
-/>
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -318,11 +317,11 @@ export const ModelEvaluation: React.FC = () => {
 
           <div className="flex-1 flex flex-col items-center justify-center mt-4">
             <div className="grid grid-cols-3 gap-2 text-center text-xs font-semibold w-full max-w-[280px]">
-              <div className="text-[#0F172A] dark:text-slate-300 font-extrabold text-left self-center text-[10px]">Pred &rarr;<br />Act &darr;</div>
-              <div className="text-[#0F172A] dark:text-slate-300 font-extrabold">Non-Viral</div>
-              <div className="text-[#0F172A] dark:text-slate-300 font-extrabold">Viral</div>
+              <div className="text-slate-900 dark:text-slate-300 font-extrabold text-left self-center text-[10px]">Pred &rarr;<br />Act &darr;</div>
+              <div className="text-slate-900 dark:text-slate-300 font-extrabold">Non-Viral</div>
+              <div className="text-slate-900 dark:text-slate-300 font-extrabold">Viral</div>
 
-              <div className="text-[#0F172A] dark:text-slate-300 font-extrabold text-left flex items-center">Non-Viral</div>
+              <div className="text-slate-900 dark:text-slate-300 font-extrabold text-left flex items-center">Non-Viral</div>
               <div className={`py-4 rounded-[10px] flex items-center justify-center text-sm ${getMatrixColor(true)}`}>
                 {confusionMatrixValues.tn.toLocaleString()}
               </div>
@@ -330,7 +329,7 @@ export const ModelEvaluation: React.FC = () => {
                 {confusionMatrixValues.fp.toLocaleString()}
               </div>
 
-              <div className="text-[#0F172A] dark:text-slate-300 font-extrabold text-left flex items-center">Viral</div>
+              <div className="text-slate-900 dark:text-slate-300 font-extrabold text-left flex items-center">Viral</div>
               <div className={`py-4 rounded-[10px] flex items-center justify-center text-sm ${getMatrixColor(false)}`}>
                 {confusionMatrixValues.fn.toLocaleString()}
               </div>
@@ -369,7 +368,7 @@ export const ModelEvaluation: React.FC = () => {
                   }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ color: theme === "dark" ? "#F8FAFC" : "#0F172A", fontSize: "11px", fontWeight: 600 }} />
-                <Line type="linear" dataKey="fpr" stroke="#94A3B8" strokeWidth={1.5} strokeDasharray="5 5" name="Random Baseline" dot={false} activeDot={false} />
+                <Line type="linear" dataKey="baseline" stroke="#94A3B8" strokeWidth={1.5} strokeDasharray="5 5" name="Random Baseline" dot={false} activeDot={false} />
                 <Line type="monotone" dataKey="tpr" stroke="#FF6B00" strokeWidth={3} name="Virality ROC (AUC = 0.81)" dot={false} />
               </LineChart>
             </ResponsiveContainer>
