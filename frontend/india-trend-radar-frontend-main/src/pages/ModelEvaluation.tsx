@@ -159,7 +159,7 @@ export const ModelEvaluation: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center space-x-2">
-            <Cpu className="w-5.5 h-5.5 text-[#FF6B00] dark:text-orange-400" />
+            <Cpu className="w-5.5 h-5.5 text-orange-600 dark:text-orange-400" />
             <span>AI Model Evaluation & Metrics</span>
           </h2>
           <p className="text-xs text-muted-foreground">
@@ -180,28 +180,28 @@ export const ModelEvaluation: React.FC = () => {
         {/* Accuracy */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Virality Accuracy</span>
-          <h3 className="text-2xl font-extrabold text-[#FF6B00] dark:text-orange-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
+          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityAccuracy, "80.6%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Classification Accuracy</span>
         </div>
 
         {/* Precision */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Precision</span>
-          <h3 className="text-2xl font-extrabold text-[#FF6B00] dark:text-orange-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
+          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityPrecision, "67.4%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Positive Predictive Value</span>
         </div>
 
         {/* Recall */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Recall</span>
-          <h3 className="text-2xl font-extrabold text-[#FF6B00] dark:text-orange-400 mt-2">{fmtPct(viralityRecall, "73.2%")}</h3>
+          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityRecall, "73.2%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Sensitivity / TPR</span>
         </div>
 
         {/* F1 Score */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">F1 Score</span>
-          <h3 className="text-2xl font-extrabold text-[#FF6B00] dark:text-orange-400 mt-2">{fmtPct(viralityF1, "70.2%")}</h3>
+          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">{fmtPct(viralityF1, "70.2%")}</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Harmonic Mean Metric</span>
         </div>
 
@@ -215,7 +215,7 @@ export const ModelEvaluation: React.FC = () => {
         {/* ROC AUC */}
         <div className="p-4 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-28 relative overflow-hidden group">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ROC AUC</span>
-          <h3 className="text-2xl font-extrabold text-[#FF6B00] dark:text-orange-400 mt-2">0.81</h3>
+          <h3 className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 mt-2">0.81</h3>
           <span className="text-[9px] text-muted-foreground font-semibold">Area Under ROC Curve</span>
         </div>
       </motion.div>
@@ -227,7 +227,7 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-6 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-[#FF6B00] dark:text-orange-400" />
+              <Sparkles className="w-4 h-4 text-orange-600 dark:text-orange-400" />
               <span>Algorithmic Model Accuracy Comparison</span>
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
@@ -253,7 +253,13 @@ export const ModelEvaluation: React.FC = () => {
                 />
                 <Legend iconType="circle" wrapperStyle={{ color: theme === "dark" ? "#F8FAFC" : "#0F172A", fontSize: "11px", fontWeight: 600 }} />
                 <Bar dataKey="accuracy" fill="#FF6B00" name="Accuracy (%)" radius={[4, 4, 0, 0]} barSize={16} />
-                <Bar dataKey="f1" fill={theme === "dark" ? "#A855F7" : "#0F172A"} name="F1 Score (%)" radius={[4, 4, 0, 0]} barSize={16} />
+                <Bar
+                 dataKey="f1"
+                 fill={theme === "dark" ? "#A855F7" : "#334155"}
+                 name="F1 Score (%)"
+                 radius={[4, 4, 0, 0]}
+                 barSize={16}
+/>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -302,7 +308,7 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-5 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Binary className="w-4 h-4 text-[#FF6B00] dark:text-orange-400" />
+              <Binary className="w-4 h-4 text-orange-600 dark:text-orange-400" />
               <span>Real Virality Model Confusion Matrix</span>
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
@@ -339,7 +345,7 @@ export const ModelEvaluation: React.FC = () => {
         <div className="lg:col-span-7 p-6 bg-card border border-border rounded-[18px] backdrop-blur-md flex flex-col justify-between h-[380px]">
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-[#FF6B00] dark:text-orange-400" />
+              <Layers className="w-4 h-4 text-orange-600 dark:text-orange-400" />
               <span>ROC Classifier Vector (AUC Threshold)</span>
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
