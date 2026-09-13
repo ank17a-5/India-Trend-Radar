@@ -88,14 +88,9 @@ def run():
     logger.info(f"Train size: {len(X_train)}, Test size: {len(X_test)}")
 
     model = XGBClassifier(
-        n_estimators=300,
-        max_depth=3,
+        n_estimators=200,
+        max_depth=4,
         learning_rate=0.03,
-        subsample=0.7,
-        colsample_bytree=0.7,
-        gamma=1,
-        reg_alpha=0.5,
-        reg_lambda=1.0,
         eval_metric="logloss",
         random_state=42,
     )
