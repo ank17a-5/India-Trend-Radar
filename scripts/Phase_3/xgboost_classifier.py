@@ -24,7 +24,6 @@ from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from xgboost import XGBClassifier
-from datetime import datetime
 from utils.utils import logger
 
 FEATURES_PATH = "data/features/master_trend_features.csv"
@@ -88,7 +87,7 @@ def run():
     )
     logger.info(f"Train size: {len(X_train)}, Test size: {len(X_test)}")
 
-   model = XGBClassifier(
+    model = XGBClassifier(
         n_estimators=300,
         max_depth=3,
         learning_rate=0.03,
