@@ -29,15 +29,24 @@ import { useStore } from "../hooks/useStore";
 export const ModelEvaluation: React.FC = () => {
   const { theme, dateRange } = useStore();
   const [metrics, setMetrics] = useState<EvaluationMetric[]>([]);
+  
+  // Local state for independent page dropdown control
+  const [evalRange, setEvalRange] = useState<string>("30d");
+
+  // Sync with global dateRange when it changes if desired, or keep independent
+  useEffect(() => {
+    if (dateRange) {
+      setEvalRange(dateRange);
+    }
+  }, [dateRange]);
 
   const displayRangeLabel = useMemo(() => {
-    if (!dateRange) return "Today";
-    const val = dateRange.toUpperCase();
-    if (val.includes("7")) return "7 Days";
-    if (val.includes("15")) return "15 Days";
-    if (val.includes("30")) return "30 Days";
-    return val;
-  }, [dateRange]);
+    const val = evalRange.toUpperCase();
+    if (val.includes("7")) return "Last 7 Days";
+    if (val.includes("15")) return "Last 15 Days";
+    if (val.includes("30")) return "Last 30 Days";
+    return "Today";
+  }, [evalRange]);
 
   const loadEvaluationData = async (rangeQuery: string) => {
     try {
@@ -49,8 +58,8 @@ export const ModelEvaluation: React.FC = () => {
   };
 
   useEffect(() => {
-    loadEvaluationData(dateRange || "30d");
-  }, [dateRange]);
+    loadEvaluationData(evalRange);
+  }, [evalRange]);
 
   const getMetricVal = (section: string, metricName: string): string => {
     const item = metrics.find(
@@ -168,13 +177,28 @@ export const ModelEvaluation: React.FC = () => {
             Showing metrics for range: <span className="font-semibold text-orange-500">{displayRangeLabel}</span> (Extracted from `model_metrics.csv`).
           </p>
         </div>
-        <button
-          onClick={() => loadEvaluationData(dateRange || "30d")}
-          className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          title="Refresh Live Data"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </button>
+
+        <div className="flex items-center gap-2">
+          {/* Local Evaluation Range Selector Dropdown */}
+          <select
+            value={evalRange}
+            onChange={(e) => setEvalRange(e.target.value)}
+            className="px-3 py-1.5 rounded-[10px] bg-card border border-border text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+          >
+            <option value="today">Today</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="15d">Last 15 Days</option>
+            <option value="30d">Last 30 Days</option>
+          </select>
+
+          <button
+            onClick={() => loadEvaluationData(evalRange)}
+            className="p-2 rounded-[10px] bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            title="Refresh Live Data"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* 6 KPI Cards Grid */}
