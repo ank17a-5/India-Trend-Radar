@@ -293,11 +293,23 @@ def get_anomalies(limit: int = 20):
     except Exception:
         return {"count": len(FALLBACK_ANOMALIES), "anomalies": FALLBACK_ANOMALIES[:limit]}
 
-# ==========================================================
-# MODEL EVALUATION
+# # ==========================================================
+# MODEL EVALUATION (Fixed Keys & Structure)
 # ==========================================================
 
-def get_model_evaluation():
+FALLBACK_METRICS = [
+    {"section": "Virality Model", "metric": "Accuracy", "value": "0.806"},
+    {"section": "Virality Model", "metric": "Precision", "value": "0.674"},
+    {"section": "Virality Model", "metric": "Recall", "value": "0.732"},
+    {"section": "Virality Model", "metric": "F1 Score", "value": "0.582"},
+    {"section": "Virality Model", "metric": "Confusion Matrix", "value": "[[3632, 353], [695, 729]]"},
+    {"section": "Anomaly Detection (Isolation Forest vs Final)", "metric": "Accuracy", "value": "0.900"},
+    {"section": "Anomaly Detection (Isolation Forest vs Final)", "metric": "F1 Score", "value": "0.388"},
+    {"section": "Anomaly Detection (Z-Score vs Final)", "metric": "Accuracy", "value": "0.999"},
+    {"section": "Anomaly Detection (Z-Score vs Final)", "metric": "F1 Score", "value": "0.996"},
+]
+
+def get_model_evaluation(date_range: str = "30d"):
     df = None
     if db_engine is not None:
         try:

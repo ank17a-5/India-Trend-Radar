@@ -201,9 +201,17 @@ export async function fetchAnomalies(
   );
 }
 
-export async function fetchEvaluation(options?: ApiFetchOptions): Promise<EvaluationResponse> {
+// Updated fetchEvaluation to accept dateRange parameter and send it as a query string
+export async function fetchEvaluation(
+  dateRange: string = "30d",
+  options?: ApiFetchOptions
+): Promise<EvaluationResponse> {
+  const queryParams = new URLSearchParams({
+    date_range: dateRange,
+  }).toString();
+
   return apiFetch<EvaluationResponse>(
-    "/evaluation",
+    `/evaluation?${queryParams}`,
     "Failed to fetch evaluation metrics",
     options
   );
