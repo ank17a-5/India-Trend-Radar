@@ -17,6 +17,11 @@ interface AppState {
   // Global filters
   dateFilter: DateFilterType;
   setDateFilter: (filter: DateFilterType) => void;
+  
+  // ModelEvaluation ke liye dateRange alias/property add kiya gaya hai
+  dateRange: DateFilterType;
+  setDateRange: (filter: DateFilterType) => void;
+
   sourceFilter: SourceFilterType;
   setSourceFilter: (filter: SourceFilterType) => void;
   searchQuery: string;
@@ -56,7 +61,11 @@ export const useStore = create<AppState>((set) => ({
 
   // Global filters
   dateFilter: "Last 7 Days",
-  setDateFilter: (dateFilter) => set({ dateFilter }),
+  setDateFilter: (dateFilter) => set({ dateFilter, dateRange: dateFilter }),
+  
+  dateRange: "Last 7 Days",
+  setDateRange: (dateRange) => set({ dateRange, dateFilter: dateRange }),
+
   sourceFilter: "All",
   setSourceFilter: (sourceFilter) => set({ sourceFilter }),
   searchQuery: "",
