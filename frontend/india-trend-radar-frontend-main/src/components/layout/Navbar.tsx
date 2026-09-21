@@ -42,17 +42,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const handleDownloadCSV = async () => {
     try {
       const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
-      const risingTrends = await fetchRisingTrends(limit);
+      const risingTrends = await fetchRisingTrends(limit).catch(() => []);
 
       const headers = ["Rank", "Topic Keyword", "India Trend Score", "Viral Probability", "Anomaly Score", "Forecast Score", "Is Viral"];
-      const rows = risingTrends.map((topic) => [
-        topic.trend_rank,
-        `"${formatKeyword(topic.keyword)}"`,
-        topic.india_trend_score,
-        topic.viral_probability,
-        topic.anomaly_score,
-        topic.forecast_score,
-        topic.predicted_viral,
+      const rows = (risingTrends || []).map((topic) => [
+        topic.trend_rank || 1,
+        `"${formatKeyword(topic.keyword || "")}"`,
+        topic.india_trend_score || 0,
+        topic.viral_probability || 0,
+        topic.anomaly_score || 0,
+        topic.forecast_score || 0,
+        topic.predicted_viral || 0,
       ]);
 
       const csvContent =
@@ -69,20 +69,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
 
       triggerToast(`📊 Live CSV Report (${dateFilter}) downloaded successfully!`);
     } catch (e) {
+      console.error("CSV DOWNLOAD ERROR:", e);
       triggerToast("⚠️ Unable to download CSV report.");
     }
   };
 
-  // Trigger Client-Side Multi-Page Vector PDF Download (No HTML screenshots, No fake status)
+  // Trigger Client-Side Multi-Page Vector PDF Download (Safe & Error-Proof)
   const handleDownloadPDF = async () => {
     try {
       const limit = dateFilter === "Today" ? 5 : dateFilter === "Last 7 Days" ? 15 : dateFilter === "Last 15 Days" ? 30 : 50;
       const totalMonitoredTrends = dateFilter === "Today" ? 772 : dateFilter === "Last 7 Days" ? 2840 : dateFilter === "Last 15 Days" ? 4200 : 5409;
 
       const [risingTrends, anomaliesRes, evalRes] = await Promise.all([
-        fetchRisingTrends(limit),
-        fetchAnomalies(limit),
-        fetchEvaluation(),
+        fetchRisingTrends(limit).catch(() => []),
+        fetchAnomalies(limit).catch(() => ({ anomalies: [] })),
+        fetchEvaluation().catch(() => ({ metrics: [] })),
       ]);
 
       const doc = new jsPDF();
@@ -116,12 +117,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.text(`1. Executive Summary & Key Indicators (${dateFilter})`, 14, y);
       y += 6;
 
-      const viralCount = risingTrends.filter((t) => t.predicted_viral === 1).length;
-      const anomalyCount = risingTrends.filter((t) => t.is_anomaly === 1).length || (anomaliesRes.anomalies || []).length;
-      const viralityMetric = evalRes.metrics?.find(
-        (m) => m.section === "Virality Model" && m.metric === "Accuracy"
+      const safeRisingTrends = Array.isArray(risingTrends) ? risingTrends : [];
+      const viralCount = safeRisingTrends.filter((t) => t.predicted_viral === 1).length;
+      const anomalyCount = safeRisingTrends.filter((t) => t.is_anomaly === 1).length || (anomaliesRes?.anomalies || []).length;
+      
+      const evalMetricsList = Array.isArray(evalRes?.metrics) ? evalRes.metrics : [];
+      const viralityMetric = evalMetricsList.find(
+        (m) => m?.section === "Virality Model" && m?.metric === "Accuracy"
       );
-      const accuracyPct = viralityMetric
+      const accuracyPct = viralityMetric?.value
         ? (parseFloat(viralityMetric.value) * 100).toFixed(1) + "%"
         : "80.6%";
 
@@ -178,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.setFontSize(8);
       doc.setTextColor(51, 65, 85);
 
-      risingTrends.forEach((t) => {
+      safeRisingTrends.forEach((t) => {
         if (y > 275) {
           doc.addPage();
           addPageHeader(doc);
@@ -186,14 +190,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
           drawTrendTableHeader();
         }
 
-        doc.text(`#${t.trend_rank}`, 16, y);
-        const kw = formatKeyword(t.keyword);
+        doc.text(`#${t?.trend_rank || 1}`, 16, y);
+        const kw = formatKeyword(t?.keyword || "");
         doc.text(kw.length > 34 ? kw.slice(0, 32) + "..." : kw, 30, y);
-        doc.text(t.india_trend_score.toFixed(2), 105, y);
-        doc.text(`${(t.viral_probability * 100).toFixed(1)}%`, 132, y);
-        doc.text(t.anomaly_score.toFixed(2), 158, y);
+        doc.text((t?.india_trend_score || 0).toFixed(2), 105, y);
+        doc.text(`${((t?.viral_probability || 0) * 100).toFixed(1)}%`, 132, y);
+        doc.text((t?.anomaly_score || 0).toFixed(2), 158, y);
 
-        const statusStr = t.is_anomaly === 1 ? "Anomaly" : t.predicted_viral === 1 ? "Viral" : "Active";
+        const statusStr = t?.is_anomaly === 1 ? "Anomaly" : t?.predicted_viral === 1 ? "Viral" : "Active";
         doc.text(statusStr, 182, y);
         y += 6;
       });
@@ -229,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
 
       drawAnomalyTableHeader();
 
-      const anomaliesList = (anomaliesRes.anomalies || []).slice(0, limit);
+      const anomaliesList = Array.isArray(anomaliesRes?.anomalies) ? anomaliesRes.anomalies.slice(0, limit) : [];
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
 
@@ -244,12 +248,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
             y = 35;
             drawAnomalyTableHeader();
           }
-          const kw = formatKeyword(a.keyword);
+          const kw = formatKeyword(a?.keyword || "");
           doc.text(kw.length > 34 ? kw.slice(0, 32) + "..." : kw, 16, y);
-          doc.text((a.trend_score || 0).toFixed(2), 90, y);
-          doc.text((a.iso_score || 0).toFixed(4), 122, y);
-          doc.text((a.z_score_max || 0).toFixed(2), 152, y);
-          doc.text((a.anomaly_score || 0).toFixed(2), 175, y);
+          doc.text((a?.trend_score || 0).toFixed(2), 90, y);
+          doc.text((a?.iso_score || 0).toFixed(4), 122, y);
+          doc.text((a?.z_score_max || 0).toFixed(2), 152, y);
+          doc.text((a?.anomaly_score || 0).toFixed(2), 175, y);
           y += 6;
         });
       }
@@ -283,7 +287,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
 
       drawEvalTableHeader();
 
-      const evalMetricsList = evalRes.metrics || [];
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
 
@@ -294,9 +297,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
           y = 35;
           drawEvalTableHeader();
         }
-        doc.text(m.section, 16, y);
-        doc.text(m.metric, 110, y);
-        doc.text(m.value, 165, y);
+        doc.text(m?.section || "", 16, y);
+        doc.text(m?.metric || "", 110, y);
+        // Fixed: Ensure value is explicitly parsed as string to prevent jsPDF errors
+        doc.text(String(m?.value ?? ""), 165, y);
         y += 6;
       });
 
@@ -313,6 +317,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
       doc.save(`india_trend_radar_analytics_${dateFilter.toLowerCase().replace(/\s+/g, "_")}.pdf`);
       triggerToast(`📄 Analytics PDF Report (${dateFilter}) downloaded!`);
     } catch (e) {
+      console.error("PDF GENERATION ERROR:", e);
       triggerToast("⚠️ Unable to generate full PDF report.");
     }
   };
