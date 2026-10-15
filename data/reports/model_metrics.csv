@@ -1,22 +1,22 @@
 ﻿section,metric,value
 Prophet Forecast,Forecast Count,30
-Prophet Forecast,Average Forecast,0.14297357895818238
-Prophet Forecast,Minimum Forecast,0.1378081824389826
-Prophet Forecast,Maximum Forecast,0.1477978095530649
-Prophet Forecast,Forecast Std Dev,0.0028384945026335077
-Prophet Forecast,Average Confidence Width,0.00370299040398976
-Virality Model,Accuracy,0.8134209124800285
-Virality Model,Precision,0.6299911268855368
-Virality Model,Recall,0.5282738095238095
-Virality Model,F1 Score,0.5746661270740591
-Virality Model,Confusion Matrix,"[[3872, 417], [634, 710]]"
-Anomaly Detection (Isolation Forest vs Final),Accuracy,0.9005858334812711
+Prophet Forecast,Average Forecast,0.1396999614823637
+Prophet Forecast,Minimum Forecast,0.1365348768859644
+Prophet Forecast,Maximum Forecast,0.1421466336869395
+Prophet Forecast,Forecast Std Dev,0.0015222690933763936
+Prophet Forecast,Average Confidence Width,0.0048750471317212515
+Virality Model,Accuracy,0.8245192307692307
+Virality Model,Precision,0.6394849785407726
+Virality Model,Recall,0.5530809205642168
+Virality Model,F1 Score,0.5931528662420382
+Virality Model,Confusion Matrix,"[[4057, 420], [602, 745]]"
+Anomaly Detection (Isolation Forest vs Final),Accuracy,0.8993818681318682
 Anomaly Detection (Isolation Forest vs Final),Precision,1.0
-Anomaly Detection (Isolation Forest vs Final),Recall,0.31873479318734793
-Anomaly Detection (Isolation Forest vs Final),F1 Score,0.4833948339483395
-Anomaly Detection (Z-Score vs Final),Accuracy,0.9904136339428369
+Anomaly Detection (Isolation Forest vs Final),Recall,0.2800982800982801
+Anomaly Detection (Isolation Forest vs Final),F1 Score,0.43761996161228406
+Anomaly Detection (Z-Score vs Final),Accuracy,0.9941620879120879
 Anomaly Detection (Z-Score vs Final),Precision,1.0
-Anomaly Detection (Z-Score vs Final),Recall,0.9343065693430657
-Anomaly Detection (Z-Score vs Final),F1 Score,0.9660377358490566
-India Trend Score,Describe,"{'forecast_score': {'count': 5633.0, 'mean': 0.14680292008162718, 'std': 2.7758039602105926e-17, 'min': 0.1468029200816272, '25%': 0.1468029200816272, '50%': 0.1468029200816272, '75%': 0.1468029200816272, 'max': 0.1468029200816272}, 'predicted_viral': {'count': 5633.0, 'mean': 0.20007101011894196, 'std': 0.40008876225650275, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'viral_probability': {'count': 5633.0, 'mean': 0.2000403109799982, 'std': 0.39930745371881154, 'min': 9.492222e-05, '25%': 0.00012253593, '50%': 0.000285823, '75%': 0.000285823, 'max': 0.9997868}, 'is_anomaly': {'count': 5633.0, 'mean': 0.14592579442570566, 'std': 0.3530631474847994, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'anomaly_score': {'count': 5633.0, 'mean': 0.08186150051974565, 'std': 0.09316787261800337, 'min': 0.0, '25%': 0.0151939877821647, '50%': 0.0528157156188055, '75%': 0.1095423541245069, 'max': 0.877886343129453}, 'india_trend_score': {'count': 5633.0, 'mean': 0.22716073140422513, 'std': 0.30880196283430134, 'min': 0.1199, '25%': 0.1221, '50%': 0.2081, '75%': 0.2123, 'max': 10.0936}, 'trend_rank': {'count': 5633.0, 'mean': 2817.0, 'std': 1626.2513643345546, 'min': 1.0, '25%': 1409.0, '50%': 2817.0, '75%': 4225.0, 'max': 5633.0}}"
-India Trend Score,Correlation Matrix,"{'forecast_score': {'forecast_score': nan, 'predicted_viral': nan, 'viral_probability': nan, 'is_anomaly': nan, 'anomaly_score': nan, 'india_trend_score': nan, 'trend_rank': nan}, 'predicted_viral': {'forecast_score': nan, 'predicted_viral': 1.0, 'viral_probability': 0.9998880768703177, 'is_anomaly': 0.4029146446802129, 'anomaly_score': 0.4493144489983316, 'india_trend_score': 0.43624623797141177, 'trend_rank': -0.6917483977065222}, 'viral_probability': {'forecast_score': nan, 'predicted_viral': 0.9998880768703177, 'viral_probability': 1.0, 'is_anomaly': 0.40251836094230026, 'anomaly_score': 0.4488310462637126, 'india_trend_score': 0.4364985296945409, 'trend_rank': -0.6920504001073939}, 'is_anomaly': {'forecast_score': nan, 'predicted_viral': 0.4029146446802129, 'viral_probability': 0.40251836094230026, 'is_anomaly': 1.0, 'anomaly_score': 0.7670184766981052, 'india_trend_score': 0.3729038984575121, 'trend_rank': -0.38294878847492614}, 'anomaly_score': {'forecast_score': nan, 'predicted_viral': 0.4493144489983316, 'viral_probability': 0.4488310462637126, 'is_anomaly': 0.7670184766981052, 'anomaly_score': 1.0, 'india_trend_score': 0.5191183059694917, 'trend_rank': -0.34185904250457777}, 'india_trend_score': {'forecast_score': nan, 'predicted_viral': 0.43624623797141177, 'viral_probability': 0.4364985296945409, 'is_anomaly': 0.3729038984575121, 'anomaly_score': 0.5191183059694917, 'india_trend_score': 1.0, 'trend_rank': -0.4218609697642119}, 'trend_rank': {'forecast_score': nan, 'predicted_viral': -0.6917483977065222, 'viral_probability': -0.6920504001073939, 'is_anomaly': -0.38294878847492614, 'anomaly_score': -0.34185904250457777, 'india_trend_score': -0.4218609697642119, 'trend_rank': 1.0}}"
+Anomaly Detection (Z-Score vs Final),Recall,0.9582309582309583
+Anomaly Detection (Z-Score vs Final),F1 Score,0.9786700125470514
+India Trend Score,Describe,"{'forecast_score': {'count': 5824.0, 'mean': 0.14211431084152576, 'std': 2.7757958784449313e-17, 'min': 0.1421143108415258, '25%': 0.1421143108415258, '50%': 0.1421143108415258, '75%': 0.1421143108415258, 'max': 0.1421143108415258}, 'predicted_viral': {'count': 5824.0, 'mean': 0.20003434065934067, 'std': 0.4000601004848864, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'viral_probability': {'count': 5824.0, 'mean': 0.2000204481950275, 'std': 0.3992634606567958, 'min': 8.456159e-05, '25%': 0.0002624592, '50%': 0.00026490958, '75%': 0.00026981492, 'max': 0.9997348}, 'is_anomaly': {'count': 5824.0, 'mean': 0.13976648351648352, 'std': 0.34677436662182776, 'min': 0.0, '25%': 0.0, '50%': 0.0, '75%': 0.0, 'max': 1.0}, 'anomaly_score': {'count': 5824.0, 'mean': 0.07667131401341078, 'std': 0.09028951304932731, 'min': 0.0, '25%': 0.0180670114771393, '50%': 0.0463134608224728, '75%': 0.10127809006669447, 'max': 0.8667632492801304}, 'india_trend_score': {'count': 5824.0, 'mean': 0.22402803914835165, 'std': 0.30808197834996787, 'min': 0.1194, '25%': 0.121375, '50%': 0.2077, '75%': 0.21182499999999999, 'max': 10.493}, 'trend_rank': {'count': 5824.0, 'mean': 2912.5, 'std': 1681.3883152522103, 'min': 1.0, '25%': 1456.75, '50%': 2912.5, '75%': 4368.25, 'max': 5824.0}}"
+India Trend Score,Correlation Matrix,"{'forecast_score': {'forecast_score': nan, 'predicted_viral': nan, 'viral_probability': nan, 'is_anomaly': nan, 'anomaly_score': nan, 'india_trend_score': nan, 'trend_rank': nan}, 'predicted_viral': {'forecast_score': nan, 'predicted_viral': 1.0, 'viral_probability': 0.9996497822050087, 'is_anomaly': 0.3901473622363471, 'anomaly_score': 0.4607016274674316, 'india_trend_score': 0.43212140862464604, 'trend_rank': -0.6917298514136713}, 'viral_probability': {'forecast_score': nan, 'predicted_viral': 0.9996497822050087, 'viral_probability': 1.0, 'is_anomaly': 0.3896876816013766, 'anomaly_score': 0.4602065020806766, 'india_trend_score': 0.4323895900829961, 'trend_rank': -0.6921261561775002}, 'is_anomaly': {'forecast_score': nan, 'predicted_viral': 0.3901473622363471, 'viral_probability': 0.3896876816013766, 'is_anomaly': 1.0, 'anomaly_score': 0.7591814614354278, 'india_trend_score': 0.3646554313409553, 'trend_rank': -0.3798555524456601}, 'anomaly_score': {'forecast_score': nan, 'predicted_viral': 0.4607016274674316, 'viral_probability': 0.4602065020806766, 'is_anomaly': 0.7591814614354278, 'anomaly_score': 1.0, 'india_trend_score': 0.5318596747755611, 'trend_rank': -0.3742614409087928}, 'india_trend_score': {'forecast_score': nan, 'predicted_viral': 0.43212140862464604, 'viral_probability': 0.4323895900829961, 'is_anomaly': 0.3646554313409553, 'anomaly_score': 0.5318596747755611, 'india_trend_score': 1.0, 'trend_rank': -0.41766793221458853}, 'trend_rank': {'forecast_score': nan, 'predicted_viral': -0.6917298514136713, 'viral_probability': -0.6921261561775002, 'is_anomaly': -0.3798555524456601, 'anomaly_score': -0.3742614409087928, 'india_trend_score': -0.41766793221458853, 'trend_rank': 1.0}}"
